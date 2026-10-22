@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNAPTIQ Lab — Демо-портал проектов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090D16;
+      --card-bg: rgba(22, 29, 47, 0.75);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #3B82F6;
+      --accent: #8B5CF6;
+      --rose: #F43F5E;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .ambient-glow {
+      position: absolute;
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(139, 92, 246, 0.15) 50%, transparent 80%);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    header {
+      padding: 60px 24px 30px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #93C5FD;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    main {
+      flex: 1;
+      max-width: 1080px;
+      width: 100%;
+      margin: 30px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .showcase-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(16px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .showcase-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+    }
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+    .card-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--rose);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      margin-bottom: 24px;
+      flex: 1;
+    }
+    .card-features {
+      list-style: none;
+      margin-bottom: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .card-features li {
+      font-size: 0.8rem;
+      color: #CBD5E1;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #E2E8F0;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      position: relative;
+      z-index: 2;
+    }
+    footer a {
+      color: #60A5FA;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <header>
+    <div class="badge">⚡ SYNAPTIQ Lab Showcase</div>
+    <h1>Демо-портал прототипов</h1>
+    <p class="subtitle">Интерактивные онлайн-витрины, мобильные меню и CRM-системы на архитектуре PulseCore для клиентов и партнеров.</p>
+  </header>
+
+  <main>
+    <!-- Card: Art Bouquet -->
+    <div class="showcase-card">
+      <div class="card-icon">🌸</div>
+      <div class="card-tag">Премиум-флористика & CRM</div>
+      <h2 class="card-title">Art Bouquet</h2>
+      <p class="card-desc">Французский люкс-бутик цветов: интерактивная витрина со 140+ букетами, фильтрами по оттенкам и форматам, конструктором открыток и прямой отправкой заказов в Telegram флориста.</p>
+      
+      <ul class="card-features">
+        <li>✨ Умная фильтрация «В наличии» и «Под заказ»</li>
+        <li>💬 Мгновенные заявки в Telegram-бот</li>
+        <li>🔒 Встроенная CRM-система управления складом</li>
+      </ul>
+
+      <div class="card-actions">
+        <a href="./art-bouquet/" class="btn btn-primary">
+          <span>Открыть витрину сайта</span>
+          <span>→</span>
+        </a>
+        <a href="./art-bouquet/admin.html" class="btn btn-secondary">
+          <span>🔒 CRM флориста (ПИН: 1234)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Placeholder for next demo -->
+    <div class="showcase-card" style="opacity: 0.65; border-style: dashed;">
+      <div class="card-icon">🚀</div>
+      <div class="card-tag" style="color: #64748B;">Скоро в каталоге</div>
+      <h2 class="card-title" style="color: #94A3B8;">Новый демо-проект</h2>
+      <p class="card-desc">Следующий интерактивный демонстрационный стенд заведения или сервиса готовится к публикации.</p>
+      
+      <ul class="card-features">
+        <li>⚡ Скоростная загрузка &lt;0.5 сек</li>
+        <li>📱 Адаптивный мобильный интерфейс</li>
+        <li>🤖 AI-интеграции и боты</li>
+      </ul>
+
+      <div class="card-actions">
+        <button class="btn btn-secondary" disabled style="opacity: 0.5; cursor: default;">
+          <span>В разработке</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 SYNAPTIQ Lab. <a href="https://synaptiqlab.tech/#pricing" target="_blank" rel="noopener noreferrer">Built on PulseCore architecture by SYNAPTIQ Lab</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Art Bouquet CRM | Панель управления бутиком</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/admin.css?v=1.0">
+  <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+</head>
+<body class="admin-body">
+
+  <!-- 1. PIN Lock Screen (1234) -->
+  <div class="pin-lock-overlay" id="pinLockScreen">
+    <div class="pin-lock-card">
+      <img src="images/logo.jpg" alt="Art Bouquet" class="pin-logo-img">
+      <h1 class="pin-title">Art Bouquet CRM</h1>
+      <p class="pin-subtitle">Вход в панель управления флориста и витрины</p>
+
+      <form id="pinForm">
+        <input type="password" id="pinInput" class="pin-input" maxlength="6" placeholder="••••" autocomplete="off" autofocus>
+        <div id="pinError" style="color: var(--admin-danger); font-size: 0.82rem; margin-bottom: 12px; display: none;">
+          Неверный PIN-код. Попробуйте еще раз.
+        </div>
+        <button type="submit" class="pin-btn">Войти в панель</button>
+      </form>
+      <div class="pin-hint">PIN-код по умолчанию: <strong>1234</strong></div>
+    </div>
+  </div>
+
+  <!-- 2. Main CRM Layout -->
+  <div class="admin-layout" id="adminMainLayout" style="display: none;">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div>
+        <a href="index.html" class="admin-brand">
+          <img src="images/logo.jpg" alt="Art Bouquet" class="admin-brand-img">
+          <div>
+            <div class="admin-brand-title">Art Bouquet</div>
+            <div class="admin-brand-sub">Nha Trang · CRM & Boutique</div>
+          </div>
+        </a>
+
+        <nav class="admin-nav">
+          <a href="#" class="admin-nav-item active" data-tab="orders">
+            <span>📦</span>
+            <span>Журнал заказов</span>
+            <span class="admin-nav-badge" id="ordersBadge">0</span>
+          </a>
+          <a href="#" class="admin-nav-item" data-tab="bouquets">
+            <span>💐</span>
+            <span>Витрина и наличие</span>
+          </a>
+          <a href="#" class="admin-nav-item" data-tab="add">
+            <span>➕</span>
+            <span>Добавить букет</span>
+          </a>
+          <a href="#" class="admin-nav-item" data-tab="bot">
+            <span>🤖</span>
+            <span>Telegram-бот</span>
+          </a>
+          
+          <a href="index.html" target="_blank" class="admin-nav-item admin-nav-external">
+            <span>↗</span>
+            <span>Открыть витрину сайта</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="admin-sidebar-footer">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Art Bouquet v2.0 CRM</span>
+          <a href="#" id="logoutBtn" style="color: var(--admin-danger); text-decoration: none; font-weight: 600;">Выйти</a>
+        </div>
+        <div style="margin-top: 6px; font-size: 0.72rem; color: var(--admin-text-light);">
+          Сайт создан на архитектуре PulseCore by SYNAPTIQ Lab
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="admin-main">
+      
+      <!-- Top Bar Title -->
+      <header class="admin-header">
+        <div>
+          <h2 class="admin-header-title">Управление бутиком Art Bouquet</h2>
+          <p class="admin-header-desc">Контроль поступающих заказов, моментальное переключение наличия и обновление каталога</p>
+        </div>
+        <div>
+          <button class="btn-admin btn-admin-primary" onclick="switchTab('add')">
+            <span>+</span>
+            <span>Новый букет</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- KPI Summary Cards -->
+      <section class="admin-kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">Всего композиций</span>
+          <span class="kpi-val" id="kpiTotalBouquets">54</span>
+          <span class="kpi-sub">в активном каталоге</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">🟢 В наличии</span>
+          <span class="kpi-val" id="kpiInStock" style="color: var(--admin-success);">35</span>
+          <span class="kpi-sub">доставка за 60 минут</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">🟡 Под заказ</span>
+          <span class="kpi-val" id="kpiPreorder" style="color: var(--admin-warning);">19</span>
+          <span class="kpi-sub">свежий привоз 1-2 дня</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">⚡ Новых заказов</span>
+          <span class="kpi-val" id="kpiNewOrders" style="color: var(--admin-primary);">1</span>
+          <span class="kpi-sub">требуют подтверждения</span>
+        </div>
+      </section>
+
+      <!-- TAB 1: ORDERS LOG -->
+      <section class="admin-tab active" id="tab-orders">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3 class="admin-card-title">Журнал поступающих заказов</h3>
+            <span style="font-size: 0.8rem; color: var(--admin-text-muted);">
+              Синхронизировано с Telegram-ботом (@litt1e_roo)
+            </span>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Заказ / Дата</th>
+                  <th>Клиент</th>
+                  <th>Букет и дополнения</th>
+                  <th>Способ / Адрес</th>
+                  <th>Сумма</th>
+                  <th>Статус</th>
+                  <th>Действие</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Injected via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: BOUQUETS & AVAILABILITY -->
+      <section class="admin-tab" id="tab-bouquets">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div>
+              <h3 class="admin-card-title">Управление витриной и наличием</h3>
+              <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin-top: 4px;">
+                Переключайте тумблер <strong>«В наличии»</strong>, когда букет готов в салоне, или <strong>«Под заказ»</strong> для редких сортов.
+              </p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="searchBouquetTable" class="admin-input" placeholder="🔍 Поиск по названию или SKU..." style="width: 240px; padding: 7px 12px; font-size: 0.84rem;">
+            </div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Фото</th>
+                  <th>SKU</th>
+                  <th>Название композиции</th>
+                  <th>Упаковка</th>
+                  <th>Оттенок</th>
+                  <th>Цена (₫)</th>
+                  <th>Статус наличия</th>
+                  <th style="text-align: right;">Действия</th>
+                </tr>
+              </thead>
+              <tbody id="bouquetsTableBody">
+                <!-- Injected via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: ADD BOUQUET -->
+      <section class="admin-tab" id="tab-add">
+        <div class="admin-card" style="max-width: 900px; margin: 0 auto;">
+          <div class="admin-card-header">
+            <div>
+              <h3 class="admin-card-title">Быстрое добавление букета в витрину</h3>
+              <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin-top: 4px;">
+                Загрузите фото, укажите название, цену и оттенок. Букет сразу появится в каталоге на сайте.
+              </p>
+            </div>
+          </div>
+
+          <form id="addBouquetForm">
+            <div class="form-grid">
+              
+              <!-- Photo Upload Zone -->
+              <div class="admin-form-group form-group-full">
+                <label>Фотография букета *</label>
+                <div class="upload-dropzone" id="uploadDropzone">
+                  <div style="font-size: 2.2rem; margin-bottom: 8px;">📸</div>
+                  <div style="font-weight: 600; color: var(--admin-text-main); margin-bottom: 4px;">Нажмите для выбора фото или перетащите файл сюда</div>
+                  <div style="font-size: 0.78rem; color: var(--admin-text-muted);">Поддерживаются форматы JPG, PNG, WEBP (с камеры или галереи телефона)</div>
+                  <input type="file" id="newBouquetPhotoInput" accept="image/*" multiple style="display: none;">
+                </div>
+                <div class="upload-preview-wrap" id="uploadPreviewWrap"></div>
+              </div>
+
+              <!-- Title -->
+              <div class="admin-form-group">
+                <label>Название композиции *</label>
+                <input type="text" id="newTitle" class="admin-input" placeholder="Например: Шампань & Розы" required>
+              </div>
+
+              <!-- SKU Number (Unique, immutable after creation) -->
+              <div class="admin-form-group">
+                <label>Артикул SKU (уникальный номер) *</label>
+                <input type="text" id="newSku" class="admin-input" placeholder="Например: 129" required>
+                <div style="font-size: 0.74rem; color: var(--admin-text-light); margin-top: 4px;">Фиксируется при создании, дублирование номеров запрещено.</div>
+              </div>
+
+              <!-- Price -->
+              <div class="admin-form-group">
+                <label>Цена в донгах (₫) *</label>
+                <input type="number" id="newPrice" class="admin-input" placeholder="Например: 1250000" step="50000" required>
+              </div>
+
+              <!-- Package Format -->
+              <div class="admin-form-group">
+                <label>Формат оформления *</label>
+                <select id="newPackage" class="admin-select">
+                  <option value="Букет">Классический авторский букет</option>
+                  <option value="В шляпной коробке">В шляпной коробке</option>
+                  <option value="В корзине">В плетеной корзине</option>
+                  <option value="В сумочке">В флористической сумочке</option>
+                  <option value="Игрушки и Сладости">Подарки и сладости</option>
+                </select>
+              </div>
+
+              <!-- Color Tone (including Shafranny, Peach, etc.) -->
+              <div class="admin-form-group">
+                <label>Оттенок и настроение *</label>
+                <select id="newColor" class="admin-select">
+                  <option value="Нежно-розовые и Персик">Нежно-розовый / Персик</option>
+                  <option value="Солнечные и Желтые">Солнечные / Шафранные</option>
+                  <option value="Красные и Бордо">Алые и Бордо</option>
+                  <option value="Белые и Кремовые">Белые и Жемчужные</option>
+                  <option value="Микс">Гармоничный микс</option>
+                </select>
+              </div>
+
+              <!-- Initial Status -->
+              <div class="admin-form-group">
+                <label>Статус наличия *</label>
+                <select id="newStatus" class="admin-select">
+                  <option value="in_stock">🟢 В наличии (доставка за 60 мин)</option>
+                  <option value="preorder">🟡 Под заказ (свежий привоз 1-2 дня)</option>
+                </select>
+              </div>
+
+              <!-- Description -->
+              <div class="admin-form-group form-group-full">
+                <label>Состав цветов и описание</label>
+                <textarea id="newDesc" class="admin-textarea" rows="3" placeholder="Например: 19 роз сорта O'Hara, веточки эвкалипта Cinerea, французская атласная лента..."></textarea>
+              </div>
+
+              <div class="admin-form-group form-group-full" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+                <button type="button" class="btn-admin btn-admin-outline" onclick="switchTab('bouquets')">Отмена</button>
+                <button type="submit" class="btn-admin btn-admin-primary">
+                  <span>Опубликовать в витрину</span>
+                  <span>✨</span>
+                </button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 4: TELEGRAM BOT INTEGRATION DEMO -->
+      <section class="admin-tab" id="tab-bot">
+        <div class="admin-card" style="max-width: 900px; margin: 0 auto;">
+          <div class="admin-card-header">
+            <div>
+              <h3 class="admin-card-title">Автоматизация через Telegram</h3>
+              <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin-top: 4px;">
+                Двусторонняя связка сайта с вашей рабочей группой в Telegram
+              </p>
+            </div>
+          </div>
+
+          <div style="padding: 28px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 28px;">
+              <div style="background: var(--admin-surface-subtle); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); padding: 22px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🔔</div>
+                <h4 style="font-size: 1.1rem; margin-bottom: 6px;">1. Прием заказов клиентом</h4>
+                <p style="font-size: 0.85rem; color: var(--admin-text-muted); line-height: 1.6;">
+                  Когда покупатель оформляет заказ на сайте, уведомление со всеми деталями (имя, телефон, адрес, сумма, текст открытки) со звуком мгновенно падает в ваш Telegram.
+                </p>
+              </div>
+
+              <div style="background: var(--admin-surface-subtle); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); padding: 22px;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📸</div>
+                <h4 style="font-size: 1.1rem; margin-bottom: 6px;">2. Добавление букета флористом</h4>
+                <p style="font-size: 0.85rem; color: var(--admin-text-muted); line-height: 1.6;">
+                  Флорист скидывает в рабочую группу фото свежесобранного букета с подписью: <em>«Французский поцелуй · 1.250.000 ₫ · В наличии»</em>. Бот распознает параметры и добавляет букет в каталог.
+                </p>
+              </div>
+            </div>
+
+            <!-- Telegram Bubble Preview -->
+            <div class="tg-preview-card">
+              <div style="font-size: 0.8rem; color: #8295A5; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                <span>Art Bouquet Orders Bot</span>
+                <span>bot • сейчас</span>
+              </div>
+              <div class="tg-bubble">
+🌸 <b>НОВЫЙ ЗАКАЗ #4892</b> 🌸
+━━━━━━━━━━━━━━━━━━
+💐 <b>Букет:</b> Miss Dior (#054)
+💰 <b>Базовая цена:</b> 1.200.000 ₫
+📦 <b>Формат:</b> В шляпной коробке
+🎁 <b>Дополнение:</b> 🧸 Мягкая игрушка (S) · +220.000 ₫
+💌 <b>Послание:</b> 💌 Праздничная открытка (+30.000 ₫)
+📝 <b>Текст:</b> «С днем рождения, любимая мамочка!»
+💎 <b>ИТОГО К ОПЛАТЕ: 1.450.000 ₫</b>
+━━━━━━━━━━━━━━━━━━
+👤 <b>Клиент:</b> Екатерина В.
+📞 <b>Контакт:</b> @ekaterina_sea
+📍 <b>Способ:</b> Доставка
+🏠 <b>Адрес:</b> Muong Thanh Luxury, 60 Trần Phú
+━━━━━━━━━━━━━━━━━━
+⏰ 23.10.2026, 01:10
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 3. Edit Bouquet Modal (Opens on 'Редактировать') -->
+  <div class="admin-modal-overlay" id="editBouquetModal" style="display: none;">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <div>
+          <h3 class="admin-card-title" id="editModalHeaderTitle">Редактирование букета</h3>
+          <span style="font-size: 0.8rem; color: var(--admin-text-muted);" id="editModalHeaderSub">Артикул SKU зафиксирован и защищен от изменения</span>
+        </div>
+        <button type="button" class="admin-modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+
+      <form id="editBouquetForm">
+        <input type="hidden" id="editBouquetId">
+        <div class="form-grid">
+          
+          <!-- Photo Edit / Replace / Delete Zone -->
+          <div class="admin-form-group form-group-full">
+            <label>Фотография композиции</label>
+            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+              <div style="position: relative; width: 90px; height: 90px; border-radius: var(--admin-radius-md); overflow: hidden; border: 2px solid var(--admin-border); background: var(--admin-surface-subtle); flex-shrink: 0;">
+                <img id="editCurrentPhotoImg" src="" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">
+                <button type="button" id="editRemovePhotoBtn" onclick="removeEditPhoto()" title="Удалить фото" style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(239, 68, 68, 0.9); color: #FFF; border: none; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700;">✕</button>
+              </div>
+              <div style="flex-grow: 1;">
+                <div class="upload-dropzone" id="editUploadDropzone" style="padding: 16px;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">🔄</div>
+                  <div style="font-weight: 600; font-size: 0.85rem; color: var(--admin-text-main);">Загрузить новую фотографию вместо текущей</div>
+                  <div style="font-size: 0.74rem; color: var(--admin-text-muted);">Нажмите или перетащите фото с телефона/ПК</div>
+                  <input type="file" id="editPhotoInput" accept="image/*" style="display: none;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SKU (Readonly/Disabled) -->
+          <div class="admin-form-group">
+            <label>Артикул SKU (неизменяемый)</label>
+            <input type="text" id="editSku" class="admin-input" readonly style="background: var(--admin-surface-subtle); color: var(--admin-primary-dark); font-weight: 700; cursor: not-allowed;">
+          </div>
+
+          <!-- Title -->
+          <div class="admin-form-group">
+            <label>Название композиции *</label>
+            <input type="text" id="editTitle" class="admin-input" required>
+          </div>
+
+          <!-- Price -->
+          <div class="admin-form-group">
+            <label>Цена в донгах (₫) *</label>
+            <input type="number" id="editPrice" class="admin-input" step="50000" required>
+          </div>
+
+          <!-- Package Format -->
+          <div class="admin-form-group">
+            <label>Формат оформления *</label>
+            <select id="editPackage" class="admin-select">
+              <option value="Букет">Классический авторский букет</option>
+              <option value="В шляпной коробке">В шляпной коробке</option>
+              <option value="В корзине">В плетеной корзине</option>
+              <option value="В сумочке">В флористической сумочке</option>
+              <option value="Игрушки и Сладости">Подарки и сладости</option>
+            </select>
+          </div>
+
+          <!-- Color Tone -->
+          <div class="admin-form-group">
+            <label>Оттенок и настроение *</label>
+            <select id="editColor" class="admin-select">
+              <option value="Нежно-розовые и Персик">Нежно-розовый / Персик</option>
+              <option value="Солнечные и Желтые">Солнечные / Шафранные</option>
+              <option value="Красные и Бордо">Алые и Бордо</option>
+              <option value="Белые и Кремовые">Белые и Жемчужные</option>
+              <option value="Микс">Гармоничный микс</option>
+            </select>
+          </div>
+
+          <!-- Stock Status -->
+          <div class="admin-form-group">
+            <label>Статус наличия *</label>
+            <select id="editStatus" class="admin-select">
+              <option value="in_stock">🟢 В наличии (доставка за 60 мин)</option>
+              <option value="preorder">🟡 Под заказ (свежий привоз 1-2 дня)</option>
+            </select>
+          </div>
+
+          <!-- Description -->
+          <div class="admin-form-group form-group-full">
+            <label>Состав цветов и описание</label>
+            <textarea id="editDesc" class="admin-textarea" rows="3" placeholder="Состав композиции..."></textarea>
+          </div>
+
+          <div class="admin-form-group form-group-full" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+            <button type="button" class="btn-admin btn-admin-outline" onclick="closeEditModal()">Отмена</button>
+            <button type="submit" class="btn-admin btn-admin-primary">
+              <span>Сохранить изменения</span>
+              <span>✓</span>
+            </button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/data.js?v=20.0"></script>
+  <script src="js/admin.js?v=20.0"></script>
+</body>
+</html>

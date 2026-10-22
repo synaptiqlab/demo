@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Bouquet | Авторские букеты и композиции из роз в Нячанге</title>
+  <meta name="description" content="Art Bouquet — студия авторской флористики в Нячанге с 2016 года. Свежие розы, элегантные шляпные коробки, плетеные корзины и быстрая бережная доставка за 60 минут.">
+  
+  <!-- Google Fonts: Cormorant Garamond (Editorial Luxury) & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css?v=17.0">
+  <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+</head>
+<body>
+
+  <!-- Ambient Organic Background Shapes -->
+  <div class="bg-ambient-brush"></div>
+  <div class="bg-ambient-brush-2"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-group">
+        <img src="images/logo.jpg" alt="Art Bouquet Nha Trang" class="brand-logo-img">
+        <div class="brand-info">
+          <span class="brand-title">Art Bouquet</span>
+          <span class="brand-subtitle">Сближает сердца · since 2016</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a href="admin.html" class="contact-pill" title="Панель управления флориста (PIN: 1234)" style="background: rgba(189, 117, 111, 0.1); border-color: rgba(189, 117, 111, 0.4); color: var(--color-primary-dark);">
+          <span>🔒</span>
+          <span>CRM Флориста</span>
+        </a>
+        <a href="https://t.me/litt1e_roo" target="_blank" class="contact-pill" title="Написать флористу">
+          <span>💬</span>
+          <span>Чат с флористом</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1 class="hero-title">
+        Цветы, которые <span>говорят о чувствах</span>
+      </h1>
+      <p class="hero-subtitle">
+        Коллекция премиальных букетов из отборных свежих роз, трендовых лотосов и экзотических цветов в стильных коробках, плетеных корзинах и авторском крафте с доставкой по Нячангу.
+      </p>
+
+      <div class="hero-features-line">
+        <span>Свежие поставки роз ежедневно</span>
+        <span class="feat-dot">•</span>
+        <span>Бережная доставка</span>
+        <span class="feat-dot">•</span>
+        <span>Фото букета перед отправкой</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catalog Section -->
+  <section class="catalog-section">
+    <div class="container">
+      
+      <!-- Interactive Filter Box -->
+      <div class="filter-card">
+        <!-- Search Input -->
+        <div class="search-bar-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Поиск по названию букета или сорту цветов (например, пионы, лотос, O'Hara)...">
+        </div>
+
+        <div class="filters-top-grid">
+          <!-- Filter by Package -->
+          <div class="filter-group">
+            <div class="filter-group-label">
+              <span>Формат оформления</span>
+            </div>
+            <div class="filter-chips" id="filterPackage">
+              <button class="filter-chip active" data-filter="all">Все форматы</button>
+              <button class="filter-chip" data-filter="Букет">Классический букет</button>
+              <button class="filter-chip" data-filter="В шляпной коробке">В шляпной коробке</button>
+              <button class="filter-chip" data-filter="В корзине">В корзине</button>
+              <button class="filter-chip" data-filter="В сумочке">В сумочке</button>
+              <button class="filter-chip" data-filter="Игрушки и Сладости">Подарки и сладости</button>
+            </div>
+          </div>
+
+          <!-- Filter by Shade -->
+          <div class="filter-group">
+            <div class="filter-group-label">
+              <span>Оттенок и настроение</span>
+            </div>
+            <div class="filter-chips" id="filterColor">
+              <button class="filter-chip active" data-filter="all">Любой цвет</button>
+              <button class="filter-chip" data-filter="Нежно-розовые и Персик">Нежно-розовый / Персик</button>
+              <button class="filter-chip" data-filter="Красные и Бордо">Алые и Бордо</button>
+              <button class="filter-chip" data-filter="Белые и Кремовые">Белые и Жемчужные</button>
+              <button class="filter-chip" data-filter="Солнечные и Желтые">Солнечные</button>
+              <button class="filter-chip" data-filter="Микс">Гармоничный микс</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter by Price: Full Width Range Slider -->
+        <div class="filter-price-slider-wrap">
+          <div class="price-slider-header">
+            <div class="filter-group-label mb-0">
+              <span>Бюджет:</span>
+            </div>
+            <div class="price-slider-values">
+              от <strong id="priceMinLabel">220.000 ₫</strong> до <strong id="priceMaxLabel">8.500.000 ₫</strong>
+            </div>
+          </div>
+          <div class="range-slider-container">
+            <input type="range" id="priceRangeInput" min="200000" max="8500000" step="100000" value="8500000" class="pulse-range-slider">
+          </div>
+          <div class="price-slider-ticks">
+            <span>200.000 ₫</span>
+            <span>2.000.000 ₫</span>
+            <span>4.000.000 ₫</span>
+            <span>6.000.000 ₫</span>
+            <span>8.500.000 ₫</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Counter & Stock Filter Toggle -->
+      <div class="catalog-counter-bar">
+        <span class="counter-text">В витрине доступно композиций: <span class="counter-count" id="countDisplay">0</span></span>
+        
+        <div class="stock-filter-toggle-group">
+          <button class="stock-toggle-btn active" data-stock="all" id="stockFilterAll">
+            <span>Все букеты (под заказ на любую дату)</span>
+          </button>
+          <button class="stock-toggle-btn" data-stock="in_stock" id="stockFilterInStock">
+            <span class="stock-indicator-dot"></span>
+            <span>Только в наличии сейчас (доставка за 60 мин)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bouquets Grid -->
+      <div class="bouquets-grid" id="bouquetsGrid">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Quick View & 1-Click Order Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modalCloseBtn" onclick="closeProductModal()" aria-label="Закрыть">✕</button>
+      
+      <div class="modal-grid">
+        <!-- Gallery Left -->
+        <div class="modal-gallery">
+          <div class="gallery-main-img-wrap">
+            <img src="" alt="" id="modalMainImg" class="gallery-main-img">
+          </div>
+          <div class="gallery-thumbs-row" id="modalThumbsRow">
+            <!-- Thumbs injected via JS -->
+          </div>
+        </div>
+
+        <!-- Details & Order Right -->
+        <div class="modal-info">
+          
+          <!-- Top Bar: Title & Price -->
+          <div class="modal-header-hero">
+            <div class="modal-title-meta">
+              <div class="modal-tags-row">
+                <span class="pulse-tag" id="modalPackage">Букет</span>
+                <span class="pulse-tag-sku" id="modalSku">#054</span>
+              </div>
+              <h2 class="modal-title" id="modalTitle">Miss Dior</h2>
+            </div>
+            <div class="modal-price-hero">
+              <span class="modal-price-val" id="modalPrice">1.200.000 ₫</span>
+              <span class="modal-price-sub">свежая поставка</span>
+            </div>
+          </div>
+
+          <!-- Description Pill Box -->
+          <div class="modal-desc-lux" id="modalDesc">
+            Описание букета и состав...
+          </div>
+
+          <!-- Interactive 2-Step Checkout -->
+          <div class="pulse-checkout-card">
+            
+            <form id="fastOrderForm">
+              <div class="pulse-field">
+                <span class="field-ico">👤</span>
+                <input type="text" id="orderName" class="pulse-input" placeholder="Как к вам обращаться *" required>
+              </div>
+
+              <div class="pulse-field">
+                <span class="field-ico">💬</span>
+                <input type="text" id="orderContact" class="pulse-input" placeholder="Telegram / WhatsApp / Телефон *" required>
+              </div>
+
+              <!-- Выбор дополнения -->
+              <div class="lux-addons-bar">
+                <span class="lux-bar-caption">🎁 Добавить к букету:</span>
+                <div class="addon-pills-wrap">
+                  <select id="orderAddonSelect" class="pulse-select" onchange="updateOrderTotal()">
+                    <option value="none" data-price="0">✨ Без дополнений (только букет)</option>
+                    <option value="toy_s" data-price="220000">🧸 Мягкая игрушка (S) · +220.000 ₫</option>
+                    <option value="toy_m" data-price="330000">🧸 Мягкая игрушка (M) · +330.000 ₫</option>
+                    <option value="sweets_kinder" data-price="1450000">🍫 Набор Kinder «Sweet Dreams» · +1.450.000 ₫</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Способ получения -->
+              <div class="lux-segment-control">
+                <label class="lux-segment-item selected" id="optDelivery">
+                  <input type="radio" name="orderType" value="Доставка" checked>
+                  <span class="segment-icon">🚚</span>
+                  <span class="segment-text">Доставка</span>
+                </label>
+                <label class="lux-segment-item" id="optPickup">
+                  <input type="radio" name="orderType" value="Самовывоз">
+                  <span class="segment-icon">🏬</span>
+                  <span class="segment-text">Самовывоз</span>
+                </label>
+              </div>
+
+              <div class="pulse-field" id="addressGroup">
+                <span class="field-ico">📍</span>
+                <input type="text" id="orderAddress" class="pulse-input" placeholder="Отель, улица или номер апартаментов">
+              </div>
+
+              <!-- Открытка или записка -->
+              <div class="lux-note-wrap">
+                <div class="lux-note-header">
+                  <span class="lux-bar-caption">Тёплые слова:</span>
+                  <div class="note-type-toggles">
+                    <label class="note-type-btn active" id="btnNoteFree">
+                      <input type="radio" name="cardFormat" value="note" checked onchange="updateOrderTotal()">
+                      <span>📜 Записка (0 ₫)</span>
+                    </label>
+                    <label class="note-type-btn" id="btnCardPaid">
+                      <input type="radio" name="cardFormat" value="card" onchange="updateOrderTotal()">
+                      <span>💌 Открытка (+30.000 ₫)</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="pulse-field pulse-field-note">
+                  <span class="field-ico">✍️</span>
+                  <input type="text" id="orderCard" class="pulse-input" placeholder="Текст пожеланий (необязательно, можно оставить пустой)" autocomplete="off">
+                </div>
+              </div>
+
+              <!-- Итоговая строка расчёта -->
+              <div class="lux-total-bar">
+                <div class="total-label">Итого к оплате:</div>
+                <div class="total-amount order-total-val" id="orderTotalAmount">1.200.000 ₫</div>
+              </div>
+
+              <button type="submit" class="pulse-btn-order" id="submitOrderBtn">
+                <span class="btn-lbl">Оформить заказ букета</span>
+                <span class="btn-arrow">✨</span>
+              </button>
+            </form>
+
+            <div class="order-success-msg" id="orderSuccessMsg">
+              <div class="order-success-icon">🌸</div>
+              <h4 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 8px;">Спасибо за заказ!</h4>
+              <p style="font-size: 0.9rem; color: var(--color-text-muted);">
+                Мы уже получили уведомление в Telegram и свяжемся с вами в течение 3–5 минут для подтверждения деталей доставки.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer with mandatory PulseCore attribution -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="brand-group">
+          <img src="images/logo.jpg" alt="Art Bouquet" class="brand-logo-img">
+          <div class="brand-info">
+            <span class="brand-title">Art Bouquet</span>
+            <span class="brand-subtitle">Сближает сердца · Nha Trang, Vietnam</span>
+          </div>
+        </div>
+        <div>
+          <a href="https://t.me/litt1e_roo" target="_blank" class="contact-pill">
+            <span>💬 Заказ в Telegram: @litt1e_roo</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2016–2026 Art Bouquet. Все права защищены.
+        </div>
+        <div>
+          <a href="https://synaptiqlab.tech/#pricing" target="_blank" rel="noopener noreferrer" class="pulsecore-link">
+            Сайт создан на архитектуре PulseCore by SYNAPTIQ Lab
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js?v=20.0"></script>
+  <script src="js/app.js?v=20.0"></script>
+</body>
+</html>
