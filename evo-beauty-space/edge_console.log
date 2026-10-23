@@ -1,0 +1,7 @@
+[18460:4140:1015/134953.224:ERROR:ui\gl\direct_composition_support.cc:630] AMD VideoProcessorGetOutputExtension failed: Неопознанная ошибка (0x80004005)
+[17960:3580:1015/134954.228:INFO:CONSOLE:6150] "[ProtocolLaunch] handler constructed; wiring port events.", source: chrome-extension://ndcpkimcihhghdcddljkfmmjccdmcmof/background.rollup.js (6150)
+[17960:3580:1015/134954.653:WARNING:components\signin\internal\identity_manager\account_fetcher_service.cc:252] Edge does not support fetching account capabilities
+[17960:3580:1015/134954.653:WARNING:components\signin\internal\identity_manager\account_fetcher_service.cc:213] Should not execute: Tests depending on this function may fail
+[17960:3580:1015/134954.675:ERROR:components\edge_auth\edge_auth_errors.cc:553] EDGE_IDENTITY: Image Fetch FAILED: Error: Primary Error: kAccountImageFetchFailure, Secondary Error: kUnspecified, Platform error: 0, Error string: [empty]
+
+[17960:3580:1015/134955.688:WARNING:chrome\browser\edge_personalized_data_collection\account_info_for_san.cc:88] Call to fetch child account info FAILED
