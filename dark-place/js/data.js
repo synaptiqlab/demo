@@ -29,28 +29,34 @@ const DEFAULT_SALON_INFO = {
 
 const DEFAULT_CATEGORIES = [
   { 
-    id: "complex", 
-    name: "Комплексные сеты", 
-    icon: "⚡", 
-    desc: "Популярные комплексные комбо для мужчин и семейный формат" 
-  },
-  { 
     id: "haircuts", 
     name: "Мужские стрижки", 
     icon: "✂️", 
-    desc: "Классические, текстурные и удлинённые стрижки, фейды, химзавивка и окрашивание" 
+    desc: "Классические, текстурные и удлинённые стрижки, фейды и точная окантовка" 
   },
   { 
     id: "beard", 
-    name: "Борода и Королевское бритьё", 
+    name: "Борода и бритьё", 
     icon: "🪒", 
-    desc: "Моделирование контуров, бритьё шейвером, традиционное бритьё и тонирование" 
+    desc: "Моделирование контуров, бритьё шейвером, традиционное бритьё и стрижка бороды" 
+  },
+  { 
+    id: "care", 
+    name: "Окрашивание и уход", 
+    icon: "💈", 
+    desc: "Химическая завивка, осветление, тонирование волос, Hair Tattoo и удаление волос воском" 
+  },
+  { 
+    id: "complex", 
+    name: "Комплексные сеты", 
+    icon: "⚡", 
+    desc: "Популярные комплексные сеты для мужчин и семейный формат" 
   },
   { 
     id: "tattoo-art", 
-    name: "Тату и Авторское тату", 
+    name: "Тату", 
     icon: "🎨", 
-    desc: "Художественная татуировка любой сложности, разработка эскизов и Cover-Up" 
+    desc: "Художественная татуировка любой сложности, авторские эскизы и Cover-Up" 
   }
 ];
 
@@ -61,7 +67,7 @@ const DEFAULT_SPECIALISTS = [
     role: "Барбер, мастер удлинённых стрижек",
     experience: "Опыт 5 лет. Выполняет стрижки любой сложности. Эксперт по текстурным, свежим трендовым и удлинённым стрижкам.",
     commissionPercent: 40,
-    categories: ["complex", "haircuts", "beard"],
+    categories: ["haircuts", "beard", "care", "complex"],
     avatar: "assets/master-ruslan.jpg",
     workDays: [1, 2, 3, 4, 5, 6, 7]
   },
@@ -71,7 +77,7 @@ const DEFAULT_SPECIALISTS = [
     role: "Барбер-эксперт",
     experience: "Опыт 7 лет. Простой парень из Сибири, найдет общий язык с каждым гостем. Выполняет стрижки любого уровня сложности с душой.",
     commissionPercent: 40,
-    categories: ["complex", "haircuts", "beard"],
+    categories: ["haircuts", "beard", "care", "complex"],
     avatar: "assets/master-zhora.jpg",
     workDays: [1, 2, 3, 4, 5, 6, 7]
   },
@@ -81,7 +87,7 @@ const DEFAULT_SPECIALISTS = [
     role: "Барбер, колорист & биозавивка",
     experience: "Опыт более 6 лет. Стрижет мужчин и детей, делает хим. завивку и окрашивание волос в любой цвет. Харизматичный и общительный мастер.",
     commissionPercent: 40,
-    categories: ["complex", "haircuts", "beard"],
+    categories: ["haircuts", "beard", "care", "complex"],
     avatar: "assets/master-max.jpg",
     workDays: [1, 2, 3, 4, 5, 6, 7]
   },
@@ -91,7 +97,7 @@ const DEFAULT_SPECIALISTS = [
     role: "Шеф-барбер & наставник",
     experience: "Опыт 6 лет. Постоянно развивается, обучается и обучает учеников. Цель — не просто стричь, а формировать уверенность и мужской стиль.",
     commissionPercent: 45,
-    categories: ["complex", "haircuts", "beard"],
+    categories: ["haircuts", "beard", "care", "complex"],
     avatar: "assets/master-sunnat.jpg",
     workDays: [1, 2, 3, 4, 5, 6, 7]
   },
@@ -209,7 +215,7 @@ const DEFAULT_SERVICES = [
   },
   {
     id: "srv-cut-5",
-    categoryId: "haircuts",
+    categoryId: "care",
     name: "Химическая завивка",
     shortDesc: "Трендовые кудри и долговременная текстура волос на профессиональном составе",
     fullDesc: "Создание объема, легких волн или выразительных кудрей на срок от 3 до 6 месяцев. Процедура выполняется щадящими составами с сохранением здоровья волос.",
@@ -225,7 +231,7 @@ const DEFAULT_SERVICES = [
   },
   {
     id: "srv-cut-6",
-    categoryId: "haircuts",
+    categoryId: "care",
     name: "Окрашивание волос",
     shortDesc: "Тонирование, осветление или креативное окрашивание в любой цвет",
     fullDesc: "Полное преображение: платиновый блонд, пепельный оттенок, яркие акцентные цвета или маскировка седины профессиональными красителями.",
@@ -240,7 +246,7 @@ const DEFAULT_SERVICES = [
   },
   {
     id: "srv-cut-7",
-    categoryId: "haircuts",
+    categoryId: "care",
     name: "Тонирование головы",
     shortDesc: "Камуфляж седины и придание волосам глубокого естественного оттенка",
     fullDesc: "Безаммиачное тонирование за 15-20 минут, создающее абсолютно натуральный вид волос без эффекта окрашенности.",
@@ -255,7 +261,7 @@ const DEFAULT_SERVICES = [
   },
   {
     id: "srv-cut-8",
-    categoryId: "haircuts",
+    categoryId: "care",
     name: "Hair Tattoo",
     shortDesc: "Фигурный графический выстриг: полосы, молнии или авторский рисунок на висках",
     fullDesc: "Артистичный графический акцент на виске или затылке, выполненный триммером и лезвием.",
@@ -270,7 +276,7 @@ const DEFAULT_SERVICES = [
   },
   {
     id: "srv-cut-9",
-    categoryId: "haircuts",
+    categoryId: "care",
     name: "Удаление волос воском",
     shortDesc: "Депиляция нежелательных волос в зоне носа, ушей и между бровей",
     fullDesc: "Быстрая и безболезненная процедура профессиональным горячим воском для идеальной чистоты лица.",
@@ -454,8 +460,29 @@ class NoirDataService {
       localStorage.setItem(this.STORAGE_KEYS.SALON, JSON.stringify(DEFAULT_SALON_INFO));
     }
     localStorage.setItem(this.STORAGE_KEYS.CATEGORIES, JSON.stringify(DEFAULT_CATEGORIES));
-    if (!localStorage.getItem(this.STORAGE_KEYS.SERVICES)) {
+    
+    // Sync services categories
+    const storedServices = localStorage.getItem(this.STORAGE_KEYS.SERVICES);
+    if (!storedServices) {
       localStorage.setItem(this.STORAGE_KEYS.SERVICES, JSON.stringify(DEFAULT_SERVICES));
+    } else {
+      try {
+        let list = JSON.parse(storedServices);
+        let changed = false;
+        list = list.map(s => {
+          const def = DEFAULT_SERVICES.find(d => d.id === s.id);
+          if (def && s.categoryId !== def.categoryId) {
+            s.categoryId = def.categoryId;
+            changed = true;
+          }
+          return s;
+        });
+        if (changed) {
+          localStorage.setItem(this.STORAGE_KEYS.SERVICES, JSON.stringify(list));
+        }
+      } catch (e) {
+        localStorage.setItem(this.STORAGE_KEYS.SERVICES, JSON.stringify(DEFAULT_SERVICES));
+      }
     }
     if (!localStorage.getItem(this.STORAGE_KEYS.SPECIALISTS)) {
       localStorage.setItem(this.STORAGE_KEYS.SPECIALISTS, JSON.stringify(DEFAULT_SPECIALISTS));

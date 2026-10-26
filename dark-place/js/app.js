@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initApp();
 });
 
-let currentCategoryFilter = 'complex';
+let currentCategoryFilter = 'haircuts';
 
 function initApp() {
   const categories = window.noirData.getCategories();
@@ -61,7 +61,7 @@ function renderCategoryTabs() {
   const services = window.noirData.getServices();
 
   if (!currentCategoryFilter || currentCategoryFilter === 'all') {
-    currentCategoryFilter = (categories && categories[0]) ? categories[0].id : 'complex';
+    currentCategoryFilter = (categories && categories[0]) ? categories[0].id : 'haircuts';
   }
 
   let html = '';
@@ -93,7 +93,7 @@ function renderServicesGrid() {
   const categories = window.noirData.getCategories();
 
   if (!currentCategoryFilter || currentCategoryFilter === 'all') {
-    currentCategoryFilter = (categories && categories[0]) ? categories[0].id : 'complex';
+    currentCategoryFilter = (categories && categories[0]) ? categories[0].id : 'haircuts';
   }
 
   const filtered = services.filter(s => s.categoryId === currentCategoryFilter);
