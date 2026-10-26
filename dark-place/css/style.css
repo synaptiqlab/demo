@@ -1562,23 +1562,31 @@ button, input, select, textarea {
   }
   .hero-titles-wrap {
     margin-bottom: 10px;
+    width: 100%;
+    padding: 0 6px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .hero-gothic-title {
-    font-size: clamp(20px, 6.6vw, 36px);
-    letter-spacing: 2px;
-    line-height: 1.15;
-    margin: 0 0 5px;
+    font-size: clamp(28px, 13.5vw, 54px);
+    letter-spacing: 0.04em;
+    line-height: 1.08;
+    margin: 0 0 4px;
     white-space: nowrap;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(255, 43, 68, 0.3);
+    display: inline-block;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9), 0 0 24px rgba(255, 43, 68, 0.35);
   }
   .hero-gothic-sub {
-    font-size: clamp(11.5px, 3.6vw, 17px);
-    letter-spacing: 1.8px;
-    line-height: 1.15;
+    font-size: clamp(14.5px, 7.1vw, 28px);
+    letter-spacing: 0.06em;
+    line-height: 1.08;
     margin: 0 0 7px;
     white-space: nowrap;
-    display: block;
-    transform: scaleY(1.04) scaleX(0.96);
+    display: inline-block;
+    transform: none;
+    text-shadow: 0 0 16px rgba(255, 43, 68, 0.5);
   }
   .hero-gothic-tagline {
     font-size: 13px;

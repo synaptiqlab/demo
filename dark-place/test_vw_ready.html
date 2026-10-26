@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@900&family=Rye&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #08090C; color: #fff; overflow-x: hidden; text-align: center; }
+.hero-titles-wrap {
+  width: 100%;
+  padding: 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hero-gothic-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  white-space: nowrap;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+  line-height: 1.08;
+  font-size: 14vw;
+  letter-spacing: 0.03em;
+}
+.hero-gothic-sub {
+  font-family: 'Rye', cursive, serif;
+  font-weight: 400;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: #FF2B44;
+  margin: 0 0 6px;
+  line-height: 1.08;
+  font-size: 6.8vw;
+  letter-spacing: 0.08em;
+}
+</style>
+</head>
+<body>
+<div class="hero-titles-wrap">
+  <div class="hero-gothic-title" id="t">DARK PLACE</div>
+  <div class="hero-gothic-sub" id="s">TATTOO &amp; BARBERSHOP</div>
+</div>
+<div id="res" style="font-size: 14px; margin-top: 20px; font-family: monospace;"></div>
+<script>
+window.onload = () => {
+  document.fonts.ready.then(() => {
+    const t = document.getElementById('t');
+    const s = document.getElementById('s');
+    const r = document.getElementById('res');
+    const tw = t.getBoundingClientRect().width;
+    const sw = s.getBoundingClientRect().width;
+    const vw = window.innerWidth;
+    r.innerText = 'VW=' + vw + ' | T_w=' + Math.round(tw) + ' | S_w=' + Math.round(sw) + ' | diff=' + Math.round(tw - sw);
+    document.title = r.innerText;
+  });
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@900&family=Rye&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #08090C; color: #fff; overflow-x: hidden; text-align: center; }
+.hero-titles-wrap {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 10px;
+  padding: 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hero-gothic-title {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  line-height: 1.05;
+  white-space: nowrap;
+  display: inline-block;
+  margin: 0 0 4px;
+}
+.hero-gothic-sub {
+  font-family: 'Rye', cursive, serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #FF2B44;
+  line-height: 1.05;
+  white-space: nowrap;
+  display: inline-block;
+  margin: 0 0 6px;
+}
+</style>
+</head>
+<body>
+<div class="hero-titles-wrap" id="brandWrap">
+  <h1 class="hero-gothic-title" id="brandTitle">DARK PLACE</h1>
+  <div class="hero-gothic-sub" id="brandSub">TATTOO &amp; BARBERSHOP</div>
+</div>
+<div id="res" style="font-size: 13px; font-family: monospace;"></div>
+<script>
+function fitBranding() {
+  const wrap = document.getElementById('brandWrap');
+  const title = document.getElementById('brandTitle');
+  const sub = document.getElementById('brandSub');
+  if (!wrap || !title || !sub) return;
+
+  // Available width with 6px margin each side
+  const availableWidth = Math.min(window.innerWidth - 12, 880);
+  
+  // Set base size to calculate ratio
+  title.style.fontSize = '100px';
+  title.style.letterSpacing = '0.04em';
+  const titleBaseWidth = title.getBoundingClientRect().width;
+  const targetTitleSize = Math.floor(100 * (availableWidth / titleBaseWidth));
+  title.style.fontSize = targetTitleSize + 'px';
+
+  sub.style.fontSize = '100px';
+  sub.style.letterSpacing = '0.06em';
+  const subBaseWidth = sub.getBoundingClientRect().width;
+  const targetSubSize = Math.floor(100 * (availableWidth / subBaseWidth));
+  sub.style.fontSize = targetSubSize + 'px';
+
+  const finalTitleW = Math.round(title.getBoundingClientRect().width);
+  const finalSubW = Math.round(sub.getBoundingClientRect().width);
+  const r = document.getElementById('res');
+  r.innerText = 'Avail=' + availableWidth + ' | T_w=' + finalTitleW + ' (fs:' + targetTitleSize + ') | S_w=' + finalSubW + ' (fs:' + targetSubSize + ')';
+  document.title = r.innerText;
+}
+
+window.addEventListener('resize', fitBranding);
+window.onload = () => {
+  document.fonts.ready.then(fitBranding);
+};
+</script>
+</body>
+</html>

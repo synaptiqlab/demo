@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@900&family=Rye&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #08090C; color: #fff; overflow-x: hidden; text-align: center; }
+.hero-branding {
+  width: calc(100% - 12px);
+  max-width: 440px;
+  margin: 0 auto 10px;
+  display: block;
+  overflow: visible;
+}
+.brand-title-svg {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  fill: #FFFFFF;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+.brand-sub-svg {
+  font-family: 'Rye', cursive, serif;
+  font-weight: 400;
+  fill: #FF2B44;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<div style="padding: 10px 0;">
+  <svg class="hero-branding" viewBox="0 0 500 115">
+    <text x="250" y="58" class="brand-title-svg" font-size="62" letter-spacing="3" textLength="490" lengthAdjust="spacingAndGlyphs">DARK PLACE</text>
+    <text x="250" y="105" class="brand-sub-svg" font-size="34" letter-spacing="3" textLength="490" lengthAdjust="spacingAndGlyphs">TATTOO &amp; BARBERSHOP</text>
+  </svg>
+</div>
+<div id="res" style="font-size: 14px; margin-top: 20px; font-family: monospace;"></div>
+<script>
+window.onload = () => {
+  document.fonts.ready.then(() => {
+    const svg = document.querySelector('.hero-branding');
+    const r = document.getElementById('res');
+    r.innerText = 'SVG_w=' + Math.round(svg.getBoundingClientRect().width) + ' | H=' + Math.round(svg.getBoundingClientRect().height);
+    document.title = r.innerText;
+  });
+};
+</script>
+</body>
+</html>

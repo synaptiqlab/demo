@@ -22,6 +22,7 @@ function initApp() {
   setupSmoothScroll();
   setupServiceDetailModal();
   setupAppLiveSync();
+  setupHeroBrandFit();
 
   const urlParams = new URLSearchParams(window.location.search);
   const bookSpec = urlParams.get('bookSpec');
@@ -276,3 +277,48 @@ window.openServiceDetailModal = function(serviceId) {
   modal.classList.add('active');
 };
 
+/**
+ * Dynamically fits DARK PLACE and TATTOO & BARBERSHOP on mobile screens
+ * so both lines stretch to the exact same width with comfortable ~6px margins.
+ */
+function setupHeroBrandFit() {
+  const title = document.querySelector('.hero-gothic-title');
+  const sub = document.querySelector('.hero-gothic-sub');
+  if (!title || !sub) return;
+
+  function fit() {
+    if (window.innerWidth > 768) {
+      // Reset inline styles on desktop/tablet to use default CSS
+      title.style.fontSize = '';
+      title.style.letterSpacing = '';
+      sub.style.fontSize = '';
+      sub.style.letterSpacing = '';
+      return;
+    }
+
+    // Comfortable 6px margin on each side (total 12px)
+    const availableWidth = Math.max(280, window.innerWidth - 12);
+
+    // Measure base widths with standard 100px font
+    title.style.fontSize = '100px';
+    title.style.letterSpacing = '0.04em';
+    const titleWidthAt100 = title.getBoundingClientRect().width;
+    const calcTitleSize = Math.floor(100 * (availableWidth / titleWidthAt100));
+
+    sub.style.fontSize = '100px';
+    sub.style.letterSpacing = '0.06em';
+    const subWidthAt100 = sub.getBoundingClientRect().width;
+    const calcSubSize = Math.floor(100 * (availableWidth / subWidthAt100));
+
+    // Apply proportional matched sizes
+    title.style.fontSize = calcTitleSize + 'px';
+    sub.style.fontSize = calcSubSize + 'px';
+  }
+
+  window.addEventListener('resize', fit);
+  fit();
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fit);
+  }
+}
