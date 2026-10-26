@@ -33,9 +33,10 @@
 
       <div class="header-actions">
         <a href="admin.html" class="btn-crm-pill" title="Открыть CRM систему Dark Place">
-          CRM Управление
+          <span class="crm-text-full">CRM Управление</span>
+          <span class="crm-text-short">CRM</span>
         </a>
-        <button type="button" class="btn btn-primary" data-open-booking>
+        <button type="button" class="btn btn-primary btn-header-book" data-open-booking>
           Записаться
         </button>
       </div>
@@ -500,5 +501,19 @@
   <script src="js/data.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/app.js"></script>
+
+<script>
+window.addEventListener('load', () => {
+  const winW = window.innerWidth;
+  const bad = [];
+  document.querySelectorAll('*').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.right > winW + 2) {
+      bad.push(`${el.tagName}.${el.className}#${el.id}: right=${r.right}, width=${r.width}`);
+    }
+  });
+  console.log("BAD_OVERFLOW:" + JSON.stringify(bad.slice(0, 15)));
+});
+</script>
 </body>
 </html>
