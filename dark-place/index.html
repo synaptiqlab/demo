@@ -7,10 +7,10 @@
   <meta name="description" content="Dark Place — барбершоп и тату-салон в Нячанге (Вьетнам), где стиль, качество и атмосфера объединены в одном месте. Мужские стрижки, уход за бородой, татуировки любой сложности. Cao Văn Bé 17/10. Онлайн-запись.">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   
-  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Google Fonts: Pirata One, Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Pirata+One&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -46,53 +46,43 @@
   <section class="hero-section">
     <div class="hero-glow-bg"></div>
     <div class="container hero-content">
-      <div class="hero-badge">
-        <span>Tattoo Art • Premium Barbershop • Нячанг, Cao Văn Bé 17/10</span>
+      <div class="hero-titles-wrap">
+        <h1 class="hero-gothic-title">DARK PLACE</h1>
+        <div class="hero-gothic-sub">TATTOO &amp; BARBERSHOP</div>
+        <div class="hero-gothic-tagline">Стиль, Качество и Атмосфера</div>
       </div>
 
-      <h1 class="hero-title">
-        Dark Place Tattoo &amp; Barbershop <br>
-        <span class="hero-title-accent">Стиль, Качество &amp; Атмосфера</span>
-      </h1>
-
-      <p class="hero-desc">
-        Пространство в Нячанге, где соединились мужская барбер-культура и искусство авторской татуировки. Команда опытных мастеров со стажем от 5 до 7 лет, точные стрижки, королевское бритьё, химическая завивка и тату любой сложности.
-      </p>
+      <!-- 5 Core Plaques / Direction Badges -->
+      <div class="hero-plaques-grid">
+        <div class="hero-plaque-card">
+          <div class="plaque-icon">⚡</div>
+          <div class="plaque-title">Опытные мастера</div>
+        </div>
+        <div class="hero-plaque-card">
+          <div class="plaque-icon">✂️</div>
+          <div class="plaque-title">Точные стрижки</div>
+        </div>
+        <div class="hero-plaque-card">
+          <div class="plaque-icon">🪒</div>
+          <div class="plaque-title">Королевское бритьё</div>
+        </div>
+        <div class="hero-plaque-card">
+          <div class="plaque-icon">💈</div>
+          <div class="plaque-title">Химическая завивка</div>
+        </div>
+        <div class="hero-plaque-card">
+          <div class="plaque-icon">🎨</div>
+          <div class="plaque-title">Тату любой сложности</div>
+        </div>
+      </div>
 
       <div class="hero-actions">
-        <button type="button" class="btn btn-primary" style="padding: 14px 34px; font-size: 16px;" data-open-booking>
+        <button type="button" class="btn btn-primary btn-hero-cta" data-open-booking>
           Онлайн-запись к мастеру
         </button>
-        <a href="#services" class="btn btn-secondary" style="padding: 14px 28px; font-size: 15px;">
+        <a href="#services" class="btn btn-secondary btn-hero-menu">
           Смотреть меню услуг ↓
         </a>
-      </div>
-
-      <!-- 4 Core Feature Cards -->
-      <div class="hero-features-bar">
-        <div class="hero-feature-card">
-          <span class="hero-feat-icon">✂️</span>
-          <h4 class="hero-feat-title">Опытные барберы</h4>
-          <p class="hero-feat-desc">Мастера со стажем от 5 до 7 лет, преподаватели и эксперты по текстурным стрижкам.</p>
-        </div>
-
-        <div class="hero-feature-card">
-          <span class="hero-feat-icon">🎨</span>
-          <h4 class="hero-feat-title">Tattoo Art Студия</h4>
-          <p class="hero-feat-desc">Художественная татуировка, авторские эскизы, блэк-энд-грей, реализм и качественный Cover-Up.</p>
-        </div>
-
-        <div class="hero-feature-card">
-          <span class="hero-feat-icon">🛡️</span>
-          <h4 class="hero-feat-title">100% стерильность</h4>
-          <p class="hero-feat-desc">Медицинская стерилизация инструмента, одноразовые картриджи ведущих мировых брендов.</p>
-        </div>
-
-        <div class="hero-feature-card">
-          <span class="hero-feat-icon">☕</span>
-          <h4 class="hero-feat-title">Лаундж &amp; Музыка</h4>
-          <p class="hero-feat-desc">Настоящая мужская атмосфера, спешелти-кофе, прохладительные напитки и рок-хип-хоп вайб.</p>
-        </div>
       </div>
     </div>
   </section>
@@ -100,10 +90,8 @@
   <!-- Services & Pricing Catalog -->
   <section class="section" id="services">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Прейскурант услуг</span>
-        <h2 class="section-title">Меню услуг Dark Place</h2>
-        <p class="section-subtitle">Выберите интересующее направление и запишитесь к мастеру в удобное время</p>
+      <div class="section-header services-section-header">
+        <h2 class="services-clean-title">Меню услуг</h2>
       </div>
 
       <!-- Category Filter Tabs -->

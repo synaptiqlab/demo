@@ -6,9 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initApp();
 });
 
-let currentCategoryFilter = 'all';
+let currentCategoryFilter = 'complex';
 
 function initApp() {
+  const categories = window.noirData.getCategories();
+  if (categories && categories.length > 0) {
+    if (!currentCategoryFilter || currentCategoryFilter === 'all') {
+      currentCategoryFilter = categories[0].id;
+    }
+  }
   renderCategoryTabs();
   renderServicesGrid();
   renderSpecialistsGrid();
@@ -34,7 +40,7 @@ function setupAppLiveSync() {
     if (e.key === window.noirData.STORAGE_KEYS.SPECIALISTS) {
       renderSpecialistsGrid();
     }
-    if (e.key === window.noirData.STORAGE_KEYS.SERVICES) {
+    if (e.key === window.noirData.STORAGE_KEYS.SERVICES || e.key === window.noirData.STORAGE_KEYS.CATEGORIES) {
       renderCategoryTabs();
       renderServicesGrid();
     }
@@ -54,13 +60,11 @@ function renderCategoryTabs() {
   const categories = window.noirData.getCategories();
   const services = window.noirData.getServices();
 
-  let html = `
-    <button type="button" class="cat-tab-btn ${currentCategoryFilter === 'all' ? 'active' : ''}" onclick="filterCategory('all')">
-      <span>Все направления</span>
-      <span class="cat-badge">${services.length}</span>
-    </button>
-  `;
+  if (!currentCategoryFilter || currentCategoryFilter === 'all') {
+    currentCategoryFilter = (categories && categories[0]) ? categories[0].id : 'complex';
+  }
 
+  let html = '';
   categories.forEach(cat => {
     const count = services.filter(s => s.categoryId === cat.id).length;
     const isActive = currentCategoryFilter === cat.id;
@@ -88,9 +92,11 @@ function renderServicesGrid() {
   const services = window.noirData.getServices();
   const categories = window.noirData.getCategories();
 
-  const filtered = currentCategoryFilter === 'all' 
-    ? services 
-    : services.filter(s => s.categoryId === currentCategoryFilter);
+  if (!currentCategoryFilter || currentCategoryFilter === 'all') {
+    currentCategoryFilter = (categories && categories[0]) ? categories[0].id : 'complex';
+  }
+
+  const filtered = services.filter(s => s.categoryId === currentCategoryFilter);
 
   if (filtered.length === 0) {
     container.innerHTML = `

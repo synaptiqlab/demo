@@ -36,19 +36,19 @@ const DEFAULT_CATEGORIES = [
   },
   { 
     id: "haircuts", 
-    name: "Мужские стрижки & Стиль", 
+    name: "Мужские стрижки", 
     icon: "✂️", 
     desc: "Классические, текстурные и удлинённые стрижки, фейды, химзавивка и окрашивание" 
   },
   { 
     id: "beard", 
-    name: "Борода & Королевское бритьё", 
+    name: "Борода и Королевское бритьё", 
     icon: "🪒", 
     desc: "Моделирование контуров, бритьё шейвером, традиционное бритьё и тонирование" 
   },
   { 
     id: "tattoo-art", 
-    name: "Tattoo Art & Авторская тату", 
+    name: "Тату и Авторское тату", 
     icon: "🎨", 
     desc: "Художественная татуировка любой сложности, разработка эскизов и Cover-Up" 
   }
@@ -453,9 +453,7 @@ class NoirDataService {
     if (!localStorage.getItem(this.STORAGE_KEYS.SALON)) {
       localStorage.setItem(this.STORAGE_KEYS.SALON, JSON.stringify(DEFAULT_SALON_INFO));
     }
-    if (!localStorage.getItem(this.STORAGE_KEYS.CATEGORIES)) {
-      localStorage.setItem(this.STORAGE_KEYS.CATEGORIES, JSON.stringify(DEFAULT_CATEGORIES));
-    }
+    localStorage.setItem(this.STORAGE_KEYS.CATEGORIES, JSON.stringify(DEFAULT_CATEGORIES));
     if (!localStorage.getItem(this.STORAGE_KEYS.SERVICES)) {
       localStorage.setItem(this.STORAGE_KEYS.SERVICES, JSON.stringify(DEFAULT_SERVICES));
     }
