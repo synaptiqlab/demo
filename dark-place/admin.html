@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Place CRM | Панель управления расписанием и записями</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Admin specific fine-tuning */
+    .timeline-table th {
+      text-align: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      background: var(--bg-surface);
+      border-bottom: 2px solid var(--border-medium);
+      padding: 10px 8px;
+    }
+    .timeline-table td {
+      height: 68px;
+      border-color: var(--border-subtle);
+    }
+    .schedule-day-toggle {
+      border: 1px solid var(--border-subtle);
+    }
+    .badge-status-new {
+      background: rgba(245, 158, 11, 0.15);
+      color: #F59E0B;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .badge-status-confirmed {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60A5FA;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .badge-status-completed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge-status-cancelled {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .status-select {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .status-select option {
+      background: #12151E;
+      color: #FFFFFF;
+    }
+    .status-select.badge-status-new {
+      background: rgba(245, 158, 11, 0.15);
+      color: #F59E0B;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .status-select.badge-status-confirmed {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60A5FA;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .status-select.badge-status-completed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .status-select.badge-status-cancelled {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    /* Fixed alignment grid for Payroll & Clients to prevent column drifting across browser widths */
+    .payroll-master-row {
+      display: grid;
+      grid-template-columns: minmax(250px, 1.4fr) 70px 140px 140px 190px auto;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+    }
+    .client-list-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.4fr) 80px 140px minmax(170px, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      transition: border-color 0.2s ease;
+    }
+
+    @media (max-width: 1366px) {
+      .payroll-master-row {
+        grid-template-columns: minmax(220px, 1.2fr) 60px 125px 125px 175px auto;
+        gap: 12px;
+      }
+      .client-list-row {
+        grid-template-columns: minmax(220px, 1.2fr) 70px 125px minmax(150px, 1fr) auto;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .payroll-master-row {
+        grid-template-columns: minmax(200px, 1fr) 55px 115px 115px 165px auto;
+        gap: 10px;
+      }
+      .client-list-row {
+        grid-template-columns: minmax(200px, 1fr) 65px 115px minmax(130px, 1fr) auto;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .payroll-master-row, .client-list-row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .payroll-master-row > div, .client-list-row > div {
+        width: 100%;
+      }
+    }
+
+  </style>
+</head>
+<body class="admin-body">
+
+  <script>
+    try {
+      if (window.location.href.includes('autologin=1') || sessionStorage.getItem('noir_admin_auth') === 'true') {
+        document.write('<style>#pinLockScreen { display: none !important; } #adminMainLayout { display: flex !important; }</style>');
+      }
+    } catch(e) {}
+  </script>
+
+  <!-- PIN Lock Screen -->
+  <div id="pinLockScreen" style="position: fixed; inset: 0; background: var(--bg-deep); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: 40px; max-width: 400px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
+      <img src="assets/logo.png" alt="Dark Place" style="height: 52px; margin-bottom: 20px; object-fit: contain;">
+      <h3 style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Вход в Dark Place CRM</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Введите PIN-код администратора (демо: 1234)</p>
+      
+      <form id="pinAuthForm">
+        <div class="form-group">
+          <input type="password" id="pinInput" class="form-input" placeholder="••••" maxlength="8" style="text-align: center; font-size: 24px; letter-spacing: 8px; font-family: var(--font-mono);" autofocus required>
+        </div>
+        <div id="pinErrorMsg" style="display: none; color: var(--color-danger); font-size: 13px; margin-bottom: 16px;">
+          Неверный PIN-код. Проверьте правильность ввода
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Войти в систему →
+        </button>
+        <div style="margin-top: 18px;">
+          <a href="javascript:void(0)" onclick="openPinRecoveryModal()" style="font-size: 12px; color: var(--accent-gold); text-decoration: none; opacity: 0.85; transition: opacity 0.2s ease;">
+            Забыли PIN-код? Восстановление доступа →
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Восстановление забытого PIN-кода -->
+  <div class="modal-overlay" id="pinRecoveryModal" style="display: none; z-index: 10000;">
+    <div class="modal-card" style="max-width: 440px; padding: 32px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; margin: 0;">
+          <span>🔑</span>
+          <span>Восстановление доступа к CRM</span>
+        </h3>
+        <button type="button" class="btn btn-secondary" onclick="closePinRecoveryModal()" style="padding: 4px 10px; font-size: 13px; border-radius: var(--radius-sm);">✕</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">
+        Введите свой email
+      </p>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <input type="email" id="recoveryEmailInput" class="form-input" placeholder="name@example.com" value="" style="font-size: 13px;">
+      </div>
+
+
+      <div id="recoverySuccessNotice" style="display: none; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 12px; color: #10B981;">
+        ✓ PIN-код успешно сброшен на заводской <strong>1234</strong>! Теперь вы можете войти в систему.
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+        <button type="button" class="btn btn-secondary" onclick="closePinRecoveryModal()" style="padding: 8px 16px; font-size: 12px;">
+          Отмена
+        </button>
+        <button type="button" class="btn btn-primary" onclick="confirmResetPinToDefault()" style="padding: 8px 18px; font-size: 12px; font-weight: 700;">
+          Сбросить PIN на 1234
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Admin Main Layout -->
+  <div class="admin-layout" id="adminMainLayout" style="display: none;">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <a href="index.html">
+          <img src="assets/logo.png" alt="Dark Place CRM" style="height: 48px; object-fit: contain;">
+        </a>
+        <div style="font-size: 11px; color: #FF2B44; font-weight: 700; margin-top: 6px; letter-spacing: 1px; text-transform: uppercase;">
+          CRM &amp; Schedule System
+        </div>
+      </div>
+
+      <nav class="admin-sidebar-nav">
+        <div class="admin-nav-item active" data-tab="timeline">
+          <span>📅</span>
+          <span>Расписание на день</span>
+        </div>
+        <div class="admin-nav-item" data-tab="specialists">
+          <span>👥</span>
+          <span>Мастера и смены</span>
+        </div>
+        <div class="admin-nav-item" data-tab="appointments">
+          <span>📋</span>
+          <span>Журнал записей</span>
+        </div>
+        <div class="admin-nav-item" data-tab="services">
+          <span>🏷️</span>
+          <span>Прейскурант и услуги</span>
+        </div>
+        <div class="admin-nav-item" data-tab="clients">
+          <span>👤</span>
+          <span>База клиентов</span>
+        </div>
+        <div class="admin-nav-item" data-tab="payroll">
+          <span>💰</span>
+          <span>Расчёт зарплат</span>
+        </div>
+      </nav>
+
+      <div style="padding: 20px; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+        <a href="index.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; text-align: center;">
+          ← На витрину сайта
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 800; color: #FFFFFF;">Dark Place Tattoo &amp; Barbershop &bull; Управление</h2>
+          <div style="font-size: 12px; color: var(--text-dim);" id="timelineCurrentDateDisplay">Сегодня</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 6px 12px; font-size: 12px; border-color: rgba(255, 255, 255, 0.15); display: flex; align-items: center; gap: 6px;" title="Изменить PIN-код администратора">
+            <span>🔒</span>
+            <span>Сменить PIN</span>
+          </button>
+          <button type="button" class="btn btn-secondary" id="timelineRefreshBtn" style="padding: 6px 14px; font-size: 12px;">
+            🔄 Обновить
+          </button>
+          <button type="button" class="btn btn-primary" onclick="openQuickBookingFor('any', '12:00')" style="padding: 6px 16px; font-size: 12px;">
+            + Новая запись
+          </button>
+        </div>
+      </header>
+
+
+      <!-- Content Views -->
+      <div class="admin-content">
+        <!-- Top KPIs (4 Blocks) -->
+        <div class="kpi-grid">
+          <!-- 1. Новые заявки -->
+          <div class="kpi-card">
+            <span class="kpi-title">Новые заявки</span>
+            <span class="kpi-value" id="kpiNewRequestsCount" style="color: var(--color-warning);">0</span>
+            <span class="kpi-sub">Требуют подтверждения</span>
+          </div>
+
+          <!-- 2. Записей на сегодня -->
+          <div class="kpi-card">
+            <span class="kpi-title">Записей на сегодня</span>
+            <span class="kpi-value" id="kpiTodayCount">0</span>
+            <span class="kpi-sub">Подтверждённые визиты</span>
+          </div>
+
+          <!-- 3. Выручка сегодня -->
+          <div class="kpi-card">
+            <span class="kpi-title">Выручка сегодня</span>
+            <span class="kpi-value" id="kpiTodayRevenue" style="color: var(--accent-gold);">0 ₫</span>
+            <span class="kpi-sub">Сумма подтверждённых броней</span>
+          </div>
+
+          <!-- 4. В кассе (Оплачено) -->
+          <div class="kpi-card">
+            <span class="kpi-title">В кассе (Оплачено)</span>
+            <span class="kpi-value" id="kpiCashRevenue" style="color: var(--color-success);">0 ₫</span>
+            <span class="kpi-sub">Выполненные визиты</span>
+          </div>
+        </div>
+
+        <!-- TAB 1: ТАЙМЛАЙН / СЕТКА РАСПИСАНИЯ -->
+        <div class="admin-tab-pane" id="tabPane_timeline">
+          <!-- Date Navigator Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button type="button" class="btn btn-secondary" id="timelinePrevDayBtn" style="padding: 6px 12px; font-size: 12px;">
+                ← Предыдущий день
+              </button>
+              <button type="button" class="btn btn-secondary" id="timelineTodayBtn" style="padding: 6px 12px; font-size: 12px;">
+                Сегодня
+              </button>
+              <button type="button" class="btn btn-secondary" id="timelineNextDayBtn" style="padding: 6px 12px; font-size: 12px;">
+                Следующий день →
+              </button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label style="font-size: 13px; color: var(--text-dim);">Выбрать дату:</label>
+              <input type="date" id="timelineDateInput" class="form-input" style="padding: 6px 12px; font-size: 13px; width: auto;">
+            </div>
+          </div>
+
+          <!-- Timeline Grid Matrix -->
+          <div class="timeline-table-wrapper">
+            <table class="timeline-table">
+              <thead>
+                <tr>
+                  <th style="width: 220px; text-align: left; padding-left: 16px;">Мастер</th>
+                  <th>10:00</th>
+                  <th>11:00</th>
+                  <th>12:00</th>
+                  <th>13:00</th>
+                  <th>14:00</th>
+                  <th>15:00</th>
+                  <th>16:00</th>
+                  <th>17:00</th>
+                  <th>18:00</th>
+                  <th>19:00</th>
+                  <th>20:00</th>
+                </tr>
+              </thead>
+              <tbody id="timelineTableBody">
+                <!-- Rendered dynamically via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: МАСТЕРА И СМЕНЫ -->
+        <div class="admin-tab-pane" id="tabPane_specialists" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button type="button" class="btn btn-secondary" id="schedulePrevWeekBtn" style="padding: 6px 12px; font-size: 12px;">
+                ← Пред. неделя
+              </button>
+              <button type="button" class="btn btn-secondary" id="scheduleCurrentWeekBtn" style="padding: 6px 12px; font-size: 12px;">
+                Текущая неделя
+              </button>
+              <button type="button" class="btn btn-secondary" id="scheduleNextWeekBtn" style="padding: 6px 12px; font-size: 12px;">
+                След. неделя →
+              </button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <div id="scheduleCurrentWeekLabel" style="font-weight: 700; color: #FFFFFF; font-size: 14px;">
+                Неделя
+              </div>
+              <button type="button" class="btn btn-secondary" onclick="switchTab('payroll')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; border-color: rgba(212,175,55,0.4); color: #E5C378;">
+                💰 Ведомость зарплат →
+              </button>
+              <button type="button" class="btn btn-primary" id="openAddSpecialistBtn" onclick="openCreateSpecialistModal()" style="padding: 7px 14px; font-size: 12px; font-weight: 700;">
+                + Добавить мастера
+              </button>
+            </div>
+          </div>
+
+          <div class="timeline-table-wrapper">
+            <table class="timeline-table">
+              <thead>
+                <tr id="scheduleDaysHeader">
+                  <!-- Rendered dynamically via admin.js -->
+                </tr>
+              </thead>
+              <tbody id="specialistsScheduleTableBody">
+                <!-- Rendered dynamically via admin.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn btn-primary" onclick="openCreateSpecialistModal()" style="padding: 8px 18px; font-size: 13px;">
+              + Добавить нового мастера
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 3: ЖУРНАЛ ЗАПИСЕЙ -->
+        <div class="admin-tab-pane" id="tabPane_appointments" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <div style="flex-grow: 1; max-width: 380px;">
+              <input type="text" id="journalSearchInput" class="form-input" placeholder="🔍 Поиск по имени, номеру брони, телефону..." style="padding: 8px 14px; font-size: 13px;">
+            </div>
+            <div>
+              <select id="journalStatusFilter" class="form-select" style="padding: 8px 14px; font-size: 13px;">
+                <option value="all">Все статусы</option>
+                <option value="new">Новые</option>
+                <option value="confirmed">Подтверждённые</option>
+                <option value="completed">Выполненные</option>
+                <option value="cancelled">Отменённые</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="timeline-table-wrapper">
+            <table class="timeline-table">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">Бронь #</th>
+                  <th>Клиент</th>
+                  <th>Услуга / Пакет</th>
+                  <th>Мастер</th>
+                  <th>Дата и время</th>
+                  <th>Статус</th>
+                  <th style="text-align: right;">Действия</th>
+                </tr>
+              </thead>
+              <tbody id="journalTableBody">
+                <!-- Rendered dynamically via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: ПРЕЙСКУРАНТ И УСЛУГИ -->
+        <div class="admin-tab-pane" id="tabPane_services" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <div>
+              <h3 style="font-size: 15px; font-weight: 800; color: #FFFFFF;">Прейскурант и услуги ателье NOIR</h3>
+              <p style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Управление ценами, длительностью, протоколами и описанием процедур</p>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="openCreateServiceModal()" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">
+              + Добавить услугу
+            </button>
+          </div>
+          <div id="adminServicesContainer">
+            <!-- Rendered dynamically via admin.js -->
+          </div>
+        </div>
+
+        <!-- TAB 5: БАЗА КЛИЕНТОВ -->
+        <div class="admin-tab-pane" id="tabPane_clients" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <div>
+              <h3 style="font-size: 15px; font-weight: 800; color: #FFFFFF;">База клиентов NOIR Hair Atelier</h3>
+              <p style="font-size: 12px; color: var(--text-dim); margin-top: 2px;" id="clientsStatsSub">Карточки гостей, история процедур, статистика визитов и заметки мастеров</p>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="openCreateClientModal()" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">
+              + Новый гость
+            </button>
+          </div>
+
+          <!-- Поиск и фильтры клиентов -->
+          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="flex-grow: 1; min-width: 240px;">
+              <input type="text" id="clientSearchInput" class="form-input" placeholder="🔍 Поиск по имени или номеру телефона..." style="padding: 10px 16px; font-size: 13px;">
+            </div>
+            <div style="width: 210px;">
+              <select id="clientCategoryFilter" class="form-select" style="padding: 10px 14px; font-size: 13px;">
+                <option value="all">Все категории гостей</option>
+                <option value="vip">⭐ VIP гости</option>
+                <option value="regular">💎 Постоянные гости</option>
+                <option value="new">✨ Новые гости</option>
+              </select>
+            </div>
+            <div style="width: 230px;">
+              <select id="clientSortSelect" class="form-select" style="padding: 10px 14px; font-size: 13px;">
+                <option value="spent_desc">Сортировка: По сумме чеков (LTV)</option>
+                <option value="visits_desc">Сортировка: По числу визитов</option>
+                <option value="recent">Сортировка: По дате визита</option>
+                <option value="name_asc">Сортировка: По имени (А–Я)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Список клиентов -->
+          <div id="adminClientsContainer" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Rendered dynamically via admin.js -->
+          </div>
+        </div>
+
+        <!-- TAB 6: ЗАРПЛАТНАЯ ВЕДОМОСТЬ МАСТЕРОВ -->
+        <div class="admin-tab-pane" id="tabPane_payroll" style="display: none;">
+          <!-- Верхний переключатель: Расчёт начислений vs Журнал выплат -->
+          <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; flex-wrap: wrap; align-items: center;">
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-primary" id="payrollSubTab_calc" onclick="switchPayrollSubView('calc')" style="padding: 8px 18px; font-size: 13px; font-weight: 700;">
+                💰 Расчёт начислений
+              </button>
+              <button type="button" class="btn btn-secondary" id="payrollSubTab_ledger" onclick="switchPayrollSubView('ledger')" style="padding: 8px 18px; font-size: 13px; font-weight: 700;">
+                📜 Журнал кассовых выплат (<span id="payoutOrdersBadgeCount">0</span>)
+              </button>
+            </div>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary" onclick="openPayrollHelpModal()" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-color: rgba(255, 255, 255, 0.18); color: #FFFFFF; display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.05);" title="Открыть руководство по расчёту и выплате зарплат">
+                <span>📖 Инструкция по расчёту</span>
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="printWeeklyPayrollSummary()" style="padding: 8px 16px; font-size: 12px; font-weight: 700; border-color: rgba(212, 175, 55, 0.4); color: #E5C378; display: flex; align-items: center; gap: 6px;">
+                <span>🖨️ Распечатать сводную ведомость на салон</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ВИД 1: КАЛЬКУЛЯТОР НАЧИСЛЕНИЙ ЗАРПЛАТ -->
+          <div id="payrollSubView_calc">
+            <!-- Шапка ведомости с настройками выплат -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 16px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF; letter-spacing: 0.5px;">💰 Ведомость расчёта зарплат мастеров</h3>
+                  <span style="background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;">Авторасчёт</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-dim); margin-top: 4px;" id="payrollSubHeader">
+                  Начисления по выполненным услугам, процентная ставка каждого мастера и маржа салона
+                </p>
+              </div>
+
+              <!-- Настройка графика выплат салона -->
+              <div style="display: flex; align-items: center; gap: 12px; background: rgba(0, 0, 0, 0.35); padding: 8px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.08);">
+                <label for="salonPayrollPeriodSelect" style="font-size: 12px; color: var(--text-muted); white-space: nowrap;">
+                  Регламент выплат салона:
+                </label>
+                <select id="salonPayrollPeriodSelect" class="form-select" onchange="changeSalonDefaultPayrollPeriod(this.value)" style="padding: 6px 12px; font-size: 12px; border-color: rgba(212, 175, 55, 0.4); color: var(--accent-gold); font-weight: 700; width: auto;">
+                  <option value="weekly">Раз в неделю (понедельник)</option>
+                  <option value="daily">Каждый день (в конце смены)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Панель переключения периодов и навигация -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 12px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary payroll-period-btn" id="payrollPeriodBtn_today" onclick="setPayrollPeriod('today')" style="padding: 7px 12px; font-size: 12px;">
+                  📅 Сегодня
+                </button>
+                <button type="button" class="btn btn-primary payroll-period-btn" id="payrollPeriodBtn_weekly" onclick="setPayrollPeriod('weekly')" style="padding: 7px 12px; font-size: 12px;">
+                  🗓️ Текущая неделя
+                </button>
+                <button type="button" class="btn btn-secondary payroll-period-btn" id="payrollPeriodBtn_lastweek" onclick="setPayrollPeriod('lastweek')" style="padding: 7px 12px; font-size: 12px;">
+                  ⏮️ Прошлая неделя
+                </button>
+                <button type="button" class="btn btn-secondary payroll-period-btn" id="payrollPeriodBtn_month" onclick="setPayrollPeriod('month')" style="padding: 7px 12px; font-size: 12px;">
+                  📆 Этот месяц
+                </button>
+              </div>
+
+              <!-- Навигация ‹ период › -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="navigatePayrollPeriod(-1)" style="padding: 6px 10px; font-size: 12px;" title="Предыдущий период">
+                  ‹
+                </button>
+                <div id="payrollCurrentPeriodLabel" style="font-weight: 700; color: #FFFFFF; font-size: 13px; min-width: 170px; text-align: center;">
+                  Загрузка...
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="navigatePayrollPeriod(1)" style="padding: 6px 10px; font-size: 12px;" title="Следующий период">
+                  ›
+                </button>
+              </div>
+
+              <!-- Опция учета подтвержденных записей -->
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; color: var(--text-sub); user-select: none;">
+                  <input type="checkbox" id="payrollIncludeConfirmedCheckbox" onchange="togglePayrollIncludeConfirmed(this.checked)" style="accent-color: var(--accent-gold); cursor: pointer;">
+                  <span>Включать подтверждённые записи (план)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Сводные KPI за выбранный период -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 22px;">
+              <div class="kpi-card" style="padding: 16px 18px;">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">💳 Выручка за период</div>
+                <div class="kpi-value" id="payrollKpiTotalRevenue" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 6px;">0 ₫</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Сумма оказанных услуг</div>
+              </div>
+              <div class="kpi-card" style="padding: 16px 18px; border-color: rgba(212, 175, 55, 0.35); background: linear-gradient(145deg, rgba(212, 175, 55, 0.08) 0%, rgba(18, 18, 18, 0.8) 100%);">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-gold);">💰 Фонд оплаты мастеров</div>
+                <div class="kpi-value" id="payrollKpiTotalPayroll" style="font-size: 24px; font-weight: 800; color: var(--accent-gold); margin-top: 6px;">0 ₫</div>
+                <div style="font-size: 11px; color: var(--accent-gold-light); margin-top: 4px;">Итого к выплате специалистам</div>
+              </div>
+              <div class="kpi-card" style="padding: 16px 18px;">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">🏛️ Маржа салона (доход)</div>
+                <div class="kpi-value" id="payrollKpiSalonMargin" style="font-size: 24px; font-weight: 800; color: #10B981; margin-top: 6px;">0 ₫</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Остаётся после выплаты зарплат</div>
+              </div>
+              <div class="kpi-card" style="padding: 16px 18px;">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">✂️ Оказано услуг</div>
+                <div class="kpi-value" id="payrollKpiServicesCount" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 6px;">0</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Процедур в ведомости</div>
+              </div>
+            </div>
+
+            <!-- Список мастеров и детализация начислений -->
+            <div id="payrollTableContainer" style="display: flex; flex-direction: column; gap: 14px;">
+              <!-- Rendered dynamically via admin.js -->
+            </div>
+          </div>
+
+          <!-- ВИД 2: ЖУРНАЛ КАССОВЫХ ВЫПЛАТ (АРХИВ И ИСТОРИЯ) -->
+          <div id="payrollSubView_ledger" style="display: none;">
+            <!-- Фильтры журнала -->
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; background: var(--bg-card); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); align-items: center;">
+              <div style="flex-grow: 1; min-width: 220px;">
+                <input type="text" id="ledgerSearchInput" oninput="renderPayoutLedger()" class="form-input" placeholder="🔍 Поиск по номеру ордера или имени мастера..." style="padding: 9px 14px; font-size: 13px;">
+              </div>
+              <div style="width: 140px;">
+                <select id="ledgerYearSelect" onchange="renderPayoutLedger()" class="form-select" style="padding: 9px 12px; font-size: 13px;">
+                  <option value="all">Все годы</option>
+                  <option value="2026" selected>2026 год</option>
+                  <option value="2025">2025 год</option>
+                </select>
+              </div>
+              <div style="width: 170px;">
+                <select id="ledgerMonthSelect" onchange="renderPayoutLedger()" class="form-select" style="padding: 9px 12px; font-size: 13px;">
+                  <option value="all">Все месяцы</option>
+                  <option value="0">Январь</option>
+                  <option value="1">Февраль</option>
+                  <option value="2">Март</option>
+                  <option value="3">Апрель</option>
+                  <option value="4">Май</option>
+                  <option value="5">Июнь</option>
+                  <option value="6">Июль</option>
+                  <option value="7">Август</option>
+                  <option value="8">Сентябрь</option>
+                  <option value="9">Октябрь</option>
+                  <option value="10">Ноябрь</option>
+                  <option value="11">Декабрь</option>
+                </select>
+              </div>
+              <div style="width: 210px;">
+                <select id="ledgerSpecialistSelect" onchange="renderPayoutLedger()" class="form-select" style="padding: 9px 12px; font-size: 13px;">
+                  <!-- Rendered dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Сводные KPI реестра выплат -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 22px;">
+              <div class="kpi-card" style="padding: 14px 18px;">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Проведено выплат</div>
+                <div class="kpi-value" id="ledgerKpiCount" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">0</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Кассовых ордеров в архиве</div>
+              </div>
+              <div class="kpi-card" style="padding: 14px 18px; border-color: rgba(212, 175, 55, 0.35); background: linear-gradient(145deg, rgba(212, 175, 55, 0.08) 0%, rgba(18, 18, 18, 0.8) 100%);">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold);">Выдано на руки мастерам</div>
+                <div class="kpi-value" id="ledgerKpiPaidTotal" style="font-size: 24px; font-weight: 800; color: var(--accent-gold); margin-top: 4px;">0 ₫</div>
+                <div style="font-size: 11px; color: var(--accent-gold-light); margin-top: 2px;">Сумма закрытых расходных ордеров</div>
+              </div>
+              <div class="kpi-card" style="padding: 14px 18px;">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Валовая выручка по ордерам</div>
+                <div class="kpi-value" id="ledgerKpiGrossTotal" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">0 ₫</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Сумма оказанных услуг мастерами</div>
+              </div>
+              <div class="kpi-card" style="padding: 14px 18px;">
+                <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Доход салона</div>
+                <div class="kpi-value" id="ledgerKpiMarginTotal" style="font-size: 24px; font-weight: 800; color: #10B981; margin-top: 4px;">0 ₫</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Удержанная доля ателье</div>
+              </div>
+            </div>
+
+            <!-- Таблица кассовых ордеров выплат -->
+            <div id="payoutLedgerTableContainer">
+              <!-- Rendered dynamically via admin.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: РЕДАКТИРОВАНИЕ ЗАПИСИ (СМЕНА МАСТЕРА, ВРЕМЕНИ, ДОБАВЛЕНИЕ УСЛУГ) -->
+  <div class="modal-overlay" id="adminEditAppointmentModal">
+    <div class="modal-card" style="max-width: 640px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 id="editAppModalTitle">Изменить запись</h3>
+          <p id="editAppSubtitle">Перенос времени, смена мастера или добавление услуг</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <form id="adminEditAppForm">
+        <div class="modal-body">
+          <input type="hidden" id="editAppId">
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label class="form-label">Имя клиента *</label>
+              <input type="text" id="editAppClientName" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">Телефон / Telegram *</label>
+              <input type="text" id="editAppClientPhone" class="form-input" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+              <label class="form-label">Дата визита *</label>
+              <input type="date" id="editAppDate" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">Время начала *</label>
+              <input type="time" id="editAppTime" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">Статус записи</label>
+              <select id="editAppStatus" class="form-select">
+                <option value="new">Новая</option>
+                <option value="confirmed">Подтверждена</option>
+                <option value="completed">Выполнена</option>
+                <option value="cancelled">Отменена</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Назначенный специалист *</label>
+            <select id="editAppSpecialist" class="form-select">
+              <!-- Rendered dynamically -->
+            </select>
+          </div>
+
+          <!-- Секция динамического добавления/удаления услуг -->
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 13px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; letter-spacing: 1px;">
+                Услуги в чеке
+              </span>
+              <div style="font-size: 12px; color: var(--text-dim);">
+                Итого: <strong style="color: var(--accent-gold);" id="editAppTotalPriceDisplay">0 ₫</strong> (<span id="editAppTotalDurationDisplay">60 мин</span>)
+              </div>
+            </div>
+
+            <div id="editAppServicesList" style="margin-bottom: 12px;">
+              <!-- Rendered dynamically via admin.js -->
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <select id="editAppAddServiceSelect" class="form-select" style="font-size: 13px; flex-grow: 1;">
+                <!-- Rendered dynamically -->
+              </select>
+              <button type="button" class="btn btn-secondary" onclick="addServiceToEditingApp()" style="padding: 8px 14px; font-size: 12px; white-space: nowrap;">
+                + Добавить
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Комментарий мастера / пожелания</label>
+            <textarea id="editAppComment" class="form-textarea" rows="2" placeholder="Заметки о стрижке, формуле тонирования или аллергии..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-trigger">
+            Отмена
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Сохранить изменения
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: БЫСТРАЯ ЗАПИСЬ ИЗ СВОБОДНОЙ ЯЧЕЙКИ -->
+  <div class="modal-overlay" id="adminQuickBookingModal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3>Быстрая запись клиента</h3>
+          <p>В расписание мастера</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <form id="adminQuickBookingForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Имя клиента *</label>
+            <input type="text" id="adminClientName" class="form-input" placeholder="Имя клиента" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Телефон *</label>
+            <input type="text" id="adminClientPhone" class="form-input" placeholder="+7 (999) 000-00-00" required>
+          </div>
+
+          <div id="quickBookingDiscountInfo" style="display: none; background: rgba(201, 162, 77, 0.1); border: 1px solid rgba(201, 162, 77, 0.35); border-radius: var(--radius-sm); padding: 8px 12px; margin-bottom: 14px; font-size: 12px; color: var(--accent-gold);">
+            <!-- Populated via JS -->
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Услуга *</label>
+            <select id="adminServiceSelect" class="form-select" required>
+              <!-- Rendered dynamically -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Мастер *</label>
+            <select id="adminSpecialistSelect" class="form-select" required>
+              <!-- Rendered dynamically -->
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div>
+              <label class="form-label">Дата *</label>
+              <input type="date" id="adminBookingDate" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">Время *</label>
+              <input type="time" id="adminBookingTime" class="form-input" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-trigger">Отмена</button>
+          <button type="submit" class="btn btn-primary">Создать запись</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: СОЗДАНИЕ И РЕДАКТИРОВАНИЕ ПРОФИЛЯ МАСТЕРА -->
+  <div class="modal-overlay" id="adminSpecialistModal">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 id="specialistModalTitle">Профиль мастера</h3>
+          <p>Направления работы, специализация и график</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <form id="adminSpecialistForm">
+        <input type="hidden" id="specEditId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Имя мастера *</label>
+            <input type="text" id="specEditName" class="form-input" required placeholder="Например: Владимир Клим">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Должность / Специализация *</label>
+            <input type="text" id="specEditRole" class="form-input" required placeholder="Например: Ведущий топ-стилист, шеф-барбер">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Опыт работы / Регалии</label>
+            <textarea id="specEditExperience" class="form-textarea" rows="2" placeholder="Опыт более 8 лет, сложная геометрия стрижек, Fade, борода"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ссылка на фото (аватар)</label>
+            <input type="url" id="specEditAvatar" class="form-input" placeholder="https://images.unsplash.com/photo-...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Процент мастера от выручки (%): *</span>
+              <span style="font-size: 11px; color: var(--accent-gold); font-weight: normal;">Для ведомости зарплат</span>
+            </label>
+            <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+              <input type="number" id="specEditCommission" class="form-input" min="0" max="100" step="1" required placeholder="40" style="max-width: 100px; font-weight: 800; color: var(--accent-gold); font-size: 15px; text-align: center;">
+              <span style="font-weight: 800; color: var(--text-muted); font-size: 16px;">%</span>
+              <div style="display: flex; gap: 4px; margin-left: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary" onclick="setSpecCommission(30)" style="padding: 4px 8px; font-size: 11px;">30%</button>
+                <button type="button" class="btn btn-secondary" onclick="setSpecCommission(35)" style="padding: 4px 8px; font-size: 11px;">35%</button>
+                <button type="button" class="btn btn-secondary" onclick="setSpecCommission(40)" style="padding: 4px 8px; font-size: 11px;">40%</button>
+                <button type="button" class="btn btn-secondary" onclick="setSpecCommission(45)" style="padding: 4px 8px; font-size: 11px;">45%</button>
+                <button type="button" class="btn btn-secondary" onclick="setSpecCommission(50)" style="padding: 4px 8px; font-size: 11px;">50%</button>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 5px;">
+              От суммы каждой выполненной услуги мастер получает этот процент.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span>Направления услуг мастера:</span>
+              <span style="font-size: 11px; color: var(--accent-gold); font-weight: normal;">Определяет доступные услуги для записи</span>
+            </label>
+            <div id="specCategoryCheckboxes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: var(--text-sub);">
+              <!-- Rendered dynamically via admin.js -->
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="margin-bottom: 8px;">Постоянные рабочие дни по умолчанию:</label>
+            <div id="specWorkDaysCheckboxes" style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="1" checked> Пн
+              </label>
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="2" checked> Вт
+              </label>
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="3" checked> Ср
+              </label>
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="4" checked> Чт
+              </label>
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="5" checked> Пт
+              </label>
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="6" checked> Сб
+              </label>
+              <label style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" name="workday" value="7" checked> Вс
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-trigger">Отмена</button>
+          <button type="submit" class="btn btn-primary" id="saveSpecialistSubmitBtn">Сохранить мастера</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: СОЗДАНИЕ И РЕДАКТИРОВАНИЕ УСЛУГИ -->
+  <div class="modal-overlay" id="adminServiceModal">
+    <div class="modal-card" style="max-width: 660px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 id="serviceModalTitle">Редактирование услуги</h3>
+          <p>Параметры услуги, цены, длительность и протокол процедуры</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <form id="adminServiceForm" style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; min-height: 0;">
+        <input type="hidden" id="serviceEditId">
+        <div class="modal-body" style="flex-grow: 1; overflow-y: auto; max-height: calc(85vh - 160px); padding: 20px 28px;">
+          <!-- 1. Категория и статус популярности -->
+          <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+              <label class="form-label">Направление / Категория *</label>
+              <select id="serviceEditCategory" class="form-select" required></select>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+              <label style="display: flex; align-items: center; gap: 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 10px 14px; border-radius: var(--radius-sm); cursor: pointer; height: 42px;">
+                <input type="checkbox" id="serviceEditPopular" style="accent-color: var(--accent-gold); width: 16px; height: 16px; cursor: pointer;">
+                <span style="font-size: 13px; font-weight: 700; color: #FFFFFF;">Популярная услуга</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2. Название услуги -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Название услуги *</label>
+            <input type="text" id="serviceEditName" class="form-input" required placeholder="Например: Авторская стрижка NOIR (Signature Cut)">
+          </div>
+
+          <!-- 3. Цена и Длительность -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+              <label class="form-label">Стоимость (₫) *</label>
+              <input type="number" id="serviceEditPrice" class="form-input" required min="0" step="10000" placeholder="450000">
+            </div>
+            <div>
+              <label class="form-label">Длительность (минут) *</label>
+              <input type="number" id="serviceEditDuration" class="form-input" required min="5" step="5" placeholder="60">
+            </div>
+          </div>
+
+          <!-- 4. Краткое описание -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              <span>Краткое описание (для карточки и визарда) *</span>
+              <span style="font-size: 11px; color: var(--text-dim);">1-2 предложения</span>
+            </label>
+            <textarea id="serviceEditShortDesc" class="form-textarea" rows="2" required placeholder="Консультация стилиста, мытье головы премиальным шампунем, стрижка ножницами и машинкой, стайлинг"></textarea>
+          </div>
+
+          <!-- 5. Полное подробное описание -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              <span>Полное описание процедуры (для окна «О процедуре»)</span>
+              <span style="font-size: 11px; color: var(--accent-gold);">Подробно для гостей</span>
+            </label>
+            <textarea id="serviceEditFullDesc" class="form-textarea" rows="3" placeholder="Фирменная стрижка с индивидуальной адаптацией под форму черепа и черты лица..."></textarea>
+          </div>
+
+          <!-- 6. Что входит в стоимость (Протокол процедуры) -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label class="form-label" style="margin-bottom: 0;">Что входит в стоимость (Протокол процедуры):</label>
+              <button type="button" class="btn btn-secondary" onclick="addServiceIncludeItem()" style="padding: 3px 10px; font-size: 11px;">
+                + Добавить пункт
+              </button>
+            </div>
+            <div id="serviceEditIncludesList" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamic list of inputs with delete buttons -->
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <button type="button" class="btn" id="serviceDeleteBtn" onclick="deleteCurrentService()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--color-danger); font-size: 12px; padding: 8px 14px; display: none;">
+              Удалить услугу
+            </button>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-secondary modal-close-trigger">Отмена</button>
+            <button type="submit" class="btn btn-primary" id="saveServiceSubmitBtn">Сохранить услугу</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: КАРТОЧКА ГОСТЯ -->
+  <div class="modal-overlay" id="adminClientModal">
+    <div class="modal-card" style="max-width: 880px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div id="clientModalAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-gold), #8B6B23); color: #0E1118; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent-gold); flex-shrink: 0;">
+            АВ
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h3 id="clientModalName" style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin: 0;">Имя гостя</h3>
+              <span id="clientModalBadge" style="font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 800; text-transform: uppercase;">VIP</span>
+            </div>
+            <p id="clientModalSubtitle" style="font-size: 12px; color: var(--text-dim); margin-top: 3px;">+7 (999) 000-00-00 &bull; Клиент с 15 июня 2026</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <div class="modal-body" style="max-height: calc(88vh - 150px); overflow-y: auto; padding: 20px 28px;">
+        <input type="hidden" id="clientModalId">
+
+        <!-- 4 KPI Блока гостя -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+            <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Всего визитов</div>
+            <div id="clientModalTotalVisits" style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">0</div>
+          </div>
+          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+            <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Сумма покупок (LTV)</div>
+            <div id="clientModalTotalSpent" style="font-size: 18px; font-weight: 800; color: var(--accent-gold); margin-top: 4px;">0 ₫</div>
+          </div>
+          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+            <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Средний чек</div>
+            <div id="clientModalAvgCheck" style="font-size: 18px; font-weight: 800; color: var(--color-success); margin-top: 4px;">0 ₫</div>
+          </div>
+          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+            <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Любимый мастер</div>
+            <div id="clientModalFavSpecialist" style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">—</div>
+          </div>
+        </div>
+
+        <!-- Двухколоночный блок: Заметки и История -->
+        <div style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 20px;">
+          <!-- Левая колонка: Профиль и Заметки мастера -->
+          <div>
+            <h4 style="font-size: 14px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">
+              📝 Заметки мастера и предпочтения
+            </h4>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label class="form-label" style="font-size: 11px;">Особенности волос, кожи и формулы:</label>
+              <textarea id="clientModalHairNotes" class="form-textarea" rows="3" placeholder="Формулы тонирования, особенности черепа, длина фейда, чувствительность кожи..."></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="font-size: 11px;">Пожелания гостя и сервис:</label>
+              <textarea id="clientModalNotes" class="form-textarea" rows="3" placeholder="Любимый кофе/чай, темы бесед, аллергии, комфортная температура..."></textarea>
+            </div>
+
+            <div style="background: var(--bg-surface); padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 14px;">
+              <div style="font-size: 12px; font-weight: 700; color: #FFFFFF; margin-bottom: 10px;">Профиль и программа лояльности</div>
+              
+              <div style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 10px;">Имя гостя (редактируемое):</label>
+                <input type="text" id="clientModalNameInput" class="form-input" style="padding: 6px 10px; font-size: 12px;" placeholder="Имя Фамилия гостя">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <div>
+                  <label class="form-label" style="font-size: 10px;">Телефон</label>
+                  <input type="text" id="clientModalPhoneInput" class="form-input" style="padding: 6px 10px; font-size: 12px;">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 10px;">Telegram</label>
+                  <input type="text" id="clientModalTelegramInput" class="form-input" placeholder="@username" style="padding: 6px 10px; font-size: 12px;">
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" style="font-size: 10px;">Статус гостя в CRM</label>
+                <select id="clientModalCategorySelect" class="form-select" style="padding: 6px 10px; font-size: 12px;">
+                  <option value="new">Новый гость</option>
+                  <option value="regular">Постоянный гость</option>
+                  <option value="vip">VIP гость</option>
+                </select>
+              </div>
+
+              <!-- Программа лояльности и персональная скидка -->
+              <div style="margin-top: 12px; background: rgba(201, 162, 77, 0.08); border: 1px solid rgba(201, 162, 77, 0.25); border-radius: var(--radius-sm); padding: 10px 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label class="form-label" style="font-size: 11px; color: var(--accent-gold); font-weight: 700; margin: 0;">
+                    ⭐ Персональная скидка (%)
+                  </label>
+                  <span id="clientModalDiscountBadge" style="font-size: 11px; font-weight: 800; color: var(--accent-gold); background: rgba(201, 162, 77, 0.2); padding: 2px 7px; border-radius: 4px;">0%</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <input type="number" id="clientModalDiscountInput" class="form-input" min="0" max="100" step="1" value="0" style="width: 72px; padding: 6px 8px; font-size: 13px; font-weight: 700; text-align: center; color: var(--accent-gold);">
+                  <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary" onclick="setClientModalDiscount(0)" style="padding: 4px 7px; font-size: 11px;">0%</button>
+                    <button type="button" class="btn btn-secondary" onclick="setClientModalDiscount(5)" style="padding: 4px 7px; font-size: 11px;">5%</button>
+                    <button type="button" class="btn btn-secondary" onclick="setClientModalDiscount(10)" style="padding: 4px 7px; font-size: 11px; color: var(--accent-gold); border-color: rgba(201,162,77,0.4);">10%</button>
+                    <button type="button" class="btn btn-secondary" onclick="setClientModalDiscount(15)" style="padding: 4px 7px; font-size: 11px; color: var(--accent-gold); border-color: rgba(201,162,77,0.4);">15%</button>
+                    <button type="button" class="btn btn-secondary" onclick="setClientModalDiscount(20)" style="padding: 4px 7px; font-size: 11px; color: var(--accent-gold); border-color: rgba(201,162,77,0.4);">20%</button>
+                  </div>
+                </div>
+                <div style="font-size: 10px; color: var(--text-dim); margin-top: 6px; line-height: 1.3;">
+                  Скидка автоматически применяется при онлайн-записи и при записи администратором.
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary" onclick="saveCurrentClientProfile()" style="width: 100%; font-size: 12px; padding: 8px 14px;">
+              💾 Сохранить заметки и профиль
+            </button>
+          </div>
+
+          <!-- Правая колонка: История процедур и посещений -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="font-size: 14px; font-weight: 800; color: #FFFFFF; margin: 0;">
+                Хроника визитов и процедур
+              </h4>
+              <span id="clientModalHistoryCount" style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">0 записей</span>
+            </div>
+
+            <div id="clientModalVisitsHistoryList" style="display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; padding-right: 4px;">
+              <!-- Dynamic list of visit cards rendered via admin.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-secondary modal-close-trigger">
+          Закрыть
+        </button>
+        <button type="button" class="btn btn-primary" id="clientModalQuickBookBtn" onclick="bookAppointmentForCurrentClient()">
+          + Записать гостя на процедуру
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: СОЗДАНИЕ НОВОГО ГОСТЯ -->
+  <div class="modal-overlay" id="adminClientCreateModal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3>Новый гость в базе</h3>
+          <p>Ручное добавление карточки клиента</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+      <form id="adminClientCreateForm">
+        <div class="modal-body" style="padding: 20px 28px;">
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Имя и фамилия гостя *</label>
+            <input type="text" id="newClientName" class="form-input" required placeholder="Например: Роман Кравцов">
+          </div>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Телефон *</label>
+            <input type="text" id="newClientPhone" class="form-input" required placeholder="+7 (999) 000-00-00">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+              <label class="form-label">Telegram (опционально)</label>
+              <input type="text" id="newClientTelegram" class="form-input" placeholder="@username">
+            </div>
+            <div>
+              <label class="form-label">Категория</label>
+              <select id="newClientCategory" class="form-select">
+                <option value="new">Новый гость</option>
+                <option value="regular">Постоянный гость</option>
+                <option value="vip">VIP гость</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Персональная скидка гостя (%)</label>
+            <input type="number" id="newClientDiscount" class="form-input" min="0" max="100" step="1" value="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Заметки о пожеланиях гостя</label>
+            <textarea id="newClientNotes" class="form-textarea" rows="2" placeholder="Предпочитаемые напитки, стиль, пожелания..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary modal-close-trigger">Отмена</button>
+          <button type="submit" class="btn btn-primary">Добавить в базу</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ОФОРМЛЕНИЕ КАССОВОЙ ВЫПЛАТЫ МАСТЕРУ -->
+  <div class="modal-overlay" id="adminPayoutConfirmModal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3>Оформление кассовой выплаты</h3>
+          <p id="payoutConfirmSubtitle">Формирование расходного ордера и расчётного листка</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <form id="adminPayoutConfirmForm">
+        <input type="hidden" id="payoutFormSpecId">
+        <input type="hidden" id="payoutFormStartDate">
+        <input type="hidden" id="payoutFormEndDate">
+        <input type="hidden" id="payoutFormAmount">
+        <input type="hidden" id="payoutFormGross">
+        <input type="hidden" id="payoutFormMargin">
+        <input type="hidden" id="payoutFormCount">
+
+        <div class="modal-body" style="padding: 20px 28px;">
+          <div style="display: flex; align-items: center; gap: 14px; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 16px;">
+            <img id="payoutModalAvatar" src="" alt="" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-gold);">
+            <div>
+              <div style="font-weight: 800; color: #FFFFFF; font-size: 15px;" id="payoutModalMasterName">Master Name</div>
+              <div style="font-size: 12px; color: var(--text-dim);" id="payoutModalMasterRole">Role</div>
+              <div style="font-size: 11px; color: var(--accent-gold); margin-top: 2px;" id="payoutModalPeriod">Период: 12 — 18 окт. 2026</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: var(--radius-md); padding: 16px; text-align: center; margin-bottom: 18px;">
+            <div style="font-size: 11px; color: var(--accent-gold); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Сумма к выдаче на руки:</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--accent-gold); margin: 4px 0;" id="payoutModalAmountDisplay">0 ₫</div>
+            <div style="font-size: 12px; color: var(--text-dim);" id="payoutModalStatsSummary">
+              По 2 выполненным услугам (касса: 1 200 000 ₫, ставка: 45%)
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Способ выдачи денежных средств *</label>
+            <select id="payoutMethodSelect" class="form-select" required>
+              <option value="Наличные из кассы">💵 Наличные из кассы (расходный ордер)</option>
+              <option value="Безналичный перевод / СБП">💳 Безналичный перевод / СБП на карту</option>
+              <option value="Банковский перевод по реквизитам">🏦 Банковский перевод по реквизитам</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Кто произвёл выплату *</label>
+            <input type="text" id="payoutIssuedByInput" class="form-input" value="Владелец NOIR Atelier" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Комментарий / Примечание к ордеру</label>
+            <textarea id="payoutNotesInput" class="form-textarea" rows="2" placeholder="Зарплата за расчётный период выдана в полном объёме..."></textarea>
+          </div>
+
+          <div style="margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #FFFFFF;">
+              <input type="checkbox" id="payoutAutoPrintCheckbox" checked style="accent-color: var(--accent-gold); width: 16px; height: 16px; cursor: pointer;">
+              <span>Сразу открыть расчётный листок для печати (А4)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary modal-close-trigger">Отмена</button>
+          <button type="submit" class="btn btn-primary" style="padding: 10px 22px; font-weight: 800;">
+            ✓ Провести выплату и сформировать ордер
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ИНСТРУКЦИЯ И РЕГЛАМЕНТ РАСЧЁТА ЗАРПЛАТ -->
+  <div class="modal-overlay" id="adminPayrollHelpModal">
+    <div class="modal-card" style="max-width: 760px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">📖</span>
+            <h3 style="margin: 0;">Инструкция: Регламент расчёта и выплат зарплат</h3>
+          </div>
+          <p style="margin-top: 4px;">Универсальное руководство для управляющего, администратора и владельца бизнеса</p>
+        </div>
+        <button type="button" class="modal-close-btn modal-close-trigger">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px 28px; max-height: 72vh; overflow-y: auto;">
+        <!-- Блок 1: Принцип авторасчёта -->
+        <div style="background: rgba(212, 175, 55, 0.06); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 18px;">💡</span>
+            <h4 style="font-size: 15px; font-weight: 800; color: var(--accent-gold); margin: 0;">Базовый принцип автоматического расчёта</h4>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0 0 10px;">
+            Когда визит клиента получает статус <strong>«Выполнена»</strong>, система моментально делит сумму чека на две части:
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-gold);">
+              <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold); font-weight: 700;">1. Доля мастера</div>
+              <div style="font-size: 12px; color: #FFFFFF; margin-top: 2px;">Стоимость услуги × Процент мастера (%)</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: var(--radius-sm); border-left: 3px solid #10B981;">
+              <div style="font-size: 11px; text-transform: uppercase; color: #10B981; font-weight: 700;">2. Чистая маржа салона</div>
+              <div style="font-size: 12px; color: #FFFFFF; margin-top: 2px;">Стоимость услуги − Доля мастера</div>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: var(--text-dim); background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm);">
+            <strong>Наглядный пример:</strong> Процедура стоит <strong>$100</strong>. У мастера ставка <strong>40%</strong>. Мастер зарабатывает <strong>$40</strong>, а доход салона составляет <strong>$60</strong>. При 10 процедурах за период мастер получит <strong>$400</strong>, а салон удержит <strong>$600</strong>. Ручной подсчёт исключён полностью.
+          </div>
+        </div>
+
+        <!-- Блок 2: Сценарий Каждый день -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 18px;">📅</span>
+            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Сценарий 1: Выплата КАЖДЫЙ ДЕНЬ (в конце смены)</h4>
+          </div>
+          <ol style="font-size: 13px; color: var(--text-sub); line-height: 1.6; margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 6px;">
+              <strong>Выбор периода:</strong> В строке <em>«Регламент выплат салона»</em> установите <strong>«Каждый день (в конце смены)»</strong> и нажмите кнопку <strong>«📅 Сегодня»</strong> (стрелки ‹ / › позволяют выбрать вчерашний день или любую другую дату).
+            </li>
+            <li style="margin-bottom: 6px;">
+              <strong>Оценка кассы:</strong> В верхней карточке <strong>«💰 Фонд оплаты мастеров»</strong> отображается общая сумма, которую необходимо выдать всем специалистам смены (например, <strong>$240</strong>).
+            </li>
+            <li style="margin-bottom: 6px;">
+              <strong>Проверка мастера:</strong> В списке отображаются мастера, работавшие сегодня. Нажав <em>«Детализация ▾»</em>, можно увидеть каждую проведённую стрижку с временем и именами клиентов.
+            </li>
+            <li>
+              <strong>Выдача денег:</strong> Нажмите золотую кнопку <strong>[ Выплатить ]</strong> напротив мастера. Выберите форму выдачи (<em>💵 Наличные</em> или <em>💳 Перевод</em>) и нажмите <em>«✓ Провести выплату»</em>. Сформируется ордер, карточка подсветится зелёным, а на принтер отправится расчётный листок под роспись.
+            </li>
+          </ol>
+        </div>
+
+        <!-- Блок 3: Сценарий Раз в неделю -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 18px;">🗓️</span>
+            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Сценарий 2: Выплата РАЗ В НЕДЕЛЮ (понедельник)</h4>
+          </div>
+          <ol style="font-size: 13px; color: var(--text-sub); line-height: 1.6; margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 6px;">
+              <strong>Выбор периода:</strong> Установите регламент <strong>«Раз в неделю (понедельник)»</strong> и нажмите кнопку <strong>«⏮️ Прошлая неделя»</strong>. Система автоматически объединит все чеки за 7 дней с понедельника по воскресенье.
+            </li>
+            <li style="margin-bottom: 6px;">
+              <strong>Итоги за неделю:</strong> Для каждого мастера выведен полный итог: количество процедур (например, 12 или 25), валовая касса и сумма к выдаче на руки за всю неделю.
+            </li>
+            <li style="margin-bottom: 6px;">
+              <strong>Вариант А (Индивидуально):</strong> Мастер подходит к кассе → нажимаете <strong>[ Выплатить ]</strong> → выдаёте сумму и распечатываете индивидуальный расчётный листок (Payslip) формата А4.
+            </li>
+            <li>
+              <strong>Вариант Б (Сводная ведомость на весь салон):</strong> Вверху страницы нажмите <strong>«🖨️ Распечатать сводную ведомость на салон»</strong>. Будет сформирован один общий лист со всеми мастерами и пустой колонкой для личной подписи каждого мастера в получении денег.
+            </li>
+          </ol>
+        </div>
+
+        <!-- Блок 4: Как понимать статусы -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span style="font-size: 18px;">🚦</span>
+            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Индикация статусов: Кому выплачено, а кому ещё нет</h4>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: var(--radius-sm); padding: 12px 14px;">
+              <div style="display: flex; align-items: center; gap: 6px; color: var(--accent-gold); font-weight: 800; font-size: 13px;">
+                <span>🟡</span> Золотая кнопка «Выплатить»
+              </div>
+              <p style="font-size: 12px; color: var(--text-sub); margin: 6px 0 0; line-height: 1.4;">
+                Зарплата за выбранный период <strong>ещё не выдана</strong>. Сумма долга отображается золотыми цифрами и учитывается в общем зарплатном фонде салона.
+              </p>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 12px 14px;">
+              <div style="display: flex; align-items: center; gap: 6px; color: #10B981; font-weight: 800; font-size: 13px;">
+                <span>🟢</span> Зелёный бейдж «✓ Выплачено»
+              </div>
+              <p style="font-size: 12px; color: var(--text-sub); margin: 6px 0 0; line-height: 1.4;">
+                Ордер <strong>проведён и зафиксирован</strong> (например, <em>#PAY-1003</em>). Карточка подсвечена изумрудом. Случайный клик не сбросит выплату. Доступна повторная печать листка.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Блок 5: Журнал кассовых выплат -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 18px;">📜</span>
+            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Журнал кассовых выплат (Архив всех периодов)</h4>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+            Вся история проведённых выплат сохраняется в под-вкладке <strong>«Журнал кассовых выплат»</strong>. Вы можете выбрать любой прошлый год, месяц или конкретного мастера, чтобы проверить дату и время выдачи денег, способ оплаты и распечатать дубликат ордера в случае любых вопросов или сверок.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; padding: 14px 28px;">
+        <button type="button" class="btn btn-primary modal-close-trigger" style="padding: 9px 24px; font-weight: 700;">
+          Понятно, закрыть
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Смена PIN-кода администратора -->
+  <div class="modal-overlay" id="adminPinChangeModal" style="display: none; z-index: 10000;">
+    <div class="modal-card" style="max-width: 440px; padding: 32px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; margin: 0;">
+          <span>🔒</span>
+          <span>Безопасность &bull; Смена PIN-кода</span>
+        </h3>
+        <button type="button" class="btn btn-secondary" onclick="closePinChangeModal()" style="padding: 4px 10px; font-size: 13px; border-radius: var(--radius-sm);">✕</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+        Задайте новый 4-значный цифровой PIN-код для входа в панель управления CRM на всех устройствах.
+      </p>
+
+      <form id="adminPinChangeForm" onsubmit="handleAdminPinChangeSubmit(event)">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-size: 12px;">Текущий PIN-код</label>
+          <input type="password" id="currentPinInput" class="form-input" placeholder="••••" maxlength="8" style="font-size: 18px; letter-spacing: 4px; font-family: var(--font-mono);" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-size: 12px;">Новый PIN-код (4–6 цифр)</label>
+          <input type="password" id="newPinInput" class="form-input" placeholder="••••" maxlength="8" style="font-size: 18px; letter-spacing: 4px; font-family: var(--font-mono);" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="font-size: 12px;">Повторите новый PIN-код</label>
+          <input type="password" id="confirmNewPinInput" class="form-input" placeholder="••••" maxlength="8" style="font-size: 18px; letter-spacing: 4px; font-family: var(--font-mono);" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="font-size: 12px;">Email владельца для восстановления</label>
+          <input type="email" id="changeOwnerEmailInput" class="form-input" placeholder="owner@noir-atelier.com" style="font-size: 13px;">
+        </div>
+
+        <div id="pinChangeErrorMsg" style="display: none; color: var(--color-danger); font-size: 12px; margin-bottom: 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 12px; border-radius: var(--radius-sm);">
+          Ошибка смены PIN-кода
+        </div>
+
+        <div id="pinChangeSuccessMsg" style="display: none; color: #10B981; font-size: 12px; margin-bottom: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 12px; border-radius: var(--radius-sm);">
+          ✓ Новый PIN-код успешно сохранён и активирован!
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="closePinChangeModal()" style="padding: 8px 16px; font-size: 12px;">
+            Отмена
+          </button>
+          <button type="submit" class="btn btn-primary" style="padding: 8px 18px; font-size: 12px; font-weight: 700;">
+            Сохранить новый PIN
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- PRINT CONTAINER: ПОЛИГРАФИЧЕСКИЙ ДОКУМЕНТ А4 ПОД ПЕЧАТЬ -->
+  <div id="printableDocumentArea" style="display: none;">
+    <!-- Rendered dynamically during window.print() -->
+  </div>
+
+  <style>
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printableDocumentArea, #printableDocumentArea * {
+        visibility: visible !important;
+      }
+      #printableDocumentArea {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-family: 'Plus Jakarta Sans', Arial, sans-serif !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 15mm;
+      }
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="js/salon.config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
