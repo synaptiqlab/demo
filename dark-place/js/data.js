@@ -435,8 +435,175 @@ const DEFAULT_SERVICES = [
   }
 ];
 
-const DEFAULT_CLIENTS = [];
-const DEFAULT_APPOINTMENTS = [];
+function generateDemoAppointments() {
+  const now = Date.now();
+  const today = new Date(now).toISOString().split('T')[0];
+  const tomorrow = new Date(now + 86400000).toISOString().split('T')[0];
+
+  return [
+    {
+      id: "DP-101",
+      clientId: "client-1",
+      clientName: "Артур Мартиросян",
+      phone: "+84 90 512 88 44",
+      serviceId: "srv-complex-1",
+      serviceName: "Стрижка + Моделирование бороды",
+      variantName: "Премиум комплекс",
+      specialistId: "spec-sunnat",
+      specialistName: "Суннат",
+      date: today,
+      time: "14:00",
+      duration: 75,
+      basePrice: 750000,
+      discountPercent: 15,
+      price: 637500,
+      status: "confirmed",
+      comment: "Применена скидка 15% по программе лояльности (VIP-карта гостя). Базовая цена: 750 000 ₫. Предпочитает американо без сахара.",
+      createdAt: new Date(now - 7200000).toISOString()
+    },
+    {
+      id: "DP-102",
+      clientId: "client-2",
+      clientName: "Алексей Громов",
+      phone: "+84 79 344 12 90",
+      serviceId: "srv-tattoo-1",
+      serviceName: "Художественная татуировка (Сеанс)",
+      variantName: "Авторский сеанс",
+      specialistId: "spec-tattoo",
+      specialistName: "Tattoo Team",
+      date: today,
+      time: "16:00",
+      duration: 180,
+      basePrice: 1500000,
+      discountPercent: 0,
+      price: 1500000,
+      status: "confirmed",
+      comment: "Второй сеанс рукава в японском стиле (дракон и волны) на правом предплечье. Эскиз утвержден.",
+      createdAt: new Date(now - 14400000).toISOString()
+    },
+    {
+      id: "DP-103",
+      clientId: "client-3",
+      clientName: "Игорь Васильев",
+      phone: "+84 93 881 77 23",
+      serviceId: "srv-cut-1",
+      serviceName: "Мужская стрижка",
+      variantName: "Стандарт",
+      specialistId: "spec-ruslan",
+      specialistName: "Руслан",
+      date: today,
+      time: "11:00",
+      duration: 50,
+      basePrice: 400000,
+      discountPercent: 0,
+      price: 400000,
+      status: "completed",
+      comment: "Первый визит в Dark Place. Текстурный удлиненный кроп ножницами, мытье головы и матовый стайлинг.",
+      createdAt: new Date(now - 28800000).toISOString()
+    },
+    {
+      id: "DP-104",
+      clientId: "client-4",
+      clientName: "Денис Соколов",
+      phone: "+84 91 665 43 21",
+      serviceId: "srv-cut-5",
+      serviceName: "Химическая завивка",
+      variantName: "Биозавивка волос",
+      specialistId: "spec-max",
+      specialistName: "Макс",
+      date: tomorrow,
+      time: "12:00",
+      duration: 120,
+      basePrice: 1200000,
+      discountPercent: 0,
+      price: 1200000,
+      status: "new",
+      comment: "Биозавивка на среднюю длину, создание мягкой естественной текстуры. Консультация по домашнему уходу.",
+      createdAt: new Date().toISOString()
+    }
+  ];
+}
+
+const DEFAULT_CLIENTS = [
+  {
+    id: "client-1",
+    name: "Артур Мартиросян",
+    phone: "+84 90 512 88 44",
+    normalizedPhone: "84905128844",
+    telegram: "@arthur_mar",
+    gender: "male",
+    category: "vip",
+    discountPercent: 15,
+    notes: "VIP-резидент Нячанга. Предпочитает крепкий американо без сахара. Записывается только к Суннату.",
+    hairNotes: "Жесткие густые волосы. Низкий скин-фейд с плавным переходом. Борода: четкая окантовка щек лезвием, горячее полотенце, масло с древесным ароматом.",
+    firstVisit: "2026-06-12",
+    lastVisit: new Date().toISOString().split('T')[0],
+    totalVisits: 6,
+    totalSpent: 4250000,
+    favoriteSpecialistId: "spec-sunnat",
+    favoriteSpecialistName: "Суннат",
+    tags: ["⭐ VIP", "Лояльность -15%", "Суннат", "Борода"]
+  },
+  {
+    id: "client-2",
+    name: "Алексей Громов",
+    phone: "+84 79 344 12 90",
+    normalizedPhone: "84793441290",
+    telegram: "@gromov_alex",
+    gender: "male",
+    category: "regular",
+    discountPercent: 0,
+    notes: "Делает масштабный авторский рукав в стиле ориентал. Берет с собой наушники. Сеансы по 3 часа.",
+    hairNotes: "Тату: плотный пигмент Dynamic Black + акцентный японский кармин. Заживляющая мембрана Dermalize Pro.",
+    firstVisit: "2026-08-19",
+    lastVisit: new Date().toISOString().split('T')[0],
+    totalVisits: 3,
+    totalSpent: 4500000,
+    favoriteSpecialistId: "spec-tattoo",
+    favoriteSpecialistName: "Tattoo Team",
+    tags: ["💎 Постоянный", "Tattoo Team", "Рукав", "Ориентал"]
+  },
+  {
+    id: "client-3",
+    name: "Игорь Васильев",
+    phone: "+84 93 881 77 23",
+    normalizedPhone: "84938817723",
+    telegram: "@igor_v_nha",
+    gender: "male",
+    category: "new",
+    discountPercent: 0,
+    notes: "Пришел по рекомендации резидентов. Оценил спешелти кофе и рок-атмосферу салона.",
+    hairNotes: "Средняя длина, прямые волосы. Текстурная стрижка ножницами, естественная укладка матовой глиной.",
+    firstVisit: new Date().toISOString().split('T')[0],
+    lastVisit: new Date().toISOString().split('T')[0],
+    totalVisits: 1,
+    totalSpent: 400000,
+    favoriteSpecialistId: "spec-ruslan",
+    favoriteSpecialistName: "Руслан",
+    tags: ["Новый гость", "Руслан", "Стрижка ножницами"]
+  },
+  {
+    id: "client-4",
+    name: "Денис Соколов",
+    phone: "+84 91 665 43 21",
+    normalizedPhone: "84916654321",
+    telegram: "@denis_sokol",
+    gender: "male",
+    category: "regular",
+    discountPercent: 0,
+    notes: "Любит стильные эксперименты со структурой волос. Предпочитает холодный кофе со льдом.",
+    hairNotes: "Биозавивка щадящим составом на средние коклюшки. Создание выразительных серферских локонов.",
+    firstVisit: "2026-09-04",
+    lastVisit: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    totalVisits: 2,
+    totalSpent: 1600000,
+    favoriteSpecialistId: "spec-max",
+    favoriteSpecialistName: "Макс",
+    tags: ["💎 Постоянный", "Макс", "Биозавивка"]
+  }
+];
+
+const DEFAULT_APPOINTMENTS = generateDemoAppointments();
 const DEFAULT_PAYOUT_ORDERS = [];
 
 class NoirDataService {
@@ -487,10 +654,16 @@ class NoirDataService {
     if (!localStorage.getItem(this.STORAGE_KEYS.SPECIALISTS)) {
       localStorage.setItem(this.STORAGE_KEYS.SPECIALISTS, JSON.stringify(DEFAULT_SPECIALISTS));
     }
-    if (!localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS)) {
-      localStorage.setItem(this.STORAGE_KEYS.APPOINTMENTS, JSON.stringify(DEFAULT_APPOINTMENTS));
+    const existingApps = localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS);
+    let parsedApps = [];
+    try { parsedApps = JSON.parse(existingApps) || []; } catch(e) {}
+    if (!existingApps || parsedApps.length === 0 || !existingApps.includes("DP-")) {
+      localStorage.setItem(this.STORAGE_KEYS.APPOINTMENTS, JSON.stringify(generateDemoAppointments()));
     }
-    if (!localStorage.getItem(this.STORAGE_KEYS.CLIENTS)) {
+    const existingClients = localStorage.getItem(this.STORAGE_KEYS.CLIENTS);
+    let parsedClients = [];
+    try { parsedClients = JSON.parse(existingClients) || []; } catch(e) {}
+    if (!existingClients || parsedClients.length === 0 || !existingClients.includes("Артур Мартиросян")) {
       localStorage.setItem(this.STORAGE_KEYS.CLIENTS, JSON.stringify(DEFAULT_CLIENTS));
     }
     if (!localStorage.getItem(this.STORAGE_KEYS.PAYOUT_ORDERS)) {
@@ -671,9 +844,11 @@ class NoirDataService {
 
   getAppointments() {
     try {
-      return JSON.parse(localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS)) || [];
+      const stored = JSON.parse(localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS));
+      if (Array.isArray(stored) && stored.length > 0) return stored;
+      return generateDemoAppointments();
     } catch (e) {
-      return [];
+      return generateDemoAppointments();
     }
   }
 
@@ -752,7 +927,7 @@ class NoirDataService {
   getClients() {
     try {
       const stored = JSON.parse(localStorage.getItem(this.STORAGE_KEYS.CLIENTS));
-      if (Array.isArray(stored)) {
+      if (Array.isArray(stored) && stored.length > 0) {
         return stored.map(c => ({
           ...c,
           discountPercent: (c.discountPercent !== undefined && c.discountPercent !== null)
@@ -760,9 +935,9 @@ class NoirDataService {
             : (c.category === 'vip' ? 10 : (c.category === 'regular' ? 5 : 0))
         }));
       }
-      return [];
+      return DEFAULT_CLIENTS;
     } catch (e) {
-      return [];
+      return DEFAULT_CLIENTS;
     }
   }
 

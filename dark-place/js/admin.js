@@ -584,7 +584,10 @@ function renderTimeline() {
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 10px; color: var(--text-dim);">
               <span style="font-family: var(--font-mono);">${app.time} – ${endTimeStr} (${dur} мин)</span>
-              <span style="font-weight: 700; color: var(--accent-gold);">${window.noirData.formatMoney(app.price)}</span>
+              <span style="font-weight: 700; color: var(--accent-gold); display: flex; align-items: center; gap: 4px;">
+                ${window.noirData.formatMoney(app.price)}
+                ${(app.discountPercent && app.discountPercent > 0) ? `<span style="font-size: 9px; background: rgba(255, 43, 68, 0.2); border: 1px solid rgba(255, 43, 68, 0.4); color: var(--accent-gold); padding: 0 4px; border-radius: 3px; font-weight: 800;" title="Скидка лояльности ${app.discountPercent}%">-${app.discountPercent}%</span>` : ''}
+              </span>
             </div>
           </td>
         `;
@@ -845,7 +848,12 @@ function renderJournal() {
         </td>
         <td>
           <div style="font-weight: 600; color: #FFFFFF;">${a.serviceName}</div>
-          <div style="font-size: 11px; color: var(--text-dim);">${a.duration || 60} мин • ${window.noirData.formatMoney(a.price)}</div>
+          <div style="font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px;">
+            <span>${a.duration || 60} мин</span>
+            <span>•</span>
+            <span style="font-weight: 700; color: ${a.discountPercent > 0 ? 'var(--accent-gold)' : 'inherit'};">${window.noirData.formatMoney(a.price)}</span>
+            ${(a.discountPercent && a.discountPercent > 0) ? `<span style="background: rgba(255, 43, 68, 0.15); color: var(--accent-gold); border: 1px solid rgba(255, 43, 68, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;" title="Скидка лояльности гостя">-${a.discountPercent}%</span>` : ''}
+          </div>
         </td>
         <td style="color: var(--text-sub);">${a.specialistName}</td>
         <td>
@@ -2759,11 +2767,11 @@ window.printSpecialistPayslip = function(orderId) {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 16px; margin-bottom: 20px;">
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <h1 style="font-size: 24px; font-weight: 900; letter-spacing: 1.5px; margin: 0; color: #000000;">NOIR HAIR ATELIER</h1>
-            <span style="font-size: 11px; background: #111827; color: #FFFFFF; padding: 2px 6px; border-radius: 3px; font-weight: 700;">ORIGINAL</span>
+            <h1 style="font-size: 24px; font-weight: 900; letter-spacing: 1.5px; margin: 0; color: #000000;">${salon.brandName || salon.fullName || salon.name || 'DARK PLACE TATTOO & BARBERSHOP'}</h1>
+            <span style="font-size: 11px; background: #111827; color: #FFFFFF; padding: 2px 6px; border-radius: 3px; font-weight: 700;">OFFICIAL</span>
           </div>
-          <p style="font-size: 12px; color: #4B5563; margin: 4px 0 0;">Премиальное ателье авторских стрижек, сложного окрашивания и SPA</p>
-          <p style="font-size: 11px; color: #6B7280; margin: 2px 0 0;">📍 ${salon.address || '48 An Thuong 2, Da Nang'} • 📞 ${salon.phone || '+84 90 123 4567'} • 🌐 noir.viet</p>
+          <p style="font-size: 12px; color: #4B5563; margin: 4px 0 0;">${salon.tagline || 'Tattoo Art • Premium Barbershop'}</p>
+          <p style="font-size: 11px; color: #6B7280; margin: 2px 0 0;">📍 ${salon.address || 'Cao Văn Bé, 17/10 • Nha Trang'} • 📞 ${salon.phone || '+84 7 978 07 494'}</p>
         </div>
         <div style="text-align: right;">
           <div style="display: inline-block; background: #F3F4F6; border: 1px solid #D1D5DB; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -2932,9 +2940,9 @@ window.printWeeklyPayrollSummary = function(startDate, endDate) {
       <!-- Шапка ведомости -->
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 16px; margin-bottom: 20px;">
         <div>
-          <h1 style="font-size: 24px; font-weight: 900; letter-spacing: 1.5px; margin: 0; color: #000000;">NOIR HAIR ATELIER</h1>
-          <p style="font-size: 12px; color: #4B5563; margin: 4px 0 0;">Сводная зарплатная ведомость мастеров и специалистов ателье</p>
-          <p style="font-size: 11px; color: #6B7280; margin: 2px 0 0;">📍 ${salon.address || '48 An Thuong 2, Da Nang'} • 📞 ${salon.phone || '+84 90 123 4567'}</p>
+          <h1 style="font-size: 24px; font-weight: 900; letter-spacing: 1.5px; margin: 0; color: #000000;">${salon.brandName || salon.fullName || salon.name || 'DARK PLACE TATTOO & BARBERSHOP'}</h1>
+          <p style="font-size: 12px; color: #4B5563; margin: 4px 0 0;">Сводная зарплатная ведомость мастеров и специалистов студии</p>
+          <p style="font-size: 11px; color: #6B7280; margin: 2px 0 0;">📍 ${salon.address || 'Cao Văn Bé, 17/10 • Nha Trang'} • 📞 ${salon.phone || '+84 7 978 07 494'}</p>
         </div>
         <div style="text-align: right;">
           <div style="display: inline-block; background: #F3F4F6; border: 1px solid #D1D5DB; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 800; text-transform: uppercase;">
