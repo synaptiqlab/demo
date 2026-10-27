@@ -17,7 +17,8 @@ let activeFilters = {
   package: 'all',
   color: 'all',
   price: 'all',
-  stock: 'all' // 'all' or 'in_stock'
+  stock: 'all', // 'all' or 'in_stock'
+  sort: 'default' // 'default', 'price_asc', 'price_desc'
 };
 let selectedProduct = null;
 
@@ -230,6 +231,22 @@ function initFilters() {
 
   setupChipGroup('filterPackage', 'package');
   setupChipGroup('filterColor', 'color');
+
+  // Setup Sort Chips
+  const sortContainer = document.getElementById('filterSort');
+  if (sortContainer) {
+    const sortChips = sortContainer.querySelectorAll('.filter-chip');
+    sortChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        sortChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilters.sort = chip.getAttribute('data-sort');
+        applyFilters();
+        updateFilterActiveBadge();
+      });
+    });
+  }
+
   initStockToggle();
   initPriceSlider();
 
@@ -257,6 +274,7 @@ function resetAllFilters() {
   activeFilters.package = 'all';
   activeFilters.color = 'all';
   activeFilters.stock = 'all';
+  activeFilters.sort = 'default';
 
   // Reset package chips
   const pkgContainer = document.getElementById('filterPackage');
@@ -274,6 +292,14 @@ function resetAllFilters() {
     chips.forEach(c => c.classList.remove('active'));
     const allChip = clrContainer.querySelector('[data-filter="all"]');
     if (allChip) allChip.classList.add('active');
+  }
+
+  // Reset sort chips
+  if (sortContainer) {
+    const sortChips = sortContainer.querySelectorAll('.filter-chip');
+    sortChips.forEach(c => c.classList.remove('active'));
+    const defChip = sortContainer.querySelector('[data-sort="default"]');
+    if (defChip) defChip.classList.add('active');
   }
 
   // Reset stock toggle
@@ -304,6 +330,7 @@ function updateFilterActiveBadge() {
   let count = 0;
   if (activeFilters.package && activeFilters.package !== 'all') count++;
   if (activeFilters.color && activeFilters.color !== 'all') count++;
+  if (activeFilters.sort && activeFilters.sort !== 'default') count++;
   if (activeFilters.maxPrice && defaultMaxPrice && activeFilters.maxPrice < defaultMaxPrice) count++;
 
   if (count > 0) {
@@ -405,6 +432,13 @@ function applyFilters() {
 
     return true;
   });
+
+  // Price sorting
+  if (activeFilters.sort === 'price_asc') {
+    currentFiltered.sort((a, b) => (a.price || 0) - (b.price || 0));
+  } else if (activeFilters.sort === 'price_desc') {
+    currentFiltered.sort((a, b) => (b.price || 0) - (a.price || 0));
+  }
 
   countDisplay.textContent = currentFiltered.length;
   renderCatalog(currentFiltered);
