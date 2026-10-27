@@ -277,11 +277,11 @@ button, input, select, textarea {
 }
 
 .hero-gothic-title {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: clamp(48px, 7.5vw, 84px);
-  font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: 6px;
+  font-family: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+  font-size: clamp(52px, 8.5vw, 96px);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: 10px;
   color: #FFFFFF;
   margin: 0 0 12px;
   text-transform: uppercase;
@@ -952,11 +952,12 @@ button, input, select, textarea {
 }
 
 .footer-brand-title {
-  font-size: 20px;
-  font-weight: 800;
+  font-family: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
   color: #FFFFFF;
   margin-bottom: 12px;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
 
 .footer-brand-desc {
@@ -1570,9 +1571,11 @@ button, input, select, textarea {
     align-items: center;
   }
   .hero-gothic-title {
-    font-size: clamp(28px, 13.5vw, 54px);
-    letter-spacing: 0.04em;
-    line-height: 1.08;
+    font-family: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+    font-size: clamp(32px, 14vw, 58px);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.0;
     margin: 0 0 4px;
     white-space: nowrap;
     display: inline-block;

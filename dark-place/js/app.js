@@ -301,7 +301,7 @@ function setupHeroBrandFit() {
 
     // Measure base widths with standard 100px font
     title.style.fontSize = '100px';
-    title.style.letterSpacing = '0.04em';
+    title.style.letterSpacing = '0.06em';
     const titleWidthAt100 = title.getBoundingClientRect().width;
     const calcTitleSize = Math.floor(100 * (availableWidth / titleWidthAt100));
 
