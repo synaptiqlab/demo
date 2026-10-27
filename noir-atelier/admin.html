@@ -194,7 +194,7 @@
         </p>
 
         <div style="background: rgba(201, 162, 77, 0.08); border: 1px solid rgba(201, 162, 77, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: var(--text-sub);">
-          📲 Бот пришлёт в группу заведения кнопку <b>«Подтвердить, что вы владелец»</b>. После нажатия новый PIN-код появится в чате и автоматически откроет вход на сайте.
+          📲 Бот пришлёт в группу заведения кнопку <b>«Подтвердить, что вы владелец»</b>. После подтверждения новый PIN-код будет отправлен строго в закрытый Telegram-чат для ручного ввода.
         </div>
 
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -220,16 +220,17 @@
       </div>
 
       <div id="recoveryStep_success" style="display: none; text-align: center; padding: 10px 0;">
-        <div style="font-size: 36px; color: #10B981; margin-bottom: 12px;">✅</div>
-        <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">Доступ успешно подтверждён!</h4>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
-          Новый сгенерированный PIN-код отправлен в Telegram:
+        <div style="font-size: 38px; color: #10B981; margin-bottom: 12px;">✅</div>
+        <h4 style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Доступ подтверждён в Telegram!</h4>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+          Новый PIN-код отправлен в вашу рабочую Telegram-группу заведения.<br>
+          Скопируйте его из Telegram и введите вручную в поле входа.
         </p>
-        <div id="recoveryReceivedPinDisplay" style="font-size: 26px; font-weight: 800; font-family: monospace; letter-spacing: 4px; color: var(--accent-gold); margin-bottom: 16px;">
-          ----
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: #34D399; text-align: left; line-height: 1.4;">
+          🔒 <b>Безопасность:</b> В целях защиты данных код не отображается на сайте и не подставляется автоматически.
         </div>
-        <button type="button" class="btn btn-primary" onclick="applyRecoveredPinAndLogin()" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 700;">
-          Войти в CRM с новым кодом →
+        <button type="button" class="btn btn-primary" onclick="closePinRecoveryAndFocus()" style="width: 100%; padding: 11px; font-size: 13px; font-weight: 700;">
+          Понятно, ввести PIN-код →
         </button>
       </div>
 
@@ -1644,7 +1645,7 @@
   </style>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=2.2"></script>
-  <script src="js/admin.js?v=2.2"></script>
+  <script src="js/data.js?v=2.3"></script>
+  <script src="js/admin.js?v=2.3"></script>
 </body>
 </html>
