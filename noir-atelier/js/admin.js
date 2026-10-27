@@ -347,6 +347,26 @@ function switchTab(tabId) {
     }
   });
 
+  document.querySelectorAll('.drawer-nav-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.getAttribute('data-tab') === tabId) {
+      item.classList.add('active');
+    }
+  });
+
+  const tabLabels = {
+    'timeline': 'Расписание на день',
+    'specialists': 'Мастера и смены',
+    'appointments': 'Журнал записей',
+    'services': 'Прейскурант и услуги',
+    'clients': 'База клиентов',
+    'payroll': 'Расчёт зарплат'
+  };
+  const activeLabel = document.getElementById('mobileActiveTabLabel');
+  if (activeLabel && tabLabels[tabId]) {
+    activeLabel.textContent = tabLabels[tabId];
+  }
+
   document.querySelectorAll('.admin-tab-pane').forEach(pane => {
     pane.style.display = 'none';
   });
@@ -818,6 +838,7 @@ function renderJournal() {
     return true;
   });
 
+  let mobileContainer = document.getElementById('journalMobileCardsContainer');
   if (filtered.length === 0) {
     tbody.innerHTML = `
       <tr>
@@ -826,15 +847,25 @@ function renderJournal() {
         </td>
       </tr>
     `;
+    if (mobileContainer) {
+      mobileContainer.innerHTML = `
+        <div style="padding: 30px; text-align: center; color: var(--text-dim); background: var(--bg-card); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+          Записи не найдены
+        </div>
+      `;
+    }
     return;
   }
 
   let html = '';
+  let mobileHtml = '';
+
   filtered.forEach(a => {
     let statusClass = 'badge-status-confirmed';
-    if (a.status === 'new') statusClass = 'badge-status-new';
-    if (a.status === 'completed') statusClass = 'badge-status-completed';
-    if (a.status === 'cancelled') statusClass = 'badge-status-cancelled';
+    let statusLabel = 'Подтверждена';
+    if (a.status === 'new') { statusClass = 'badge-status-new'; statusLabel = 'Новая'; }
+    if (a.status === 'completed') { statusClass = 'badge-status-completed'; statusLabel = 'Выполнена'; }
+    if (a.status === 'cancelled') { statusClass = 'badge-status-cancelled'; statusLabel = 'Отменена'; }
 
     html += `
       <tr>
@@ -845,7 +876,12 @@ function renderJournal() {
         </td>
         <td>
           <div style="font-weight: 600; color: #FFFFFF;">${a.serviceName}</div>
-          <div style="font-size: 11px; color: var(--text-dim);">${a.duration || 60} мин • ${window.noirData.formatMoney(a.price)}</div>
+          <div style="font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px;">
+            <span>${a.duration || 60} мин</span>
+            <span>•</span>
+            <span style="font-weight: 700; color: ${a.discountPercent > 0 ? 'var(--accent-gold)' : 'inherit'};">${window.noirData.formatMoney(a.price)}</span>
+            ${(a.discountPercent && a.discountPercent > 0) ? `<span style="background: rgba(229, 169, 60, 0.15); color: var(--accent-gold); border: 1px solid rgba(229, 169, 60, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;" title="Скидка лояльности гостя">-${a.discountPercent}%</span>` : ''}
+          </div>
         </td>
         <td style="color: var(--text-sub);">${a.specialistName}</td>
         <td>
@@ -867,10 +903,130 @@ function renderJournal() {
         </td>
       </tr>
     `;
+
+    // Mobile Accordion Card
+    const cleanPhone = (a.phone || '').replace(/[^\d+]/g, '');
+    const phoneDisplay = cleanPhone 
+      ? `<a href="tel:${cleanPhone}" class="mobile-app-phone" onclick="event.stopPropagation();" style="color: inherit; text-decoration: none;">📞 ${a.phone}</a>` 
+      : '<span style="color:var(--text-dim); font-size:11px;">Нет тел.</span>';
+
+    mobileHtml += `
+      <div class="mobile-app-card" onclick="toggleMobileAppCard('${a.id}')">
+        <!-- Свёрнутая видимая часть -->
+        <div class="mobile-app-summary">
+          <div class="mobile-app-top">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="mobile-app-time">⏰ ${a.time}</span>
+              <span class="mobile-app-date">${a.date}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge-status ${statusClass}" style="font-size: 10px; padding: 2px 7px;">${statusLabel}</span>
+              <span class="mobile-app-chevron">▾</span>
+            </div>
+          </div>
+
+          <div class="mobile-app-client-row">
+            <span class="mobile-app-client-name">${a.clientName}</span>
+            ${phoneDisplay}
+          </div>
+
+          <div class="mobile-app-service-row">
+            <span class="mobile-app-service-name">${a.serviceName}</span>
+            <span class="mobile-app-price">${window.noirData.formatMoney(a.price)}</span>
+          </div>
+        </div>
+
+        <!-- Раскрывающийся блок деталей -->
+        <div class="mobile-app-details" id="mobileAppDetails_${a.id}" style="display: none;">
+          <div class="mobile-app-details-grid">
+            <div class="mobile-detail-item">
+              <span class="detail-label">Мастер:</span>
+              <span class="detail-val">${a.specialistName || 'Не назначен'}</span>
+            </div>
+            <div class="mobile-detail-item">
+              <span class="detail-label">Длительность:</span>
+              <span class="detail-val">${a.duration || 60} мин</span>
+            </div>
+            <div class="mobile-detail-item">
+              <span class="detail-label">Номер брони:</span>
+              <span class="detail-val mono" style="color: var(--accent-gold);">${a.id}</span>
+            </div>
+            ${a.discountPercent > 0 ? `
+              <div class="mobile-detail-item">
+                <span class="detail-label">Скидка:</span>
+                <span class="detail-val" style="color: var(--color-success); font-weight: 700;">-${a.discountPercent}%</span>
+              </div>
+            ` : ''}
+          </div>
+
+          ${a.comment ? `
+            <div class="mobile-app-comment">
+              💬 <em>${a.comment}</em>
+            </div>
+          ` : ''}
+
+          <div class="mobile-app-actions-row">
+            <div style="flex: 1;">
+              <select class="status-select ${statusClass}" style="width: 100%; font-size: 12.5px; padding: 7px 10px;" onchange="handleQuickStatusChange('${a.id}', this.value)" onclick="event.stopPropagation();" title="Сменить статус">
+                <option value="new" ${a.status === 'new' ? 'selected' : ''}>Новая</option>
+                <option value="confirmed" ${a.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
+                <option value="completed" ${a.status === 'completed' ? 'selected' : ''}>Выполнена</option>
+                <option value="cancelled" ${a.status === 'cancelled' ? 'selected' : ''}>Отменена</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="event.stopPropagation(); openEditAppointmentModal('${a.id}');" style="padding: 7px 14px; font-size: 12px; font-weight: 700;">
+              ✏️ Изменить
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
   });
 
   tbody.innerHTML = html;
+
+  if (mobileContainer) {
+    mobileContainer.innerHTML = mobileHtml;
+  }
 }
+
+window.toggleMobileAppCard = function(appId) {
+  const details = document.getElementById(`mobileAppDetails_${appId}`);
+  if (!details) return;
+  const isHidden = details.style.display === 'none';
+  details.style.display = isHidden ? 'block' : 'none';
+  const card = details.closest('.mobile-app-card');
+  if (card) {
+    if (isHidden) card.classList.add('expanded');
+    else card.classList.remove('expanded');
+  }
+};
+
+window.toggleMobileAdminDrawer = function() {
+  const drawer = document.getElementById('adminMobileDrawer');
+  const overlay = document.getElementById('adminDrawerOverlay');
+  if (!drawer || !overlay) return;
+  const isActive = drawer.classList.contains('active');
+  if (isActive) {
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+  }
+};
+
+window.closeMobileAdminDrawer = function() {
+  const drawer = document.getElementById('adminMobileDrawer');
+  const overlay = document.getElementById('adminDrawerOverlay');
+  if (drawer) drawer.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+};
+
+window.handleDrawerNavClick = function(tabId) {
+  switchTab(tabId);
+  closeMobileAdminDrawer();
+};
 
 window.handleQuickStatusChange = function(appId, newStatus) {
   window.noirData.updateAppointmentStatus(appId, newStatus);
@@ -1801,40 +1957,48 @@ function renderClientsAdmin() {
     const apps = window.noirData.getClientAppointments(client.id);
     const lastApp = apps.length > 0 ? apps[0] : null;
 
+    const cleanPhone = (client.phone || '').replace(/[^\d+]/g, '');
+    const telLink = cleanPhone 
+      ? `<a href="tel:${cleanPhone}" class="client-phone-link" style="color: inherit; text-decoration: none;">📞 ${client.phone}</a>` 
+      : '<span>📞 —</span>';
+    const tgLink = client.telegram 
+      ? `<a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener" style="color: var(--accent-gold); font-family: var(--font-mono); text-decoration: none;">${client.telegram}</a>` 
+      : '';
+
     html += `
       <div class="client-list-row">
-        <!-- 1. Имя и аватар гостя -->
-        <div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
-          <div style="width: 44px; height: 44px; border-radius: 50%; background: ${avatarGrad}; color: ${avatarColor}; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid ${avatarBorder}; flex-shrink: 0;">
+        <!-- 1. Имя, статус и контакты гостя -->
+        <div class="client-cell-user">
+          <div class="client-avatar" style="width: 44px; height: 44px; border-radius: 50%; background: ${avatarGrad}; color: ${avatarColor}; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid ${avatarBorder}; flex-shrink: 0;">
             ${mono}
           </div>
-          <div style="min-width: 0;">
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span style="font-size: 15px; font-weight: 800; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${client.name}</span>
+          <div class="client-user-info" style="min-width: 0; flex: 1;">
+            <div class="client-name-line" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="client-name" style="font-size: 15px; font-weight: 800; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${client.name}</span>
               ${badgeHtml}
               ${discountBadge}
             </div>
-            <div style="font-size: 12px; color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span>📞 ${client.phone || '—'}</span>
-              ${client.telegram ? `<span style="color: var(--accent-gold); font-family: var(--font-mono);">${client.telegram}</span>` : ''}
+            <div class="client-contact-line" style="font-size: 12px; color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              ${telLink}
+              ${tgLink}
             </div>
           </div>
         </div>
 
-        <!-- 2. Визитов -->
-        <div style="text-align: center;">
+        <!-- 2. Визитов (Desktop) -->
+        <div class="client-cell-visits" style="text-align: center;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Визитов</div>
           <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-top: 2px;">${client.totalVisits || 1}</div>
         </div>
 
-        <!-- 3. Сумма (LTV) -->
-        <div style="text-align: center;">
+        <!-- 3. Сумма LTV (Desktop) -->
+        <div class="client-cell-ltv" style="text-align: center;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Сумма (LTV)</div>
           <div style="font-size: 15px; font-weight: 800; color: var(--accent-gold); margin-top: 2px;">${window.noirData.formatMoney(client.totalSpent)}</div>
         </div>
 
-        <!-- 4. Последний визит -->
-        <div style="min-width: 0;">
+        <!-- 4. Последний визит (Desktop) -->
+        <div class="client-cell-recent" style="min-width: 0;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Последний визит</div>
           <div style="font-size: 12px; color: #FFFFFF; font-weight: 600; margin-top: 2px;">
             ${client.lastVisit || '—'}
@@ -1844,12 +2008,28 @@ function renderClientsAdmin() {
           </div>
         </div>
 
+        <!-- Mobile Stats Strip (Visible only on mobile) -->
+        <div class="client-mobile-stats-strip">
+          <div class="stat-pill">
+            <span class="pill-lbl">Визитов</span>
+            <span class="pill-val">${client.totalVisits || 1}</span>
+          </div>
+          <div class="stat-pill">
+            <span class="pill-lbl">Сумма LTV</span>
+            <span class="pill-val-gold">${window.noirData.formatMoney(client.totalSpent)}</span>
+          </div>
+          <div class="stat-pill">
+            <span class="pill-lbl">Последний</span>
+            <span class="pill-val">${client.lastVisit ? client.lastVisit.slice(5) : '—'}</span>
+          </div>
+        </div>
+
         <!-- 5. Действия -->
-        <div style="display: flex; align-items: center; gap: 10px; justify-content: flex-end;">
-          <button type="button" class="btn btn-secondary" onclick="openClientModal('${client.id}')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; white-space: nowrap;">
-            Карточка гостя
+        <div class="client-cell-actions">
+          <button type="button" class="btn btn-secondary btn-card-guest" onclick="openClientModal('${client.id}')">
+            👤 Карточка
           </button>
-          <button type="button" class="btn btn-primary" onclick="quickBookForClient('${client.id}')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; white-space: nowrap;">
+          <button type="button" class="btn btn-primary btn-quick-book" onclick="quickBookForClient('${client.id}')">
             + Записать
           </button>
         </div>
