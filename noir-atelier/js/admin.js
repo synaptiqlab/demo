@@ -1332,7 +1332,10 @@ function setupModals() {
       const basePrice = srv ? srv.price : 0;
       const finalPrice = discount > 0 ? Math.round(basePrice * (100 - discount) / 100) : basePrice;
 
-      window.noirData.addAppointment({
+      const statusSelect = document.getElementById('adminBookingStatus');
+      const bookingStatus = statusSelect ? statusSelect.value : "confirmed";
+
+      const createdRecord = window.noirData.addAppointment({
         clientName,
         phone,
         serviceId: srvId,
@@ -1344,12 +1347,40 @@ function setupModals() {
         duration: srv ? srv.duration : 60,
         price: finalPrice,
         discountPercent: discount,
+        status: bookingStatus,
         comment: discount > 0 ? `Применена скидка гостя ${discount}% (базовая цена ${window.noirData.formatMoney(basePrice)})` : ""
       });
 
+      // Мгновенная отправка созданной из CRM записи в Telegram-группу
+      try {
+        const orderSummaryText = `💇 Услуга: ${srv ? srv.name : "Услуга"}
+👤 Мастер: ${sp ? sp.name : "Мастер"}
+📅 Дата и время: ${date} в ${time} (${srv ? srv.duration : 60} мин)
+${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i>(Запись создана администратором в CRM)</i>`;
+
+        fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            project_slug: "noir-atelier",
+            order_type: "salon_booking",
+            client_name: clientName,
+            client_phone: phone,
+            order_title: orderSummaryText,
+            total_amount: finalPrice,
+            currency: "VND"
+          })
+        }).catch(e => console.warn("CRM bot dispatch error:", e));
+      } catch (dispatchErr) {
+        console.warn("CRM dispatch error:", dispatchErr);
+      }
+
       document.getElementById('adminQuickBookingModal').classList.remove('active');
+      quickForm.reset();
       updateKPIs();
       renderTimeline();
+      if (typeof renderJournal === 'function') renderJournal();
+      if (typeof renderAppointmentsList === 'function') renderAppointmentsList();
     });
   }
 
