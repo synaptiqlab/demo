@@ -177,7 +177,7 @@
     </div>
   </div>
 
-  <!-- Modal: Восстановление забытого PIN-кода -->
+  <!-- Modal: Восстановление забытого PIN-кода через Telegram -->
   <div class="modal-overlay" id="pinRecoveryModal" style="display: none; z-index: 10000;">
     <div class="modal-card" style="max-width: 440px; padding: 32px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
@@ -188,27 +188,51 @@
         <button type="button" class="btn btn-secondary" onclick="closePinRecoveryModal()" style="padding: 4px 10px; font-size: 13px; border-radius: var(--radius-sm);">✕</button>
       </div>
 
-      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">
-        Введите свой email
-      </p>
+      <div id="recoveryStep_request">
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">
+          Забыли PIN-код? Мы отправим запрос на подтверждение личности владельца в вашу рабочую Telegram-группу заведения.
+        </p>
 
-      <div class="form-group" style="margin-bottom: 16px;">
-        <input type="email" id="recoveryEmailInput" class="form-input" placeholder="name@example.com" value="" style="font-size: 13px;">
+        <div style="background: rgba(201, 162, 77, 0.08); border: 1px solid rgba(201, 162, 77, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: var(--text-sub);">
+          📲 Бот пришлёт в группу заведения кнопку <b>«Подтвердить, что вы владелец»</b>. После нажатия новый PIN-код появится в чате и автоматически откроет вход на сайте.
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="closePinRecoveryModal()" style="padding: 8px 16px; font-size: 12px;">
+            Отмена
+          </button>
+          <button type="button" id="sendTgRecoveryBtn" class="btn btn-primary" onclick="requestTelegramPinRecovery()" style="padding: 8px 18px; font-size: 12px; font-weight: 700;">
+            Отправить запрос в Telegram →
+          </button>
+        </div>
       </div>
 
-
-      <div id="recoverySuccessNotice" style="display: none; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 12px; color: #10B981;">
-        ✓ PIN-код успешно сброшен на заводской <strong>1234</strong>! Теперь вы можете войти в систему.
+      <div id="recoveryStep_waiting" style="display: none; text-align: center; padding: 10px 0;">
+        <div style="font-size: 36px; margin-bottom: 12px; animation: pulse 1.5s infinite;">📲</div>
+        <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">Запрос отправлен в Telegram!</h4>
+        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+          Откройте вашу рабочую Telegram-группу и нажмите кнопку <b>«✅ Да, я владелец»</b>.
+        </p>
+        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--accent-gold); background: rgba(201, 162, 77, 0.1); padding: 6px 14px; border-radius: 20px;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-gold); animation: blink 1s infinite;"></span>
+          <span>Ожидаем подтверждения владельца...</span>
+        </div>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-        <button type="button" class="btn btn-secondary" onclick="closePinRecoveryModal()" style="padding: 8px 16px; font-size: 12px;">
-          Отмена
+      <div id="recoveryStep_success" style="display: none; text-align: center; padding: 10px 0;">
+        <div style="font-size: 36px; color: #10B981; margin-bottom: 12px;">✅</div>
+        <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">Доступ успешно подтверждён!</h4>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+          Новый сгенерированный PIN-код отправлен в Telegram:
+        </p>
+        <div id="recoveryReceivedPinDisplay" style="font-size: 26px; font-weight: 800; font-family: monospace; letter-spacing: 4px; color: var(--accent-gold); margin-bottom: 16px;">
+          ----
+        </div>
+        <button type="button" class="btn btn-primary" onclick="applyRecoveredPinAndLogin()" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 700;">
+          Войти в CRM с новым кодом →
         </button>
-        <button type="button" class="btn btn-primary" onclick="confirmResetPinToDefault()" style="padding: 8px 18px; font-size: 12px; font-weight: 700;">
-          Сбросить PIN на 1234
-        </button>
       </div>
+
     </div>
   </div>
 
@@ -1620,7 +1644,7 @@
   </style>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=2.1"></script>
-  <script src="js/admin.js?v=2.1"></script>
+  <script src="js/data.js?v=2.2"></script>
+  <script src="js/admin.js?v=2.2"></script>
 </body>
 </html>
