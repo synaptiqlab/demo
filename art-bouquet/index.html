@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/style.css?v=17.0">
+  <link rel="stylesheet" href="css/style.css?v=21.0">
   <link rel="icon" type="image/jpeg" href="images/logo.jpg">
 </head>
 <body>
@@ -20,8 +20,8 @@
   <div class="bg-ambient-brush"></div>
   <div class="bg-ambient-brush-2"></div>
 
-  <!-- Header -->
-  <header class="site-header">
+  <!-- Header with Integrated Search & Filter Drawer -->
+  <header class="site-header" id="siteHeader">
     <div class="container header-inner">
       <a href="index.html" class="brand-group">
         <img src="images/logo.jpg" alt="Art Bouquet Nha Trang" class="brand-logo-img">
@@ -31,49 +31,41 @@
         </div>
       </a>
 
-      <div class="header-actions">
-        <a href="admin.html" class="contact-pill" title="Панель управления флориста (PIN: 1234)" style="background: rgba(189, 117, 111, 0.1); border-color: rgba(189, 117, 111, 0.4); color: var(--color-primary-dark);">
-          <span>🔒</span>
-          <span>CRM Флориста</span>
-        </a>
-        <a href="https://t.me/litt1e_roo" target="_blank" class="contact-pill" title="Написать флористу">
-          <span>💬</span>
-          <span>Чат с флористом</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="container">
-      <h1 class="hero-title">
-        Цветы, которые <span>говорят о чувствах</span>
-      </h1>
-      <p class="hero-subtitle">
-        Коллекция премиальных букетов из отборных свежих роз, трендовых лотосов и экзотических цветов в стильных коробках, плетеных корзинах и авторском крафте с доставкой по Нячангу.
-      </p>
-
-      <div class="hero-features-line">
-        <span>Свежие поставки роз ежедневно</span>
-        <span class="feat-dot">•</span>
-        <span>Бережная доставка</span>
-        <span class="feat-dot">•</span>
-        <span>Фото букета перед отправкой</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Catalog Section -->
-  <section class="catalog-section">
-    <div class="container">
-      
-      <!-- Interactive Filter Box -->
-      <div class="filter-card">
-        <!-- Search Input -->
-        <div class="search-bar-wrap">
+      <!-- Center Search & Filter Trigger -->
+      <div class="header-search-wrap">
+        <div class="header-search-bar">
           <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" class="search-input" placeholder="Поиск по названию букета или сорту цветов (например, пионы, лотос, O'Hara)...">
+          <input type="text" id="searchInput" class="search-input" placeholder="Поиск букета или цветов (розы, пионы, лотос)..." autocomplete="off">
+          <button type="button" class="search-clear-btn" id="searchClearBtn" aria-label="Очистить поиск" style="display: none;">✕</button>
+        </div>
+        <button type="button" class="filter-toggle-btn" id="filterToggleBtn" aria-label="Открыть фильтры">
+          <span class="filter-icon">⚙️</span>
+          <span class="filter-btn-text">Фильтры</span>
+          <span class="filter-badge" id="filterActiveBadge" style="display:none;">0</span>
+        </button>
+      </div>
+
+      <!-- Right Contact Action -->
+      <div class="header-actions">
+        <a href="https://t.me/litt1e_roo" target="_blank" class="contact-pill contact-chat-pill" title="Написать флористу в Telegram">
+          <span>💬</span>
+          <span class="chat-pill-label">Чат с флористом</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Dropdown / Slide-down Filter Drawer -->
+    <div class="filter-drawer" id="filterDrawer">
+      <div class="container filter-drawer-inner">
+        <div class="filter-drawer-header">
+          <div class="filter-drawer-heading">
+            <span class="filter-drawer-icon">🎛️</span>
+            <span class="filter-drawer-title">Параметры подбора букета</span>
+          </div>
+          <div class="filter-drawer-actions">
+            <button type="button" class="filter-reset-link" id="filterResetBtn">Сбросить все</button>
+            <button type="button" class="filter-close-btn" id="filterCloseBtn" aria-label="Закрыть фильтры">✕</button>
+          </div>
         </div>
 
         <div class="filters-top-grid">
@@ -130,6 +122,32 @@
           </div>
         </div>
       </div>
+    </div>
+  </header>
+
+  <!-- Micro Trust Ticker -->
+  <div class="trust-ticker-bar">
+    <div class="container trust-ticker-inner">
+      <div class="trust-item">
+        <span class="trust-ico">🌿</span>
+        <span>Свежие поставки роз ежедневно</span>
+      </div>
+      <span class="trust-dot">•</span>
+      <div class="trust-item">
+        <span class="trust-ico">📸</span>
+        <span>Фото букета перед отправкой</span>
+      </div>
+      <span class="trust-dot">•</span>
+      <div class="trust-item">
+        <span class="trust-ico">🚀</span>
+        <span>Бережная доставка по Нячангу от 60 мин</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catalog Section (Starts immediately!) -->
+  <section class="catalog-section" id="catalogSection">
+    <div class="container">
 
       <!-- Counter & Stock Filter Toggle -->
       <div class="catalog-counter-bar">
@@ -287,6 +305,61 @@
     </div>
   </div>
 
+  <!-- About & Quality Assurance Section (Under Catalog) -->
+  <section class="about-studio-section" id="aboutSection">
+    <div class="container">
+      <div class="about-card">
+        <div class="about-grid">
+          <div class="about-info">
+            <span class="section-tag">О студии флористики</span>
+            <h2 class="about-title">Art Bouquet — сближаем сердца с 2016 года</h2>
+            <p class="about-text">
+              Мы собираем авторские букеты и цветочные композиции из отборных свежих роз Далата, французских роз O'Hara, трендовых лотосов и экзотических цветов. Каждая композиция оформляется в стильных шляпных коробках, плетеных корзинах или дизайнерском матовом крафте.
+            </p>
+            <div class="about-stats-grid">
+              <div class="stat-pill">
+                <span class="stat-num">10 лет</span>
+                <span class="stat-lbl">радуем гостей Нячанга</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-num">100%</span>
+                <span class="stat-lbl">живые свежие поставки</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-num">60 мин</span>
+                <span class="stat-lbl">экспресс-доставка</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="about-features-col">
+            <div class="pillar-item">
+              <span class="pillar-icon">🌹</span>
+              <div class="pillar-content">
+                <h4 class="pillar-title">Свежесть утренних поставок</h4>
+                <p class="pillar-desc">Цветы привозятся напрямую из прохладного Далата каждый день и хранятся в профессиональной флористической камере при правильной температуре.</p>
+              </div>
+            </div>
+            <div class="pillar-item">
+              <span class="pillar-icon">💌</span>
+              <div class="pillar-content">
+                <h4 class="pillar-title">Бесплатная записка к каждому букету</h4>
+                <p class="pillar-desc">Напишите ваши теплые пожелания при заказе — мы бесплатно перенесем их аккуратным почерком на дизайнерскую открытку.</p>
+              </div>
+            </div>
+            <div class="pillar-item">
+              <span class="pillar-icon">🛵</span>
+              <div class="pillar-content">
+                <h4 class="pillar-title">Бережные курьеры с аквабоксами</h4>
+                <p class="pillar-desc">Доставляем композиции во временных емкостях с водой и защитных коробках прямо в отели, апартаменты и рестораны города.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer with mandatory PulseCore attribution -->
   <footer class="site-footer">
     <div class="container">
@@ -306,8 +379,9 @@
       </div>
 
       <div class="footer-bottom">
-        <div>
-          © 2016–2026 Art Bouquet. Все права защищены.
+        <div class="footer-copy-wrap">
+          <span>© 2016–2026 Art Bouquet. Все права защищены.</span>
+          <a href="admin.html" class="crm-footer-link" title="Вход в CRM для флориста (PIN: 1234)">🔒 CRM</a>
         </div>
         <div>
           <a href="https://synaptiqlab.tech/#pricing" target="_blank" rel="noopener noreferrer" class="pulsecore-link">
@@ -318,7 +392,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=20.0"></script>
-  <script src="js/app.js?v=20.0"></script>
+  <script src="js/data.js?v=21.0"></script>
+  <script src="js/app.js?v=21.0"></script>
 </body>
 </html>
