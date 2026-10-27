@@ -347,6 +347,26 @@ function switchTab(tabId) {
     }
   });
 
+  document.querySelectorAll('.drawer-nav-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.getAttribute('data-tab') === tabId) {
+      item.classList.add('active');
+    }
+  });
+
+  const tabLabels = {
+    'timeline': 'Расписание на день',
+    'specialists': 'Мастера и смены',
+    'appointments': 'Журнал записей',
+    'services': 'Прейскурант и услуги',
+    'clients': 'База клиентов',
+    'payroll': 'Расчёт зарплат'
+  };
+  const activeLabel = document.getElementById('mobileActiveTabLabel');
+  if (activeLabel && tabLabels[tabId]) {
+    activeLabel.textContent = tabLabels[tabId];
+  }
+
   document.querySelectorAll('.admin-tab-pane').forEach(pane => {
     pane.style.display = 'none';
   });
@@ -829,15 +849,22 @@ function renderJournal() {
         </td>
       </tr>
     `;
+    const mobileContainer = document.getElementById('journalMobileCardsContainer');
+    if (mobileContainer) {
+      mobileContainer.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--text-dim); font-size: 13px;">Записи не найдены</div>';
+    }
     return;
   }
 
   let html = '';
+  let mobileHtml = '';
+
   filtered.forEach(a => {
     let statusClass = 'badge-status-confirmed';
-    if (a.status === 'new') statusClass = 'badge-status-new';
-    if (a.status === 'completed') statusClass = 'badge-status-completed';
-    if (a.status === 'cancelled') statusClass = 'badge-status-cancelled';
+    let statusLabel = 'Подтверждена';
+    if (a.status === 'new') { statusClass = 'badge-status-new'; statusLabel = 'Новая'; }
+    if (a.status === 'completed') { statusClass = 'badge-status-completed'; statusLabel = 'Выполнена'; }
+    if (a.status === 'cancelled') { statusClass = 'badge-status-cancelled'; statusLabel = 'Отменена'; }
 
     html += `
       <tr>
@@ -875,10 +902,128 @@ function renderJournal() {
         </td>
       </tr>
     `;
+
+    // Mobile Accordion Card
+    const phoneDisplay = a.phone ? `<a href="tel:${a.phone}" class="mobile-app-phone" onclick="event.stopPropagation();">📞 ${a.phone}</a>` : '<span style="color:var(--text-dim); font-size:11px;">Нет тел.</span>';
+
+    mobileHtml += `
+      <div class="mobile-app-card" onclick="toggleMobileAppCard('${a.id}')">
+        <!-- Свёрнутая видимая часть -->
+        <div class="mobile-app-summary">
+          <div class="mobile-app-top">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="mobile-app-time">⏰ ${a.time}</span>
+              <span class="mobile-app-date">${a.date}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge-status ${statusClass}" style="font-size: 10px; padding: 2px 7px;">${statusLabel}</span>
+              <span class="mobile-app-chevron">▾</span>
+            </div>
+          </div>
+
+          <div class="mobile-app-client-row">
+            <span class="mobile-app-client-name">${a.clientName}</span>
+            ${phoneDisplay}
+          </div>
+
+          <div class="mobile-app-service-row">
+            <span class="mobile-app-service-name">${a.serviceName}</span>
+            <span class="mobile-app-price">${window.noirData.formatMoney(a.price)}</span>
+          </div>
+        </div>
+
+        <!-- Раскрывающийся блок деталей -->
+        <div class="mobile-app-details" id="mobileAppDetails_${a.id}" style="display: none;">
+          <div class="mobile-app-details-grid">
+            <div class="mobile-detail-item">
+              <span class="detail-label">Мастер:</span>
+              <span class="detail-val">${a.specialistName || 'Не назначен'}</span>
+            </div>
+            <div class="mobile-detail-item">
+              <span class="detail-label">Длительность:</span>
+              <span class="detail-val">${a.duration || 60} мин</span>
+            </div>
+            <div class="mobile-detail-item">
+              <span class="detail-label">Номер брони:</span>
+              <span class="detail-val mono" style="color: var(--accent-gold);">${a.id}</span>
+            </div>
+            ${a.discountPercent > 0 ? `
+              <div class="mobile-detail-item">
+                <span class="detail-label">Скидка:</span>
+                <span class="detail-val" style="color: var(--color-success); font-weight: 700;">-${a.discountPercent}%</span>
+              </div>
+            ` : ''}
+          </div>
+
+          ${a.comment ? `
+            <div class="mobile-app-comment">
+              💬 <em>${a.comment}</em>
+            </div>
+          ` : ''}
+
+          <div class="mobile-app-actions-row">
+            <div style="flex: 1;">
+              <select class="status-select ${statusClass}" style="width: 100%; font-size: 12.5px; padding: 7px 10px;" onchange="handleQuickStatusChange('${a.id}', this.value)" onclick="event.stopPropagation();" title="Сменить статус">
+                <option value="new" ${a.status === 'new' ? 'selected' : ''}>Новая</option>
+                <option value="confirmed" ${a.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
+                <option value="completed" ${a.status === 'completed' ? 'selected' : ''}>Выполнена</option>
+                <option value="cancelled" ${a.status === 'cancelled' ? 'selected' : ''}>Отменена</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="event.stopPropagation(); openEditAppointmentModal('${a.id}');" style="padding: 7px 14px; font-size: 12px; font-weight: 700;">
+              ✏️ Изменить
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
   });
 
   tbody.innerHTML = html;
+
+  const mobileContainer = document.getElementById('journalMobileCardsContainer');
+  if (mobileContainer) {
+    mobileContainer.innerHTML = mobileHtml;
+  }
 }
+
+window.toggleMobileAppCard = function(appId) {
+  const details = document.getElementById(`mobileAppDetails_${appId}`);
+  if (!details) return;
+  const isHidden = details.style.display === 'none';
+  details.style.display = isHidden ? 'block' : 'none';
+  const card = details.closest('.mobile-app-card');
+  if (card) {
+    if (isHidden) card.classList.add('expanded');
+    else card.classList.remove('expanded');
+  }
+};
+
+window.toggleMobileAdminDrawer = function() {
+  const drawer = document.getElementById('adminMobileDrawer');
+  const overlay = document.getElementById('adminDrawerOverlay');
+  if (!drawer || !overlay) return;
+  const isActive = drawer.classList.contains('active');
+  if (isActive) {
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+  }
+};
+
+window.closeMobileAdminDrawer = function() {
+  const drawer = document.getElementById('adminMobileDrawer');
+  const overlay = document.getElementById('adminDrawerOverlay');
+  if (drawer) drawer.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+};
+
+window.handleDrawerNavClick = function(tabId) {
+  switchTab(tabId);
+  closeMobileAdminDrawer();
+};
 
 window.handleQuickStatusChange = function(appId, newStatus) {
   window.noirData.updateAppointmentStatus(appId, newStatus);
