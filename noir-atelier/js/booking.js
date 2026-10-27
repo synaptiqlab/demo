@@ -272,6 +272,30 @@ function handleNextStep() {
       comment: finalComment
     });
 
+    // Отправляем запись в единый бот SYNAPTIQ CRM Assistant
+    try {
+      const bookingSummaryText = `💇 Услуга: ${bookingState.serviceName}
+👤 Мастер: ${bookingState.specialistName}
+📅 Дата и время: ${bookingState.date} в ${bookingState.time} (${bookingState.duration} мин)
+${bookingState.discountPercent > 0 ? `⭐ Скидка лояльности: ${bookingState.discountPercent}%\n` : ''}${finalComment ? `💬 Пожелания: ${finalComment}` : ''}`;
+
+      fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_slug: "noir-atelier",
+          order_type: "salon_booking",
+          client_name: bookingState.clientName,
+          client_phone: bookingState.phone,
+          order_title: bookingSummaryText,
+          total_amount: bookingState.price,
+          currency: "VND"
+        })
+      }).catch(e => console.warn("CRM bot booking dispatch error:", e));
+    } catch (e) {
+      console.warn("CRM dispatch error:", e);
+    }
+
     renderStep5Success(newRecord);
     goToStep(5);
   } else if (bookingState.step === 5) {
