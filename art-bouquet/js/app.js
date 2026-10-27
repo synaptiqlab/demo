@@ -24,8 +24,15 @@ let selectedProduct = null;
 // Availability & custom prices map (synced with CRM admin)
 let availabilityMap = {};
 let pricesMap = {};
+let defaultMaxPrice = 8500000;
 
 let searchInput;
+let searchClearBtn;
+let filterToggleBtn;
+let filterDrawer;
+let filterCloseBtn;
+let filterResetBtn;
+let filterActiveBadge;
 let bouquetsGrid;
 let countDisplay;
 let productModal;
@@ -47,6 +54,12 @@ let addressGroup;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   searchInput = document.getElementById('searchInput');
+  searchClearBtn = document.getElementById('searchClearBtn');
+  filterToggleBtn = document.getElementById('filterToggleBtn');
+  filterDrawer = document.getElementById('filterDrawer');
+  filterCloseBtn = document.getElementById('filterCloseBtn');
+  filterResetBtn = document.getElementById('filterResetBtn');
+  filterActiveBadge = document.getElementById('filterActiveBadge');
   bouquetsGrid = document.getElementById('bouquetsGrid');
   countDisplay = document.getElementById('countDisplay');
   productModal = document.getElementById('productModal');
@@ -139,10 +152,64 @@ async function loadCatalogData() {
 
 // Filter listeners
 function initFilters() {
-  // Search
-  searchInput.addEventListener('input', (e) => {
-    activeFilters.search = e.target.value.trim().toLowerCase();
-    applyFilters();
+  // Search input live filtering
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      activeFilters.search = e.target.value.trim().toLowerCase();
+      if (searchClearBtn) {
+        searchClearBtn.style.display = activeFilters.search ? 'flex' : 'none';
+      }
+      applyFilters();
+      updateFilterActiveBadge();
+    });
+  }
+
+  // Clear search button
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+      }
+      activeFilters.search = '';
+      searchClearBtn.style.display = 'none';
+      applyFilters();
+      updateFilterActiveBadge();
+    });
+  }
+
+  // Toggle filter drawer
+  if (filterToggleBtn && filterDrawer) {
+    filterToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = filterDrawer.classList.toggle('open');
+      filterToggleBtn.classList.toggle('open', isOpen);
+    });
+  }
+
+  // Close filter drawer button
+  if (filterCloseBtn && filterDrawer) {
+    filterCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeFilterDrawer();
+    });
+  }
+
+  // Close drawer when clicking outside header
+  document.addEventListener('click', (e) => {
+    if (filterDrawer && filterDrawer.classList.contains('open')) {
+      const header = document.getElementById('siteHeader');
+      if (header && !header.contains(e.target)) {
+        closeFilterDrawer();
+      }
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && filterDrawer && filterDrawer.classList.contains('open')) {
+      closeFilterDrawer();
+    }
   });
 
   // Filter chips helper
@@ -156,6 +223,7 @@ function initFilters() {
         chip.classList.add('active');
         activeFilters[filterKey] = chip.getAttribute('data-filter');
         applyFilters();
+        updateFilterActiveBadge();
       });
     });
   }
@@ -164,6 +232,88 @@ function initFilters() {
   setupChipGroup('filterColor', 'color');
   initStockToggle();
   initPriceSlider();
+
+  // Reset all filters button
+  if (filterResetBtn) {
+    filterResetBtn.addEventListener('click', () => {
+      resetAllFilters();
+    });
+  }
+}
+
+function closeFilterDrawer() {
+  if (filterDrawer) filterDrawer.classList.remove('open');
+  if (filterToggleBtn) filterToggleBtn.classList.remove('open');
+}
+
+function resetAllFilters() {
+  if (searchInput) {
+    searchInput.value = '';
+  }
+  if (searchClearBtn) {
+    searchClearBtn.style.display = 'none';
+  }
+  activeFilters.search = '';
+  activeFilters.package = 'all';
+  activeFilters.color = 'all';
+  activeFilters.stock = 'all';
+
+  // Reset package chips
+  const pkgContainer = document.getElementById('filterPackage');
+  if (pkgContainer) {
+    const chips = pkgContainer.querySelectorAll('.filter-chip');
+    chips.forEach(c => c.classList.remove('active'));
+    const allChip = pkgContainer.querySelector('[data-filter="all"]');
+    if (allChip) allChip.classList.add('active');
+  }
+
+  // Reset color chips
+  const clrContainer = document.getElementById('filterColor');
+  if (clrContainer) {
+    const chips = clrContainer.querySelectorAll('.filter-chip');
+    chips.forEach(c => c.classList.remove('active'));
+    const allChip = clrContainer.querySelector('[data-filter="all"]');
+    if (allChip) allChip.classList.add('active');
+  }
+
+  // Reset stock toggle
+  const btnAll = document.getElementById('stockFilterAll');
+  const btnInStock = document.getElementById('stockFilterInStock');
+  if (btnAll && btnInStock) {
+    btnAll.classList.add('active');
+    btnInStock.classList.remove('active');
+  }
+
+  // Reset price slider
+  const slider = document.getElementById('priceRangeInput');
+  const maxLabel = document.getElementById('priceMaxLabel');
+  if (slider && defaultMaxPrice) {
+    slider.value = defaultMaxPrice;
+    activeFilters.maxPrice = defaultMaxPrice;
+    if (maxLabel) {
+      maxLabel.textContent = defaultMaxPrice.toLocaleString('de-DE') + ' ₫';
+    }
+  }
+
+  applyFilters();
+  updateFilterActiveBadge();
+}
+
+function updateFilterActiveBadge() {
+  if (!filterActiveBadge) return;
+  let count = 0;
+  if (activeFilters.package && activeFilters.package !== 'all') count++;
+  if (activeFilters.color && activeFilters.color !== 'all') count++;
+  if (activeFilters.maxPrice && defaultMaxPrice && activeFilters.maxPrice < defaultMaxPrice) count++;
+
+  if (count > 0) {
+    filterActiveBadge.textContent = count;
+    filterActiveBadge.style.display = 'inline-block';
+    if (filterToggleBtn) filterToggleBtn.classList.add('active');
+  } else {
+    filterActiveBadge.style.display = 'none';
+    if (filterToggleBtn) filterToggleBtn.classList.remove('active');
+  }
 }
 
 function initStockToggle() {
@@ -205,6 +355,7 @@ function initPriceSlider() {
     if (minLabel) minLabel.textContent = actualMin.toLocaleString('de-DE') + ' ₫';
     if (maxLabel) maxLabel.textContent = roundedMax.toLocaleString('de-DE') + ' ₫';
 
+    defaultMaxPrice = roundedMax;
     activeFilters.maxPrice = roundedMax;
   }
 
@@ -215,6 +366,7 @@ function initPriceSlider() {
       maxLabel.textContent = val.toLocaleString('de-DE') + ' ₫';
     }
     applyFilters();
+    updateFilterActiveBadge();
   });
 }
 
