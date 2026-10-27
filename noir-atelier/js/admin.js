@@ -86,10 +86,29 @@ function setupAuth() {
 
 
   if (pinForm) {
-    pinForm.addEventListener('submit', (e) => {
+    pinForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const entered = pinInput ? pinInput.value.trim() : '';
-      const isValid = window.noirData ? window.noirData.verifyAdminPin(entered) : (entered === "1234");
+      if (!entered) return;
+
+      const submitBtn = pinForm.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+
+      let isValid = false;
+      try {
+        const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tenant_id: "noir-atelier", pin: entered })
+        });
+        const resData = await resp.json();
+        isValid = resData && resData.success;
+      } catch (err) {
+        console.warn("ClientBase PIN check offline, using local verification:", err);
+        isValid = window.noirData ? window.noirData.verifyAdminPin(entered) : (entered === "1234");
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
       
       if (isValid) {
         sessionStorage.setItem('noir_admin_auth', 'true');
