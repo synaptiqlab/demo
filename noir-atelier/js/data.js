@@ -1024,6 +1024,16 @@ class NoirDataService {
     } catch (e) {
       console.error("Error syncing client for appointment:", e);
     }
+
+    // Автоматическая фоновая синхронизация с Cloudflare ClientBase D1
+    try {
+      fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...newRecord, tenant_id: "noir-atelier" })
+      }).catch(err => console.warn("Cloud appointment sync failed:", err));
+    } catch (e) {}
+
     return newRecord;
   }
 
@@ -1038,6 +1048,15 @@ class NoirDataService {
       } catch (e) {
         console.error("Error syncing client:", e);
       }
+
+      // Фоновая синхронизация обновления статуса в ClientBase D1
+      try {
+        fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...appointments[idx], tenant_id: "noir-atelier" })
+        }).catch(err => console.warn("Cloud appointment update failed:", err));
+      } catch (e) {}
       return appointments[idx];
     }
     return null;
