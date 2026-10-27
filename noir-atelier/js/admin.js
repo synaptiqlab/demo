@@ -202,21 +202,17 @@ async function pollTelegramPinRecoveryStatus() {
     const res = await fetch(`https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/check-pin-recovery?request_id=${activeRecoveryRequestId}`);
     const data = await res.json();
 
-    if (data && data.status === 'approved' && data.new_pin) {
+    if (data && data.status === 'approved') {
       clearInterval(recoveryPollTimer);
       recoveryPollTimer = null;
-      lastReceivedPin = data.new_pin;
 
       document.getElementById('recoveryStep_waiting').style.display = 'none';
       const succBox = document.getElementById('recoveryStep_success');
-      succBox.style.display = 'block';
+      if (succBox) succBox.style.display = 'block';
 
-      const disp = document.getElementById('recoveryReceivedPinDisplay');
-      if (disp) disp.textContent = data.new_pin;
-
-      // Also pre-fill the main login PIN field
+      // Keep PIN input clean so user enters the PIN manually from Telegram
       const pinInp = document.getElementById('pinInput');
-      if (pinInp) pinInp.value = data.new_pin;
+      if (pinInp) pinInp.value = '';
     } else if (data && data.status === 'denied') {
       clearInterval(recoveryPollTimer);
       recoveryPollTimer = null;
@@ -228,17 +224,15 @@ async function pollTelegramPinRecoveryStatus() {
   }
 }
 
-function applyRecoveredPinAndLogin() {
+function closePinRecoveryAndFocus() {
   closePinRecoveryModal();
-  sessionStorage.setItem('noir_admin_auth', 'true');
-  const pinScreen = document.getElementById('adminPinScreen');
-  const mainLayout = document.getElementById('adminMainLayout');
-  if (pinScreen) pinScreen.style.display = 'none';
-  if (mainLayout) mainLayout.style.display = 'flex';
-  loadDashboard();
+  const pinInp = document.getElementById('pinInput');
+  if (pinInp) {
+    pinInp.value = '';
+    pinInp.focus();
+  }
 }
-window.applyRecoveredPinAndLogin = applyRecoveredPinAndLogin;
-window.confirmResetPinToDefault = confirmResetPinToDefault;
+window.closePinRecoveryAndFocus = closePinRecoveryAndFocus;
 
 function openPinChangeModal() {
   const modal = document.getElementById('adminPinChangeModal');
