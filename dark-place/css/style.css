@@ -304,80 +304,103 @@ button, input, select, textarea {
   text-shadow: 0 0 20px rgba(255, 43, 68, 0.6);
 }
 
-.hero-gothic-tagline {
-  font-size: clamp(17px, 2.4vw, 22px);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #FFFFFF;
-  opacity: 0.95;
-  margin: 0 auto 12px;
-}
-
-.hero-gothic-desc {
-  font-size: 16px;
-  color: var(--text-muted);
-  max-width: 660px;
-  margin: 0 auto 28px;
-  line-height: 1.6;
-}
-
-/* 5 Neat & Laconic Plaques (No Emojis) */
-.hero-plaques-grid {
+/* 4 Pillars Photo Grid (Desktop 4 in a row, Mobile 2x2 chess grid) */
+.hero-pillars-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  max-width: 960px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 980px;
   margin: 0 auto 34px;
   width: 100%;
 }
 
-.hero-plaque-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 10px;
-  background: linear-gradient(180deg, rgba(22, 26, 36, 0.9) 0%, rgba(14, 17, 24, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(8px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: center;
-  min-height: 54px;
+.hero-pillar-card {
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 165px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  cursor: default;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: left;
 }
 
-.hero-plaque-card::before {
-  content: '';
+.pillar-img {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #FF2B44;
-  opacity: 0;
-  transition: opacity 0.25s ease;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.68) contrast(1.15);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+  z-index: 0;
 }
 
-.hero-plaque-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 43, 68, 0.5);
-  box-shadow: 0 8px 24px rgba(255, 43, 68, 0.2), 0 0 12px rgba(255, 43, 68, 0.15);
-  background: linear-gradient(180deg, rgba(30, 36, 50, 0.95) 0%, rgba(18, 22, 32, 0.98) 100%);
+.pillar-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13, 15, 20, 0.15) 0%, rgba(13, 15, 20, 0.75) 60%, rgba(13, 15, 20, 0.98) 100%);
+  z-index: 1;
+  transition: background 0.35s ease;
 }
 
-.hero-plaque-card:hover::before {
-  opacity: 1;
+.hero-pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 43, 68, 0.6);
+  box-shadow: 0 16px 36px rgba(255, 43, 68, 0.22), 0 0 20px rgba(255, 43, 68, 0.18);
 }
 
-.plaque-title {
-  font-size: 13.5px;
+.hero-pillar-card:hover .pillar-img {
+  transform: scale(1.08);
+  filter: brightness(0.82) contrast(1.1);
+}
+
+.hero-pillar-card:hover .pillar-overlay {
+  background: linear-gradient(180deg, rgba(13, 15, 20, 0.05) 0%, rgba(13, 15, 20, 0.65) 60%, rgba(13, 15, 20, 0.95) 100%);
+}
+
+.pillar-info {
+  position: relative;
+  z-index: 2;
+  padding: 14px 16px;
+}
+
+.pillar-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 700;
+  color: #FF2B44;
+  letter-spacing: 1.5px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.pillar-title {
+  font-family: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
   color: #FFFFFF;
+  letter-spacing: 1.5px;
+  line-height: 1.05;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.pillar-desc {
+  font-size: 11.5px;
+  color: #E2E8F0;
+  font-weight: 500;
   line-height: 1.3;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
 }
 
 .hero-actions {
@@ -1572,66 +1595,66 @@ button, input, select, textarea {
   }
   .hero-gothic-title {
     font-family: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
-    font-size: clamp(32px, 14vw, 58px);
+    font-size: clamp(28px, 11vw, 48px);
     font-weight: 400;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     line-height: 1.0;
     margin: 0 0 4px;
     white-space: nowrap;
     display: inline-block;
+    max-width: 100%;
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9), 0 0 24px rgba(255, 43, 68, 0.35);
   }
   .hero-gothic-sub {
-    font-size: clamp(14.5px, 7.1vw, 28px);
-    letter-spacing: 0.06em;
+    font-size: clamp(11px, 4.8vw, 19px);
+    letter-spacing: 0.02em;
     line-height: 1.08;
-    margin: 0 0 7px;
+    margin: 0 0 8px;
     white-space: nowrap;
     display: inline-block;
+    max-width: 100%;
     transform: none;
     text-shadow: 0 0 16px rgba(255, 43, 68, 0.5);
   }
-  .hero-gothic-tagline {
-    font-size: 13px;
-    line-height: 1.3;
-    letter-spacing: 0.3px;
-    margin: 0 auto 5px;
-  }
-  .hero-gothic-desc {
-    font-size: 11.5px;
-    line-height: 1.45;
-    margin: 0 auto 10px;
-    max-width: 340px;
-    color: #9CA3AF;
+  /* 2x2 Chess Grid for Mobile */
+  .hero-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-width: 360px;
+    margin: 0 auto 16px;
+    width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
   }
 
-  /* Compact & Narrow Direction Badges */
-  .hero-plaques-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    max-width: 360px;
-    margin: 0 auto 14px;
-    width: 100%;
+  .hero-pillar-card {
+    height: 94px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   }
-  .hero-plaque-card {
-    min-height: unset;
-    padding: 5px 9px;
-    border-radius: var(--radius-xs);
-    background: linear-gradient(180deg, rgba(22, 26, 36, 0.9) 0%, rgba(14, 17, 24, 0.95) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    flex: 0 0 auto;
+
+  .pillar-info {
+    padding: 8px 10px;
   }
-  .hero-plaque-card::before {
-    display: none;
+
+  .pillar-badge {
+    font-size: 8.5px;
+    letter-spacing: 1px;
+    margin-bottom: 0px;
   }
-  .plaque-title {
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-    letter-spacing: 0.2px;
+
+  .pillar-title {
+    font-size: 17px;
+    letter-spacing: 1px;
+    margin-bottom: 1px;
+  }
+
+  .pillar-desc {
+    font-size: 9.5px;
+    line-height: 1.15;
+    letter-spacing: 0.1px;
   }
 
   /* Compact Action Buttons */

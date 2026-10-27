@@ -296,23 +296,26 @@ function setupHeroBrandFit() {
       return;
     }
 
-    // Comfortable 6px margin on each side (total 12px)
-    const availableWidth = Math.max(280, window.innerWidth - 12);
+    // Calculate actual container inner width safely
+    const wrap = title.parentElement || document.body;
+    const availableWidth = Math.min(wrap.clientWidth - 16, window.innerWidth - 32);
 
     // Measure base widths with standard 100px font
     title.style.fontSize = '100px';
-    title.style.letterSpacing = '0.06em';
-    const titleWidthAt100 = title.getBoundingClientRect().width;
+    title.style.letterSpacing = '0.04em';
+    const titleWidthAt100 = title.getBoundingClientRect().width || 450;
     const calcTitleSize = Math.floor(100 * (availableWidth / titleWidthAt100));
 
     sub.style.fontSize = '100px';
-    sub.style.letterSpacing = '0.06em';
-    const subWidthAt100 = sub.getBoundingClientRect().width;
+    sub.style.letterSpacing = '0.04em';
+    const subWidthAt100 = sub.getBoundingClientRect().width || 550;
     const calcSubSize = Math.floor(100 * (availableWidth / subWidthAt100));
 
-    // Apply proportional matched sizes
-    title.style.fontSize = calcTitleSize + 'px';
-    sub.style.fontSize = calcSubSize + 'px';
+    // Apply proportional matched sizes with safety clamp
+    title.style.fontSize = Math.min(calcTitleSize, 48) + 'px';
+    title.style.letterSpacing = '0.04em';
+    sub.style.fontSize = Math.min(calcSubSize, 19) + 'px';
+    sub.style.letterSpacing = '0.02em';
   }
 
   window.addEventListener('resize', fit);
