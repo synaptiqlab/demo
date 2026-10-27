@@ -127,10 +127,25 @@ function setupAuth() {
 // УПРАВЛЕНИЕ PIN-КОДОМ И ВОССТАНОВЛЕНИЕ ДОСТУПА
 // ==========================================
 
+let recoveryPollTimer = null;
+let activeRecoveryRequestId = null;
+let lastReceivedPin = null;
+
 function openPinRecoveryModal() {
   const modal = document.getElementById('pinRecoveryModal');
-  const notice = document.getElementById('recoverySuccessNotice');
-  if (notice) notice.style.display = 'none';
+  const stepReq = document.getElementById('recoveryStep_request');
+  const stepWait = document.getElementById('recoveryStep_waiting');
+  const stepSucc = document.getElementById('recoveryStep_success');
+
+  if (stepReq) stepReq.style.display = 'block';
+  if (stepWait) stepWait.style.display = 'none';
+  if (stepSucc) stepSucc.style.display = 'none';
+
+  if (recoveryPollTimer) {
+    clearInterval(recoveryPollTimer);
+    recoveryPollTimer = null;
+  }
+
   if (modal) {
     modal.style.display = 'flex';
     modal.classList.add('active');
@@ -140,6 +155,10 @@ window.openPinRecoveryModal = openPinRecoveryModal;
 
 function closePinRecoveryModal() {
   const modal = document.getElementById('pinRecoveryModal');
+  if (recoveryPollTimer) {
+    clearInterval(recoveryPollTimer);
+    recoveryPollTimer = null;
+  }
   if (modal) {
     modal.classList.remove('active');
     modal.style.display = 'none';
@@ -147,22 +166,78 @@ function closePinRecoveryModal() {
 }
 window.closePinRecoveryModal = closePinRecoveryModal;
 
-function confirmResetPinToDefault() {
-  if (window.noirData) {
-    window.noirData.resetAdminPinToDefault();
+async function requestTelegramPinRecovery() {
+  const btn = document.getElementById('sendTgRecoveryBtn');
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/request-pin-recovery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenant_id: "noir-atelier" })
+    });
+    const data = await res.json();
+    if (data && data.success && data.request_id) {
+      activeRecoveryRequestId = data.request_id;
+      document.getElementById('recoveryStep_request').style.display = 'none';
+      document.getElementById('recoveryStep_waiting').style.display = 'block';
+
+      // Start polling status every 2 seconds
+      recoveryPollTimer = setInterval(pollTelegramPinRecoveryStatus, 2000);
+    } else {
+      alert("Не удалось отправить запрос: " + (data.error || "Ошибка сети"));
+      if (btn) btn.disabled = false;
+    }
+  } catch (err) {
+    alert("Ошибка соединения: " + err.message);
+    if (btn) btn.disabled = false;
   }
-  const notice = document.getElementById('recoverySuccessNotice');
-  if (notice) {
-    notice.style.display = 'block';
-  }
-  const pinInput = document.getElementById('pinInput');
-  if (pinInput) pinInput.value = '1234';
-  const pinError = document.getElementById('pinErrorMsg');
-  if (pinError) pinError.style.display = 'none';
-  setTimeout(() => {
-    closePinRecoveryModal();
-  }, 1200);
 }
+window.requestTelegramPinRecovery = requestTelegramPinRecovery;
+
+async function pollTelegramPinRecoveryStatus() {
+  if (!activeRecoveryRequestId) return;
+
+  try {
+    const res = await fetch(`https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/check-pin-recovery?request_id=${activeRecoveryRequestId}`);
+    const data = await res.json();
+
+    if (data && data.status === 'approved' && data.new_pin) {
+      clearInterval(recoveryPollTimer);
+      recoveryPollTimer = null;
+      lastReceivedPin = data.new_pin;
+
+      document.getElementById('recoveryStep_waiting').style.display = 'none';
+      const succBox = document.getElementById('recoveryStep_success');
+      succBox.style.display = 'block';
+
+      const disp = document.getElementById('recoveryReceivedPinDisplay');
+      if (disp) disp.textContent = data.new_pin;
+
+      // Also pre-fill the main login PIN field
+      const pinInp = document.getElementById('pinInput');
+      if (pinInp) pinInp.value = data.new_pin;
+    } else if (data && data.status === 'denied') {
+      clearInterval(recoveryPollTimer);
+      recoveryPollTimer = null;
+      alert("Запрос на сброс PIN-кода был отклонён администратором в Telegram.");
+      closePinRecoveryModal();
+    }
+  } catch (e) {
+    console.warn("Poll recovery error:", e);
+  }
+}
+
+function applyRecoveredPinAndLogin() {
+  closePinRecoveryModal();
+  sessionStorage.setItem('noir_admin_auth', 'true');
+  const pinScreen = document.getElementById('adminPinScreen');
+  const mainLayout = document.getElementById('adminMainLayout');
+  if (pinScreen) pinScreen.style.display = 'none';
+  if (mainLayout) mainLayout.style.display = 'flex';
+  loadDashboard();
+}
+window.applyRecoveredPinAndLogin = applyRecoveredPinAndLogin;
 window.confirmResetPinToDefault = confirmResetPinToDefault;
 
 function openPinChangeModal() {
