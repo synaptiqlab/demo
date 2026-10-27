@@ -128,13 +128,13 @@
     }
 
     @media (max-width: 960px) {
-      .payroll-master-row, .client-list-row {
+      .payroll-master-row {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         gap: 14px;
       }
-      .payroll-master-row > div, .client-list-row > div {
+      .payroll-master-row > div {
         width: 100%;
       }
     }
@@ -542,22 +542,22 @@
 
         <!-- TAB 5: БАЗА КЛИЕНТОВ -->
         <div class="admin-tab-pane" id="tabPane_clients" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+          <div class="clients-tab-header-box" style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
             <div>
               <h3 style="font-size: 15px; font-weight: 800; color: #FFFFFF;">База клиентов Dark Place</h3>
               <p style="font-size: 12px; color: var(--text-dim); margin-top: 2px;" id="clientsStatsSub">Карточки гостей, история процедур, статистика визитов и заметки мастеров</p>
             </div>
-            <button type="button" class="btn btn-primary" onclick="openCreateClientModal()" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">
+            <button type="button" class="btn btn-primary clients-add-btn" onclick="openCreateClientModal()" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">
               + Новый гость
             </button>
           </div>
 
           <!-- Поиск и фильтры клиентов -->
-          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-            <div style="flex-grow: 1; min-width: 240px;">
+          <div class="clients-filters-bar" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div class="filter-search-box" style="flex-grow: 1; min-width: 240px;">
               <input type="text" id="clientSearchInput" class="form-input" placeholder="🔍 Поиск по имени или номеру телефона..." style="padding: 10px 16px; font-size: 13px;">
             </div>
-            <div style="width: 210px;">
+            <div class="filter-cat-box" style="width: 210px;">
               <select id="clientCategoryFilter" class="form-select" style="padding: 10px 14px; font-size: 13px;">
                 <option value="all">Все категории гостей</option>
                 <option value="vip">⭐ VIP гости</option>
@@ -565,7 +565,7 @@
                 <option value="new">✨ Новые гости</option>
               </select>
             </div>
-            <div style="width: 230px;">
+            <div class="filter-sort-box" style="width: 230px;">
               <select id="clientSortSelect" class="form-select" style="padding: 10px 14px; font-size: 13px;">
                 <option value="spent_desc">Сортировка: По сумме чеков (LTV)</option>
                 <option value="visits_desc">Сортировка: По числу визитов</option>
@@ -785,7 +785,7 @@
         <div class="modal-body">
           <input type="hidden" id="editAppId">
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="edit-app-grid-client" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
             <div>
               <label class="form-label">Имя клиента *</label>
               <input type="text" id="editAppClientName" class="form-input" required>
@@ -796,7 +796,7 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div class="edit-app-grid-schedule" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px;">
             <div>
               <label class="form-label">Дата визита *</label>
               <input type="date" id="editAppDate" class="form-input" required>
@@ -824,8 +824,8 @@
           </div>
 
           <!-- Секция динамического добавления/удаления услуг -->
-          <div style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div class="edit-app-services-box" style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 6px;">
               <span style="font-size: 13px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; letter-spacing: 1px;">
                 Услуги в чеке
               </span>
@@ -838,7 +838,7 @@
               <!-- Rendered dynamically via admin.js -->
             </div>
 
-            <div style="display: flex; gap: 10px;">
+            <div class="edit-app-add-service-row" style="display: flex; gap: 10px;">
               <select id="editAppAddServiceSelect" class="form-select" style="font-size: 13px; flex-grow: 1;">
                 <!-- Rendered dynamically -->
               </select>
@@ -854,7 +854,7 @@
           </div>
         </div>
 
-        <div class="modal-footer">
+        <div class="modal-footer edit-app-modal-footer">
           <button type="button" class="btn btn-secondary modal-close-trigger">
             Отмена
           </button>
@@ -1144,27 +1144,27 @@
         <input type="hidden" id="clientModalId">
 
         <!-- 4 KPI Блока гостя -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
-          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+        <div class="client-modal-kpi-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+          <div class="client-modal-kpi-item" style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
             <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Всего визитов</div>
             <div id="clientModalTotalVisits" style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">0</div>
           </div>
-          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+          <div class="client-modal-kpi-item" style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
             <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Сумма покупок (LTV)</div>
             <div id="clientModalTotalSpent" style="font-size: 18px; font-weight: 800; color: var(--accent-gold); margin-top: 4px;">0 ₫</div>
           </div>
-          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+          <div class="client-modal-kpi-item" style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
             <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Средний чек</div>
             <div id="clientModalAvgCheck" style="font-size: 18px; font-weight: 800; color: var(--color-success); margin-top: 4px;">0 ₫</div>
           </div>
-          <div style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
+          <div class="client-modal-kpi-item" style="background: var(--bg-surface); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: center;">
             <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Любимый мастер</div>
             <div id="clientModalFavSpecialist" style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">—</div>
           </div>
         </div>
 
         <!-- Двухколоночный блок: Заметки и История -->
-        <div style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 20px;">
+        <div class="client-modal-columns-grid" style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 20px;">
           <!-- Левая колонка: Профиль и Заметки мастера -->
           <div>
             <h4 style="font-size: 14px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">
@@ -1189,7 +1189,7 @@
                 <input type="text" id="clientModalNameInput" class="form-input" style="padding: 6px 10px; font-size: 12px;" placeholder="Имя Фамилия гостя">
               </div>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+              <div class="client-modal-phone-tele-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <div>
                   <label class="form-label" style="font-size: 10px;">Телефон</label>
                   <input type="text" id="clientModalPhoneInput" class="form-input" style="padding: 6px 10px; font-size: 12px;">
@@ -1254,7 +1254,7 @@
         </div>
       </div>
 
-      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="modal-footer client-modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
         <button type="button" class="btn btn-secondary modal-close-trigger">
           Закрыть
         </button>

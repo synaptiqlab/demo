@@ -1954,55 +1954,79 @@ function renderClientsAdmin() {
     const apps = window.noirData.getClientAppointments(client.id);
     const lastApp = apps.length > 0 ? apps[0] : null;
 
+    const cleanPhone = (client.phone || '').replace(/[^\d+]/g, '');
+    const telLink = cleanPhone 
+      ? `<a href="tel:${cleanPhone}" class="client-phone-link" style="color: inherit; text-decoration: none;">📞 ${client.phone}</a>` 
+      : '<span>📞 —</span>';
+    const tgLink = client.telegram 
+      ? `<a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener" style="color: var(--accent-gold); font-family: var(--font-mono); text-decoration: none;">${client.telegram}</a>` 
+      : '';
+
     html += `
       <div class="client-list-row">
-        <!-- 1. Имя и аватар гостя -->
-        <div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
-          <div style="width: 44px; height: 44px; border-radius: 50%; background: ${avatarGrad}; color: ${avatarColor}; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid ${avatarBorder}; flex-shrink: 0;">
+        <!-- 1. Имя, статус и контакты гостя -->
+        <div class="client-cell-user">
+          <div class="client-avatar" style="width: 44px; height: 44px; border-radius: 50%; background: ${avatarGrad}; color: ${avatarColor}; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid ${avatarBorder}; flex-shrink: 0;">
             ${mono}
           </div>
-          <div style="min-width: 0;">
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span style="font-size: 15px; font-weight: 800; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${client.name}</span>
+          <div class="client-user-info" style="min-width: 0; flex: 1;">
+            <div class="client-name-line" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="client-name" style="font-size: 15px; font-weight: 800; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${client.name}</span>
               ${badgeHtml}
               ${discountBadge}
             </div>
-            <div style="font-size: 12px; color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span>📞 ${client.phone || '—'}</span>
-              ${client.telegram ? `<span style="color: var(--accent-gold); font-family: var(--font-mono);">${client.telegram}</span>` : ''}
+            <div class="client-contact-line" style="font-size: 12px; color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              ${telLink}
+              ${tgLink}
             </div>
           </div>
         </div>
 
-        <!-- 2. Визитов -->
-        <div style="text-align: center;">
+        <!-- 2. Визитов (Desktop) -->
+        <div class="client-cell-visits" style="text-align: center;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Визитов</div>
           <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-top: 2px;">${client.totalVisits || 1}</div>
         </div>
 
-        <!-- 3. Сумма (LTV) -->
-        <div style="text-align: center;">
+        <!-- 3. Сумма LTV (Desktop) -->
+        <div class="client-cell-ltv" style="text-align: center;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Сумма (LTV)</div>
           <div style="font-size: 15px; font-weight: 800; color: var(--accent-gold); margin-top: 2px;">${window.noirData.formatMoney(client.totalSpent)}</div>
         </div>
 
-        <!-- 4. Последний визит -->
-        <div style="min-width: 0;">
+        <!-- 4. Последний визит (Desktop) -->
+        <div class="client-cell-recent" style="min-width: 0;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Последний визит</div>
           <div style="font-size: 12px; color: #FFFFFF; font-weight: 600; margin-top: 2px;">
             ${client.lastVisit || '—'}
           </div>
           <div style="font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-            ${lastApp ? lastApp.serviceName : (client.favoriteSpecialistName ? 'Мастер: ' + client.favoriteSpecialistName : 'Визит в ателье')}
+            ${lastApp ? lastApp.serviceName : (client.favoriteSpecialistName ? 'Мастер: ' + client.favoriteSpecialistName : 'Визит в салон')}
+          </div>
+        </div>
+
+        <!-- Mobile Stats Strip (Visible only on mobile) -->
+        <div class="client-mobile-stats-strip">
+          <div class="stat-pill">
+            <span class="pill-lbl">Визитов</span>
+            <span class="pill-val">${client.totalVisits || 1}</span>
+          </div>
+          <div class="stat-pill">
+            <span class="pill-lbl">Сумма LTV</span>
+            <span class="pill-val-gold">${window.noirData.formatMoney(client.totalSpent)}</span>
+          </div>
+          <div class="stat-pill">
+            <span class="pill-lbl">Последний</span>
+            <span class="pill-val">${client.lastVisit ? client.lastVisit.slice(5) : '—'}</span>
           </div>
         </div>
 
         <!-- 5. Действия -->
-        <div style="display: flex; align-items: center; gap: 10px; justify-content: flex-end;">
-          <button type="button" class="btn btn-secondary" onclick="openClientModal('${client.id}')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; white-space: nowrap;">
-            Карточка гостя
+        <div class="client-cell-actions">
+          <button type="button" class="btn btn-secondary btn-card-guest" onclick="openClientModal('${client.id}')">
+            👤 Карточка
           </button>
-          <button type="button" class="btn btn-primary" onclick="quickBookForClient('${client.id}')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; white-space: nowrap;">
+          <button type="button" class="btn btn-primary btn-quick-book" onclick="quickBookForClient('${client.id}')">
             + Записать
           </button>
         </div>
