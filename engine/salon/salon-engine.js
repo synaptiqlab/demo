@@ -363,10 +363,13 @@
                 След. нед. ›
               </button>
             </div>
-            <div class="schedule-actions-wrap">
+            <div class="schedule-actions-wrap" style="display: flex; align-items: center; gap: 14px;">
               <div id="scheduleCurrentWeekLabel" class="schedule-week-label">
                 Неделя
               </div>
+              <button type="button" class="btn btn-primary" onclick="openCreateSpecialistModal()" style="padding: 7px 16px; font-size: 12px; font-weight: 700; white-space: nowrap;">
+                + Добавить нового мастера
+              </button>
             </div>
           </div>
 
