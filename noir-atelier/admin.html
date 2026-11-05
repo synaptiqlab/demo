@@ -336,8 +336,14 @@
       <div class="admin-sidebar-header">
         <div class="crm-sidebar-brand">
           <span class="crm-sidebar-name">NOIR Atelier</span>
-          <span class="crm-sidebar-sub">CRM &amp; Operations</span>
+          <span class="crm-sidebar-sub">CRM &amp; Client Operations</span>
         </div>
+        <div id="timelineCurrentDateDisplay" style="font-size: 11px; font-weight: 600; color: var(--accent-primary); margin-top: 6px; letter-spacing: 0.2px; text-transform: capitalize;">Сегодня</div>
+        <div style="height: 1px; background: var(--border-subtle); margin: 14px 0 14px 0;"></div>
+        <button type="button" class="btn btn-primary" onclick="openQuickBookingFor('any', '12:00')" style="width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--radius-sm); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.28);">
+          <span style="font-size: 16px; font-weight: 800; line-height: 1;">+</span>
+          <span>Новая запись</span>
+        </button>
       </div>
 
       <nav class="admin-sidebar-nav">
@@ -368,6 +374,16 @@
       </nav>
 
       <div style="padding: 16px 14px; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+          <button type="button" class="btn btn-secondary" id="timelineRefreshBtn" style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm);" title="Обновить данные расписания">
+            <span>🔄</span>
+            <span>Обновить</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm);" title="Сменить PIN-код администратора">
+            <span>🔒</span>
+            <span>Сменить PIN</span>
+          </button>
+        </div>
         <!-- Theme Switcher (Desktop Sidebar) - Directly above website button -->
         <div class="crm-theme-switcher" style="margin-bottom: 12px;">
           <button type="button" class="crm-theme-btn theme-btn-dark" onclick="setTheme('dark')" id="themeBtnDarkDesktop" title="Тёмная тема">
@@ -379,34 +395,16 @@
             <span>Светлая</span>
           </button>
         </div>
-        <a href="index.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; text-align: center;">
-          ← На витрину сайта
+        <a href="index.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; text-align: center; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <span>←</span>
+          <span>На витрину сайта</span>
+          <span style="font-size: 11px; opacity: 0.6;">↗</span>
         </a>
       </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="admin-main">
-      <!-- Topbar -->
-      <header class="admin-topbar">
-        <div>
-          <h2 style="font-size: 18px; font-weight: 800; color: var(--text-main); letter-spacing: -0.3px;">NOIR Atelier &bull; Управление</h2>
-          <div style="font-size: 12px; color: var(--text-dim);" id="timelineCurrentDateDisplay">Сегодня</div>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 6px 12px; font-size: 12px; border-color: var(--border-medium); display: flex; align-items: center; gap: 6px;" title="Изменить PIN-код администратора">
-            <span>🔒</span>
-            <span>Сменить PIN</span>
-          </button>
-          <button type="button" class="btn btn-secondary" id="timelineRefreshBtn" style="padding: 6px 14px; font-size: 12px;">
-            🔄 Обновить
-          </button>
-          <button type="button" class="btn btn-primary" onclick="openQuickBookingFor('any', '12:00')" style="padding: 6px 16px; font-size: 12px;">
-            + Новая запись
-          </button>
-        </div>
-      </header>
 
 
       <!-- Content Views -->
