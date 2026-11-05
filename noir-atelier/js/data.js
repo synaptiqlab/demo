@@ -1,3 +1,11 @@
+function getLocalDateString(d = new Date()) {
+  const dateObj = (d instanceof Date) ? d : new Date(d);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 /**
  * NOIR Hair Atelier - Database & Data Service
  * Универсальная CRM-платформа, каталог услуг, мастера и LocalStorage синхронизация
@@ -1354,8 +1362,8 @@ class NoirDataService {
       discountPercent: Math.max(0, Math.min(100, parseInt(clientData.discountPercent, 10) || 0)),
       notes: clientData.notes || "",
       hairNotes: clientData.hairNotes || "",
-      firstVisit: clientData.firstVisit || new Date().toISOString().split('T')[0],
-      lastVisit: clientData.lastVisit || new Date().toISOString().split('T')[0],
+      firstVisit: clientData.firstVisit || getLocalDateString(new Date()),
+      lastVisit: clientData.lastVisit || getLocalDateString(new Date()),
       totalVisits: clientData.totalVisits || 1,
       totalSpent: clientData.totalSpent || 0,
       favoriteSpecialistId: clientData.favoriteSpecialistId || "",
@@ -1439,7 +1447,7 @@ class NoirDataService {
 
       let totalVisits = 0;
       let totalSpent = 0;
-      let lastDate = client.lastVisit || app.date || new Date().toISOString().split('T')[0];
+      let lastDate = client.lastVisit || app.date || getLocalDateString(new Date());
       const specialistFreq = {};
 
       clientApps.forEach(a => {
@@ -1502,8 +1510,8 @@ class NoirDataService {
         category: "new",
         notes: app.comment ? ("Заметка из брони: " + app.comment) : "",
         hairNotes: "",
-        firstVisit: app.date || new Date().toISOString().split('T')[0],
-        lastVisit: app.date || new Date().toISOString().split('T')[0],
+        firstVisit: app.date || getLocalDateString(new Date()),
+        lastVisit: app.date || getLocalDateString(new Date()),
         totalVisits: 1,
         totalSpent: app.price || 0,
         favoriteSpecialistId: app.specialistId || "",
@@ -1746,7 +1754,7 @@ class NoirDataService {
 function generateDemoPayoutOrders() {
   const now = Date.now();
   const d = (days) => new Date(now - days * 86400000);
-  const fmt = (dateObj) => dateObj.toISOString().split('T')[0];
+  const fmt = (dateObj) => getLocalDateString(dateObj);
 
   const lastWeekMon = fmt(d(11));
   const lastWeekSun = fmt(d(5));
