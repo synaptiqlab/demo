@@ -1084,16 +1084,21 @@ class NoirDataService {
 
   async getAdminToken() {
     let token = sessionStorage.getItem('noir_admin_token');
+    if (!token) {
+      try { token = localStorage.getItem('noir_admin_token'); } catch(e) {}
+    }
     if (token) return token;
     try {
+      const tenant = (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || window.currentSalonTenant || "noir-atelier";
       const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenant_id: "noir-atelier", pin: "1234" })
+        body: JSON.stringify({ tenant_id: tenant, pin: "1234" })
       });
       const data = await resp.json();
       if (data && data.token) {
         sessionStorage.setItem('noir_admin_token', data.token);
+        try { localStorage.setItem('noir_admin_token', data.token); } catch(e) {}
         return data.token;
       }
     } catch (e) {
@@ -1144,16 +1149,28 @@ class NoirDataService {
   }
 
   // Загрузка и синхронизация актуальных записей из Cloudflare ClientBase D1
-  async syncFromCloud() {
+  async syncFromCloud(isRetry = false) {
     try {
       const token = await this.getAdminToken();
       if (!token) return;
-      const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments?tenant_id=noir-atelier", {
+      const tenant = (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || window.currentSalonTenant || "noir-atelier";
+      const resp = await fetch(`https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments?tenant_id=${tenant}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
       if (resp.status === 401) {
+        sessionStorage.removeItem('noir_admin_token');
+        try { localStorage.removeItem('noir_admin_token'); } catch(e) {}
+
+        if (!isRetry && (window.isSalonDemoMode || sessionStorage.getItem('noir_admin_auth') === 'true' || localStorage.getItem('noir_admin_auth') === 'true')) {
+          console.warn("Token 401, attempting silent token refresh...");
+          const freshToken = await this.getAdminToken();
+          if (freshToken) {
+            return this.syncFromCloud(true);
+          }
+        }
+
         if (typeof window.handleSessionExpired === 'function') {
           window.handleSessionExpired();
         }
