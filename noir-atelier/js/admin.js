@@ -2322,7 +2322,7 @@ window.openClientModal = function(clientId) {
 
   if (avatarEl) {
     avatarEl.textContent = mono;
-    avatarEl.className = 'client-avatar' + (client.category === 'vip' ? ' avatar-vip' : client.category === 'regular' ? ' avatar-regular' : '');
+    avatarEl.className = 'client-avatar';
     avatarEl.style.background = '';
     avatarEl.style.color = '';
     avatarEl.style.borderColor = '';
@@ -2437,7 +2437,35 @@ window.openClientModal = function(clientId) {
     }
   }
 
+  // Сворачиваем аккордеон истории визитов по умолчанию при открытии
+  if (typeof window.toggleClientHistoryAccordion === 'function') {
+    window.toggleClientHistoryAccordion(false);
+  }
+
   modal.classList.add('active');
+};
+
+window.toggleClientHistoryAccordion = function(forceState) {
+  const body = document.getElementById('clientHistoryAccordionBody');
+  const label = document.getElementById('clientHistoryToggleLabel');
+  const arrow = document.getElementById('clientHistoryToggleArrow');
+  const header = document.getElementById('clientHistoryAccordionHeader');
+  if (!body) return;
+
+  const isClosed = body.style.display === 'none' || !body.style.display;
+  const shouldOpen = typeof forceState === 'boolean' ? forceState : isClosed;
+
+  if (shouldOpen) {
+    body.style.display = 'block';
+    if (label) label.textContent = 'Свернуть';
+    if (arrow) arrow.textContent = '▲';
+    if (header) header.classList.add('expanded');
+  } else {
+    body.style.display = 'none';
+    if (label) label.textContent = 'Развернуть';
+    if (arrow) arrow.textContent = '▼';
+    if (header) header.classList.remove('expanded');
+  }
 };
 
 window.saveCurrentClientProfile = function() {
