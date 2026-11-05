@@ -39,8 +39,8 @@ function setTheme(theme, save = true) {
     } catch (e) {}
   }
 
-  // Update button active states across all switchers (Desktop, Mobile, Topbar)
-  ['Desktop', 'Mobile', 'Topbar'].forEach(mode => {
+  // Update button active states across all switchers (Desktop, Mobile)
+  ['Desktop', 'Mobile'].forEach(mode => {
     const darkBtn = document.getElementById(`themeBtnDark${mode}`);
     const lightBtn = document.getElementById(`themeBtnLight${mode}`);
     if (darkBtn && lightBtn) {
@@ -2186,23 +2186,19 @@ function renderClientsAdmin() {
   let html = '';
   filtered.forEach(client => {
     const mono = getClientMonogram(client.name);
-    let badgeHtml = '<span style="background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--border-subtle); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">Новый</span>';
-    let avatarBorder = 'var(--border-subtle)';
-    let avatarGrad = 'linear-gradient(135deg, #1C2333, #0E1118)';
-    let avatarColor = '#FFFFFF';
+    let badgeHtml = '<span class="badge-client badge-client-new">Новый</span>';
+    let avatarClass = 'client-avatar';
 
     if (client.category === 'vip') {
-      badgeHtml = '<span style="background: rgba(201, 162, 77, 0.15); color: var(--accent-gold); border: 1px solid rgba(201, 162, 77, 0.35); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase;">⭐ VIP</span>';
-      avatarBorder = 'var(--accent-gold)';
-      avatarGrad = 'linear-gradient(135deg, var(--accent-gold), #8B6B23)';
-      avatarColor = '#0E1118';
+      badgeHtml = '<span class="badge-client badge-client-vip">⭐ VIP</span>';
+      avatarClass += ' avatar-vip';
     } else if (client.category === 'regular') {
-      badgeHtml = '<span style="background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">💎 Постоянный</span>';
-      avatarBorder = 'rgba(16, 185, 129, 0.4)';
+      badgeHtml = '<span class="badge-client badge-client-regular">💎 Постоянный</span>';
+      avatarClass += ' avatar-regular';
     }
 
     const discountBadge = (client.discountPercent && client.discountPercent > 0)
-      ? `<span style="background: rgba(201, 162, 77, 0.15); color: var(--accent-gold); border: 1px solid rgba(201, 162, 77, 0.35); padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 800;">-${client.discountPercent}%</span>`
+      ? `<span class="badge-client-discount">-${client.discountPercent}%</span>`
       : '';
 
     const apps = window.noirData.getClientAppointments(client.id);
@@ -2213,19 +2209,19 @@ function renderClientsAdmin() {
       ? `<a href="tel:${cleanPhone}" class="client-phone-link" style="color: inherit; text-decoration: none;">📞 ${client.phone}</a>` 
       : '<span>📞 —</span>';
     const tgLink = client.telegram 
-      ? `<a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener" style="color: var(--accent-gold); font-family: var(--font-mono); text-decoration: none;">${client.telegram}</a>` 
+      ? `<a href="https://t.me/${client.telegram.replace('@', '')}" target="_blank" rel="noopener" style="color: var(--accent-primary); font-family: var(--font-mono); text-decoration: none;">${client.telegram}</a>` 
       : '';
 
     html += `
       <div class="client-list-row">
         <!-- 1. Имя, статус и контакты гостя -->
         <div class="client-cell-user">
-          <div class="client-avatar" style="width: 44px; height: 44px; border-radius: 50%; background: ${avatarGrad}; color: ${avatarColor}; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid ${avatarBorder}; flex-shrink: 0;">
+          <div class="${avatarClass}">
             ${mono}
           </div>
           <div class="client-user-info" style="min-width: 0; flex: 1;">
             <div class="client-name-line" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <span class="client-name" style="font-size: 15px; font-weight: 800; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${client.name}</span>
+              <span class="client-name" style="font-size: 15px; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${client.name}</span>
               ${badgeHtml}
               ${discountBadge}
             </div>
@@ -2326,15 +2322,10 @@ window.openClientModal = function(clientId) {
 
   if (avatarEl) {
     avatarEl.textContent = mono;
-    if (client.category === 'vip') {
-      avatarEl.style.background = 'linear-gradient(135deg, var(--accent-gold), #8B6B23)';
-      avatarEl.style.color = '#0E1118';
-      avatarEl.style.borderColor = 'var(--accent-gold)';
-    } else {
-      avatarEl.style.background = 'linear-gradient(135deg, #1C2333, #0E1118)';
-      avatarEl.style.color = '#FFFFFF';
-      avatarEl.style.borderColor = 'var(--border-subtle)';
-    }
+    avatarEl.className = 'client-avatar' + (client.category === 'vip' ? ' avatar-vip' : client.category === 'regular' ? ' avatar-regular' : '');
+    avatarEl.style.background = '';
+    avatarEl.style.color = '';
+    avatarEl.style.borderColor = '';
   }
 
   if (badgeEl) {
