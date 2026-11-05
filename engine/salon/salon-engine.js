@@ -1803,7 +1803,29 @@
 // initAdmin is called at the end of engine bundle after all declarations
 
 const ADMIN_PIN = "1234";
-let currentDate = new Date().toISOString().split('T')[0];
+
+// ==========================================
+// LOCAL TIMEZONE SAFE DATE UTILITIES
+// Prevents UTC offset shifting dates between midnight and 07:00 AM (e.g. Vietnam UTC+7)
+// ==========================================
+function getLocalDateString(d = new Date()) {
+  const dateObj = (d instanceof Date) ? d : new Date(d);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseLocalDate(dateStr) {
+  if (!dateStr) return new Date();
+  const parts = String(dateStr).split('-');
+  if (parts.length === 3) {
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 12, 0, 0);
+  }
+  return new Date(dateStr);
+}
+
+let currentDate = getLocalDateString(new Date());
 let currentTab = 'timeline';
 let currentWeekOffset = 0; // 0 = текущая неделя, 1 = следующая и т.д.
 let adminServiceSearchQuery = '';
@@ -2312,7 +2334,7 @@ function setupNav() {
   function updateTimelineDateDisplay() {
     if (dateInput) dateInput.value = currentDate;
     if (dateDisplay) {
-      const d = new Date(currentDate);
+      const d = parseLocalDate(currentDate);
       const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
       const formatted = d.toLocaleDateString('ru-RU', options);
       dateDisplay.textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -2331,9 +2353,9 @@ function setupNav() {
 
   if (prevDayBtn) {
     prevDayBtn.addEventListener('click', () => {
-      const d = new Date(currentDate);
+      const d = parseLocalDate(currentDate);
       d.setDate(d.getDate() - 1);
-      currentDate = d.toISOString().split('T')[0];
+      currentDate = getLocalDateString(d);
       updateTimelineDateDisplay();
       renderTimeline();
     });
@@ -2341,9 +2363,9 @@ function setupNav() {
 
   if (nextDayBtn) {
     nextDayBtn.addEventListener('click', () => {
-      const d = new Date(currentDate);
+      const d = parseLocalDate(currentDate);
       d.setDate(d.getDate() + 1);
-      currentDate = d.toISOString().split('T')[0];
+      currentDate = getLocalDateString(d);
       updateTimelineDateDisplay();
       renderTimeline();
     });
@@ -2351,7 +2373,7 @@ function setupNav() {
 
   if (todayBtn) {
     todayBtn.addEventListener('click', () => {
-      currentDate = new Date().toISOString().split('T')[0];
+      currentDate = getLocalDateString(new Date());
       updateTimelineDateDisplay();
       renderTimeline();
     });
@@ -2550,7 +2572,7 @@ function loadDashboard() {
 
 function updateKPIs() {
   const appointments = window.noirData.getAppointments();
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString(new Date());
 
   // 1. Новые заявки (требуют подтверждения)
   const newRequests = appointments.filter(a => a.status === 'new').length;
@@ -2803,7 +2825,7 @@ function getWeekDays(offset = 0) {
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = getLocalDateString(d);
     const dayLabel = `${dayNames[i]} ${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
     days.push({
       dateStr,
