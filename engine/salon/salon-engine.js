@@ -54,7 +54,7 @@
   <div class="modal-overlay" id="pinRecoveryModal" style="display: none; z-index: 10000;">
     <div class="modal-card" style="max-width: 440px; padding: 32px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
-        <h3 style="font-size: 17px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; margin: 0;">
+        <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin: 0;">
           <span>🔑</span>
           <span>Восстановление доступа к CRM</span>
         </h3>
@@ -82,7 +82,7 @@
 
       <div id="recoveryStep_waiting" style="display: none; text-align: center; padding: 10px 0;">
         <div style="font-size: 36px; margin-bottom: 12px; animation: pulse 1.5s infinite;">📲</div>
-        <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">Запрос отправлен в Telegram!</h4>
+        <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">Запрос отправлен в Telegram!</h4>
         <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
           Откройте вашу рабочую Telegram-группу и нажмите кнопку <b>«✅ Да, я владелец»</b>.
         </p>
@@ -94,7 +94,7 @@
 
       <div id="recoveryStep_success" style="display: none; text-align: center; padding: 10px 0;">
         <div style="font-size: 38px; color: #10B981; margin-bottom: 12px;">✅</div>
-        <h4 style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Доступ подтверждён в Telegram!</h4>
+        <h4 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Доступ подтверждён в Telegram!</h4>
         <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
           Новый PIN-код отправлен в вашу рабочую Telegram-группу заведения.<br>
           Скопируйте его из Telegram и введите вручную в поле входа.
@@ -411,8 +411,8 @@
           </div>
 
           <!-- Desktop Table (Hidden on mobile) -->
-          <div class="timeline-table-wrapper desktop-only-table">
-            <table class="timeline-table">
+          <div class="journal-table-wrapper desktop-only-table">
+            <table class="journal-table">
               <thead>
                 <tr>
                   <th style="width: 100px;">Бронь #</th>
@@ -440,7 +440,7 @@
         <div class="admin-tab-pane" id="tabPane_services" style="display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
             <div>
-              <h3 style="font-size: 15px; font-weight: 800; color: #FFFFFF;">Прейскурант и услуги ателье NOIR</h3>
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--text-main);">Прейскурант и услуги ателье NOIR</h3>
               <p style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Управление категориями, ценами, длительностью и протоколами процедур</p>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
@@ -464,7 +464,7 @@
         <div class="admin-tab-pane" id="tabPane_clients" style="display: none;">
           <div class="clients-tab-header-box" style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 14px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
             <div>
-              <h3 style="font-size: 15px; font-weight: 800; color: #FFFFFF;">База клиентов NOIR Hair Atelier</h3>
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--text-main);">База клиентов NOIR Hair Atelier</h3>
               <p style="font-size: 12px; color: var(--text-dim); margin-top: 2px;" id="clientsStatsSub">Карточки гостей, история процедур, статистика визитов и заметки мастеров</p>
             </div>
             <button type="button" class="btn btn-primary clients-add-btn" onclick="openCreateClientModal()" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">
@@ -529,7 +529,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 16px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
               <div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                  <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF; letter-spacing: 0.5px;">💰 Ведомость расчёта зарплат мастеров</h3>
+                  <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px;">💰 Ведомость расчёта зарплат мастеров</h3>
                   <span style="background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;">Авторасчёт</span>
                 </div>
                 <p style="font-size: 12px; color: var(--text-dim); margin-top: 4px;" id="payrollSubHeader">
@@ -571,7 +571,7 @@
                 <button type="button" class="btn btn-secondary" onclick="navigatePayrollPeriod(-1)" style="padding: 6px 10px; font-size: 12px;" title="Предыдущий период">
                   ‹
                 </button>
-                <div id="payrollCurrentPeriodLabel" style="font-weight: 700; color: #FFFFFF; font-size: 13px; min-width: 170px; text-align: center;">
+                <div id="payrollCurrentPeriodLabel" style="font-weight: 700; color: var(--text-main); font-size: 13px; min-width: 170px; text-align: center;">
                   Загрузка...
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="navigatePayrollPeriod(1)" style="padding: 6px 10px; font-size: 12px;" title="Следующий период">
@@ -592,7 +592,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 22px;">
               <div class="kpi-card" style="padding: 16px 18px;">
                 <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">💳 Выручка за период</div>
-                <div class="kpi-value" id="payrollKpiTotalRevenue" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 6px;">0 ₫</div>
+                <div class="kpi-value" id="payrollKpiTotalRevenue" style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 6px;">0 ₫</div>
                 <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Сумма оказанных услуг</div>
               </div>
               <div class="kpi-card" style="padding: 16px 18px; border-color: rgba(212, 175, 55, 0.35); background: linear-gradient(145deg, rgba(212, 175, 55, 0.08) 0%, rgba(18, 18, 18, 0.8) 100%);">
@@ -607,7 +607,7 @@
               </div>
               <div class="kpi-card" style="padding: 16px 18px;">
                 <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">✂️ Оказано услуг</div>
-                <div class="kpi-value" id="payrollKpiServicesCount" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 6px;">0</div>
+                <div class="kpi-value" id="payrollKpiServicesCount" style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 6px;">0</div>
                 <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Процедур в ведомости</div>
               </div>
             </div>
@@ -660,7 +660,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 22px;">
               <div class="kpi-card" style="padding: 14px 18px;">
                 <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Проведено выплат</div>
-                <div class="kpi-value" id="ledgerKpiCount" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">0</div>
+                <div class="kpi-value" id="ledgerKpiCount" style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 4px;">0</div>
                 <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Кассовых ордеров в архиве</div>
               </div>
               <div class="kpi-card" style="padding: 14px 18px; border-color: rgba(212, 175, 55, 0.35); background: linear-gradient(145deg, rgba(212, 175, 55, 0.08) 0%, rgba(18, 18, 18, 0.8) 100%);">
@@ -670,7 +670,7 @@
               </div>
               <div class="kpi-card" style="padding: 14px 18px;">
                 <div class="kpi-label" style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Валовая выручка по ордерам</div>
-                <div class="kpi-value" id="ledgerKpiGrossTotal" style="font-size: 24px; font-weight: 800; color: #FFFFFF; margin-top: 4px;">0 ₫</div>
+                <div class="kpi-value" id="ledgerKpiGrossTotal" style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 4px;">0 ₫</div>
                 <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Сумма оказанных услуг мастерами</div>
               </div>
               <div class="kpi-card" style="padding: 14px 18px;">
@@ -1473,7 +1473,7 @@
           <div style="display: flex; align-items: center; gap: 14px; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 16px;">
             <img id="payoutModalAvatar" src="" alt="" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-gold);">
             <div>
-              <div style="font-weight: 800; color: #FFFFFF; font-size: 15px;" id="payoutModalMasterName">Master Name</div>
+              <div style="font-weight: 800; color: var(--text-main); font-size: 15px;" id="payoutModalMasterName">Master Name</div>
               <div style="font-size: 12px; color: var(--text-dim);" id="payoutModalMasterRole">Role</div>
               <div style="font-size: 11px; color: var(--accent-gold); margin-top: 2px;" id="payoutModalPeriod">Период: 12 — 18 окт. 2026</div>
             </div>
@@ -1551,11 +1551,11 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div style="background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-gold);">
               <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-gold); font-weight: 700;">1. Доля мастера</div>
-              <div style="font-size: 12px; color: #FFFFFF; margin-top: 2px;">Стоимость услуги × Процент мастера (%)</div>
+              <div style="font-size: 12px; color: var(--text-main); margin-top: 2px;">Стоимость услуги × Процент мастера (%)</div>
             </div>
             <div style="background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: var(--radius-sm); border-left: 3px solid #10B981;">
               <div style="font-size: 11px; text-transform: uppercase; color: #10B981; font-weight: 700;">2. Чистая маржа салона</div>
-              <div style="font-size: 12px; color: #FFFFFF; margin-top: 2px;">Стоимость услуги − Доля мастера</div>
+              <div style="font-size: 12px; color: var(--text-main); margin-top: 2px;">Стоимость услуги − Доля мастера</div>
             </div>
           </div>
           <div style="font-size: 12px; color: var(--text-dim); background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm);">
@@ -1567,7 +1567,7 @@
         <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
             <span style="font-size: 18px;">📅</span>
-            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Сценарий 1: Выплата КАЖДЫЙ ДЕНЬ (в конце смены)</h4>
+            <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0;">Сценарий 1: Выплата КАЖДЫЙ ДЕНЬ (в конце смены)</h4>
           </div>
           <ol style="font-size: 13px; color: var(--text-sub); line-height: 1.6; margin: 0; padding-left: 20px;">
             <li style="margin-bottom: 6px;">
@@ -1589,7 +1589,7 @@
         <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
             <span style="font-size: 18px;">🗓️</span>
-            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Сценарий 2: Выплата РАЗ В НЕДЕЛЮ (понедельник)</h4>
+            <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0;">Сценарий 2: Выплата РАЗ В НЕДЕЛЮ (понедельник)</h4>
           </div>
           <ol style="font-size: 13px; color: var(--text-sub); line-height: 1.6; margin: 0; padding-left: 20px;">
             <li style="margin-bottom: 6px;">
@@ -1611,7 +1611,7 @@
         <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 20px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
             <span style="font-size: 18px;">🚦</span>
-            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Индикация статусов: Кому выплачено, а кому ещё нет</h4>
+            <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0;">Индикация статусов: Кому выплачено, а кому ещё нет</h4>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
             <div style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: var(--radius-sm); padding: 12px 14px;">
@@ -1638,7 +1638,7 @@
         <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
             <span style="font-size: 18px;">📜</span>
-            <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0;">Журнал кассовых выплат (Архив всех периодов)</h4>
+            <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0;">Журнал кассовых выплат (Архив всех периодов)</h4>
           </div>
           <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0;">
             Вся история проведённых выплат сохраняется в под-вкладке <strong>«Журнал кассовых выплат»</strong>. Вы можете выбрать любой прошлый год, месяц или конкретного мастера, чтобы проверить дату и время выдачи денег, способ оплаты и распечатать дубликат ордера в случае любых вопросов или сверок.
@@ -1658,7 +1658,7 @@
   <div class="modal-overlay" id="demoPinNoticeModal" onclick="if(event.target === this) closeDemoPinNoticeModal()" style="display: none; z-index: 10005;">
     <div class="modal-card" style="max-width: 440px; padding: 28px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
-        <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; margin: 0;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin: 0;">
           <span>🔒</span>
           <span>Ограничение демо-версии</span>
         </h3>
@@ -1666,7 +1666,7 @@
       </div>
 
       <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;">
-        <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
           <span>ℹ️</span>
           <span>Смена мастер-PIN заблокирована</span>
         </div>
@@ -1691,7 +1691,7 @@
   <div class="modal-overlay" id="adminPinChangeModal" style="display: none; z-index: 10000;">
     <div class="modal-card" style="max-width: 440px; padding: 32px; text-align: left;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
-        <h3 style="font-size: 17px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; margin: 0;">
+        <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin: 0;">
           <span>🔒</span>
           <span>Безопасность &bull; Смена PIN-кода</span>
         </h3>
@@ -2734,7 +2734,7 @@ function renderTimeline() {
         html += `
           <td colspan="${actualColspan}" class="timeline-app-cell" style="background: rgba(245, 158, 11, 0.12) !important; border: 1px solid rgba(245, 158, 11, 0.35) !important; border-left: 4px solid #F59E0B !important; vertical-align: middle;">
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 2px;">
-              <span style="font-size: 12px; font-weight: 800; color: #FFFFFF;">${app.clientName}</span>
+              <span style="font-size: 12px; font-weight: 800; color: var(--text-main);">${app.clientName}</span>
               <button type="button" class="btn btn-primary" onclick="openEditAppointmentModal('${app.id}')" style="padding: 1px 6px; font-size: 10px; line-height: 1.2;">
                 ✏️ Назначить
               </button>
@@ -2816,7 +2816,7 @@ function renderSpecialistsSchedule() {
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="${sp.avatar}" alt="${sp.name}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-medium);">
             <div>
-              <div style="font-weight: 800; color: #FFFFFF; font-size: 14px;">${sp.name}</div>
+              <div style="font-weight: 800; color: var(--text-main); font-size: 14px;">${sp.name}</div>
               <div style="font-size: 11px; color: var(--accent-gold);">${sp.role.split(',')[0]}</div>
             </div>
           </div>
@@ -2940,11 +2940,11 @@ function renderJournal() {
       <tr>
         <td style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-gold);">${a.id}</td>
         <td>
-          <div style="font-weight: 700; color: #FFFFFF;">${a.clientName}</div>
+          <div style="font-weight: 700; color: var(--text-main);">${a.clientName}</div>
           <div style="font-size: 11px; color: var(--text-dim);">${a.phone || '—'}</div>
         </td>
         <td>
-          <div style="font-weight: 600; color: #FFFFFF;">${a.serviceName}</div>
+          <div style="font-weight: 600; color: var(--text-main);">${a.serviceName}</div>
           <div style="font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px;">
             <span>${a.duration || 60} мин</span>
             <span>•</span>
@@ -2954,7 +2954,7 @@ function renderJournal() {
         </td>
         <td style="color: var(--text-sub);">${a.specialistName}</td>
         <td>
-          <div style="font-weight: 600; color: #FFFFFF;">${a.date}</div>
+          <div style="font-weight: 600; color: var(--text-main);">${a.date}</div>
           <div style="font-size: 11px; color: var(--accent-gold); font-family: var(--font-mono);">${a.time}</div>
         </td>
         <td>
@@ -3438,7 +3438,7 @@ function renderEditingAppItems() {
     html += `
       <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 6px;">
         <div>
-          <span style="font-weight: 700; color: #FFFFFF; font-size: 13px;">${item.name}</span>
+          <span style="font-weight: 700; color: var(--text-main); font-size: 13px;">${item.name}</span>
           <span style="font-size: 11px; color: var(--text-dim); margin-left: 6px;">⏱️ ${item.duration} мин</span>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -4308,7 +4308,7 @@ function populateCategoryCheckboxes(selectedCategories = []) {
     html += `
       <label style="display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.2s ease;">
         <input type="checkbox" value="${cat.id}" ${isChecked ? 'checked' : ''} style="accent-color: var(--accent-gold); width: 16px; height: 16px; cursor: pointer;">
-        <span style="font-weight: 600; color: #FFFFFF; font-size: 13px;">${cat.name}</span>
+        <span style="font-weight: 600; color: var(--text-main); font-size: 13px;">${cat.name}</span>
       </label>
     `;
   });
@@ -4554,7 +4554,7 @@ function renderClientsAdmin() {
   const newCount = clients.filter(c => c.category === 'new').length;
 
   if (statsSub) {
-    statsSub.innerHTML = `Всего гостей в базе: <strong style="color: #FFFFFF;">${totalCount}</strong> • VIP: <strong style="color: var(--accent-gold);">${vipCount}</strong> • Постоянных: <strong style="color: var(--color-success);">${regularCount}</strong> • Новых: <strong style="color: var(--color-warning);">${newCount}</strong>`;
+    statsSub.innerHTML = `Всего гостей в базе: <strong style="color: var(--text-main);">${totalCount}</strong> • VIP: <strong style="color: var(--accent-gold);">${vipCount}</strong> • Постоянных: <strong style="color: var(--color-success);">${regularCount}</strong> • Новых: <strong style="color: var(--color-warning);">${newCount}</strong>`;
   }
 
   // Фильтрация
@@ -4639,7 +4639,7 @@ function renderClientsAdmin() {
         <!-- 2. Визитов (Desktop) -->
         <div class="client-cell-visits" style="text-align: center;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Визитов</div>
-          <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-top: 2px;">${client.totalVisits || 1}</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-top: 2px;">${client.totalVisits || 1}</div>
         </div>
 
         <!-- 3. Сумма LTV (Desktop) -->
@@ -4651,7 +4651,7 @@ function renderClientsAdmin() {
         <!-- 4. Последний визит (Desktop) -->
         <div class="client-cell-recent" style="min-width: 0;">
           <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Последний визит</div>
-          <div style="font-size: 12px; color: #FFFFFF; font-weight: 600; margin-top: 2px;">
+          <div style="font-size: 12px; color: var(--text-main); font-weight: 600; margin-top: 2px;">
             ${client.lastVisit || '—'}
           </div>
           <div style="font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -4814,7 +4814,7 @@ window.openClientModal = function(clientId) {
         historyHtml += `
           <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <span style="font-size: 13px; font-weight: 700; color: #FFFFFF;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">
                 📅 ${app.date} в ${app.time}
               </span>
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -4822,7 +4822,7 @@ window.openClientModal = function(clientId) {
                 <span style="font-size: 13px; font-weight: 800; color: var(--accent-gold);">${window.noirData.formatMoney(app.price)}</span>
               </div>
             </div>
-            <div style="font-size: 13px; font-weight: 600; color: #FFFFFF;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">
               ✂️ ${app.serviceName}
             </div>
             <div style="font-size: 11px; color: var(--text-dim); margin-top: 3px; display: flex; justify-content: space-between;">
@@ -5276,7 +5276,7 @@ function renderPayrollAdmin() {
             <img src="${sp.specialistAvatar}" alt="${sp.specialistName}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid ${isPaid ? '#10B981' : 'var(--accent-gold)'}; flex-shrink: 0;">
             <div style="min-width: 0;">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <h4 style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sp.specialistName}</h4>
+                <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sp.specialistName}</h4>
                 <span style="background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 2px 7px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 800; white-space: nowrap;">
                   ${sp.commissionPercent}% ставка
                 </span>
@@ -5294,13 +5294,13 @@ function renderPayrollAdmin() {
           <!-- 2. Услуг -->
           <div style="text-align: center;">
             <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Услуг</div>
-            <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-top: 2px;">${sp.totalServicesCount}</div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">${sp.totalServicesCount}</div>
           </div>
 
           <!-- 3. Касса мастера -->
           <div style="text-align: right;">
             <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Касса мастера</div>
-            <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-top: 2px;">${window.noirData.formatMoney(sp.grossRevenue)}</div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">${window.noirData.formatMoney(sp.grossRevenue)}</div>
           </div>
 
           <!-- 4. Доход салона -->
@@ -5477,7 +5477,7 @@ window.renderPayoutLedger = function() {
     container.innerHTML = `
       <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 48px 20px; text-align: center; color: var(--text-dim);">
         <div style="font-size: 36px; margin-bottom: 10px;">📜</div>
-        <div style="font-size: 15px; font-weight: 800; color: #FFFFFF;">Кассовых ордеров не найдено</div>
+        <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">Кассовых ордеров не найдено</div>
         <div style="font-size: 12px; margin-top: 4px; color: var(--text-muted);">
           По выбранным фильтрам периода или поисковому запросу нет проведённых выплат.
         </div>
@@ -5514,14 +5514,14 @@ window.renderPayoutLedger = function() {
           #${o.id}
         </td>
         <td style="padding: 14px 14px; white-space: nowrap;">
-          <div style="font-weight: 600; color: #FFFFFF;">${o.dateFormatted}</div>
+          <div style="font-weight: 600; color: var(--text-main);">${o.dateFormatted}</div>
           <div style="font-size: 11px; color: var(--text-dim);">${o.timeFormatted || '18:00'}</div>
         </td>
         <td style="padding: 14px 16px;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="${o.specialistAvatar}" alt="${o.specialistName}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-gold);">
             <div>
-              <div style="font-weight: 800; color: #FFFFFF; font-size: 13px;">${o.specialistName}</div>
+              <div style="font-weight: 800; color: var(--text-main); font-size: 13px;">${o.specialistName}</div>
               <div style="font-size: 11px; color: var(--text-dim);">${o.commissionPercent}% ставка</div>
             </div>
           </div>
@@ -5529,7 +5529,7 @@ window.renderPayoutLedger = function() {
         <td style="padding: 14px 14px; font-size: 12px; color: var(--text-sub);">
           ${o.periodLabel || (o.startDate + ' — ' + o.endDate)}
         </td>
-        <td style="padding: 14px 12px; text-align: center; font-weight: 700; color: #FFFFFF;">
+        <td style="padding: 14px 12px; text-align: center; font-weight: 700; color: var(--text-main);">
           ${o.servicesCount || (o.items ? o.items.length : 0)}
         </td>
         <td style="padding: 14px 14px; text-align: right; font-weight: 600; color: var(--text-sub); white-space: nowrap;">
@@ -5614,7 +5614,7 @@ window.printSpecialistPayslip = function(orderId) {
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <h1 style="font-size: 24px; font-weight: 900; letter-spacing: 1.5px; margin: 0; color: #000000;">NOIR HAIR ATELIER</h1>
-            <span style="font-size: 11px; background: #111827; color: #FFFFFF; padding: 2px 6px; border-radius: 3px; font-weight: 700;">ORIGINAL</span>
+            <span style="font-size: 11px; background: #111827; color: var(--text-main); padding: 2px 6px; border-radius: 3px; font-weight: 700;">ORIGINAL</span>
           </div>
           <p style="font-size: 12px; color: #4B5563; margin: 4px 0 0;">Премиальное ателье авторских стрижек, сложного окрашивания и SPA</p>
           <p style="font-size: 11px; color: #6B7280; margin: 2px 0 0;">📍 ${salon.address || '48 An Thuong 2, Da Nang'} • 📞 ${salon.phone || '+84 90 123 4567'} • 🌐 noir.viet</p>
