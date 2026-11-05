@@ -14,11 +14,47 @@ let currentWeekOffset = 0; // 0 = текущая неделя, 1 = следую�
 let adminServiceSearchQuery = '';
 
 function initAdmin() {
+  initTheme();
   setupAuth();
   setupNav();
   setupModals();
   setupLiveSync();
 }
+
+// Universal B2B Theme Controller
+function initTheme() {
+  let saved = 'dark';
+  try {
+    saved = localStorage.getItem('noir_crm_theme') || 'dark';
+  } catch (e) {}
+  setTheme(saved, false);
+}
+
+function setTheme(theme, save = true) {
+  const current = theme === 'light' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', current);
+  if (save) {
+    try {
+      localStorage.setItem('noir_crm_theme', current);
+    } catch (e) {}
+  }
+
+  // Update button active states across all switchers (Desktop, Mobile, Topbar)
+  ['Desktop', 'Mobile', 'Topbar'].forEach(mode => {
+    const darkBtn = document.getElementById(`themeBtnDark${mode}`);
+    const lightBtn = document.getElementById(`themeBtnLight${mode}`);
+    if (darkBtn && lightBtn) {
+      if (current === 'dark') {
+        darkBtn.classList.add('active');
+        lightBtn.classList.remove('active');
+      } else {
+        lightBtn.classList.add('active');
+        darkBtn.classList.remove('active');
+      }
+    }
+  });
+}
+window.setTheme = setTheme;
 
 function setupLiveSync() {
   // Мгновенная синхронизация между вкладками через событие storage
