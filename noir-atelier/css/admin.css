@@ -1,0 +1,612 @@
+/* ==========================================================================
+   Universal B2B CRM Design System
+   Independent SaaS Architecture • Light & Dark Themes
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. THEME TOKENS: DARK (Default)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  /* Color Palette: Slate / Obsidian Dark */
+  --bg-deep: #090A0E;
+  --bg-main: #0E1015;
+  --bg-surface: #13171F;
+  --bg-card: #181C26;
+  --bg-card-hover: #1F2533;
+  --bg-input: #10131A;
+  --bg-glass: rgba(19, 23, 31, 0.85);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-accent: rgba(99, 102, 241, 0.4);
+
+  /* Universal B2B Accent: Indigo */
+  --accent-primary: #6366F1;
+  --accent-primary-hover: #4F46E5;
+  --accent-primary-light: #818CF8;
+  --accent-primary-bg: rgba(99, 102, 241, 0.14);
+  --accent-primary-glow: 0 0 24px rgba(99, 102, 241, 0.25);
+
+  /* Legacy variable mapping to modern accent */
+  --accent-gold: var(--accent-primary);
+  --accent-gold-light: var(--accent-primary-light);
+  --accent-gold-dark: var(--accent-primary-hover);
+  --accent-gold-bg: var(--accent-primary-bg);
+  --accent-gold-glow: var(--accent-primary-glow);
+
+  /* Status Colors */
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.14);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.14);
+  --color-danger: #EF4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.14);
+  --color-info: #3B82F6;
+  --color-info-bg: rgba(59, 130, 246, 0.14);
+
+  /* Typography */
+  --text-main: #F8FAFC;
+  --text-sub: #E2E8F0;
+  --text-muted: #94A3B8;
+  --text-dim: #64748B;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   2. THEME TOKENS: LIGHT
+   -------------------------------------------------------------------------- */
+[data-theme="light"] {
+  /* Color Palette: Crisp Minimalist Slate / White */
+  --bg-deep: #F1F5F9;
+  --bg-main: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-input: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.9);
+
+  /* Borders */
+  --border-subtle: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-accent: rgba(79, 70, 229, 0.35);
+
+  /* Universal B2B Accent: Royal Indigo */
+  --accent-primary: #4F46E5;
+  --accent-primary-hover: #4338CA;
+  --accent-primary-light: #6366F1;
+  --accent-primary-bg: rgba(79, 70, 229, 0.08);
+  --accent-primary-glow: 0 0 16px rgba(79, 70, 229, 0.18);
+
+  /* Legacy variable mapping to modern accent */
+  --accent-gold: var(--accent-primary);
+  --accent-gold-light: var(--accent-primary-light);
+  --accent-gold-dark: var(--accent-primary-hover);
+  --accent-gold-bg: var(--accent-primary-bg);
+  --accent-gold-glow: var(--accent-primary-glow);
+
+  /* Status Colors */
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #D97706;
+  --color-warning-bg: #FEF3C7;
+  --color-danger: #DC2626;
+  --color-danger-bg: #FEF2F2;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+
+  /* Typography */
+  --text-main: #0F172A;
+  --text-sub: #334155;
+  --text-muted: #64748B;
+  --text-dim: #94A3B8;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.09);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+}
+
+/* --------------------------------------------------------------------------
+   3. BASE LAYOUT & CRM CORE
+   -------------------------------------------------------------------------- */
+body.admin-body {
+  background: var(--bg-deep) !important;
+  color: var(--text-sub) !important;
+  font-family: var(--font-main);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-deep);
+}
+
+/* Sidebar (Desktop) */
+.admin-sidebar {
+  width: 260px;
+  background: var(--bg-surface) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.admin-sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.crm-sidebar-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.crm-sidebar-name {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.crm-sidebar-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 3px;
+}
+
+.admin-sidebar-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-nav-item:hover {
+  color: var(--text-main);
+  background: var(--bg-card-hover);
+}
+
+.admin-nav-item.active {
+  background: var(--accent-primary-bg) !important;
+  color: var(--accent-primary) !important;
+  border: 1px solid var(--border-accent) !important;
+  font-weight: 700;
+}
+
+/* Main Content & Topbar */
+.admin-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-deep);
+  min-width: 0;
+}
+
+.admin-topbar {
+  height: 68px;
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.admin-content {
+  padding: 28px;
+  flex-grow: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. THEME SWITCHER (SEGMENTED CONTROL)
+   -------------------------------------------------------------------------- */
+.crm-theme-switcher {
+  display: flex;
+  background: var(--bg-main);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.crm-theme-switcher-topbar {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+.crm-theme-switcher-topbar .crm-theme-btn {
+  padding: 5px 9px;
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  .crm-theme-switcher-topbar {
+    display: none !important;
+  }
+}
+
+.crm-theme-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: calc(var(--radius-sm) - 3px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.crm-theme-btn svg {
+  flex-shrink: 0;
+}
+
+.crm-theme-btn:hover {
+  color: var(--text-main);
+}
+
+.crm-theme-btn.active {
+  background: var(--bg-card);
+  color: var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .theme-btn-dark {
+  background: #202532;
+  color: #818CF8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  font-weight: 700;
+}
+
+[data-theme="light"] .theme-btn-light {
+  background: #FFFFFF;
+  color: #4F46E5;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   5. CARDS, KPI & CONTAINERS
+   -------------------------------------------------------------------------- */
+.kpi-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease;
+}
+
+.kpi-title {
+  color: var(--text-dim) !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.kpi-value {
+  color: var(--text-main) !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+}
+
+.kpi-sub {
+  color: var(--accent-primary) !important;
+}
+
+.admin-card,
+.modal-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+  box-shadow: var(--shadow-card);
+}
+
+/* --------------------------------------------------------------------------
+   6. TABLES & DATA LISTS
+   -------------------------------------------------------------------------- */
+.timeline-table th {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  border-bottom: 2px solid var(--border-medium) !important;
+}
+
+.timeline-table td {
+  border-color: var(--border-subtle) !important;
+  background: var(--bg-card);
+}
+
+.timeline-table td:hover {
+  background: var(--bg-card-hover) !important;
+}
+
+table {
+  color: var(--text-sub);
+}
+
+th {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--border-medium) !important;
+}
+
+td {
+  border-color: var(--border-subtle) !important;
+  color: var(--text-sub) !important;
+}
+
+tr:hover td {
+  background: var(--bg-card-hover) !important;
+}
+
+.client-list-row {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+.client-list-row:hover {
+  border-color: var(--border-medium) !important;
+  background: var(--bg-card-hover) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. BUTTONS & CONTROLS
+   -------------------------------------------------------------------------- */
+.btn-primary {
+  background: var(--accent-primary) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: var(--accent-primary-glow) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-primary:hover {
+  background: var(--accent-primary-hover) !important;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover) !important;
+  border-color: var(--border-accent) !important;
+}
+
+/* Status Badges */
+.badge-status-new {
+  background: var(--color-warning-bg) !important;
+  color: var(--color-warning) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+.badge-status-confirmed {
+  background: var(--color-info-bg) !important;
+  color: var(--color-info) !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+
+.badge-status-completed {
+  background: var(--color-success-bg) !important;
+  color: var(--color-success) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+.badge-status-cancelled {
+  background: var(--color-danger-bg) !important;
+  color: var(--color-danger) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Status select dropdown */
+.status-select {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+}
+
+.status-select option {
+  background: var(--bg-surface) !important;
+  color: var(--text-main) !important;
+}
+
+/* Forms & Inputs */
+.form-input,
+.form-select,
+textarea {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: var(--accent-primary) !important;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-primary-bg) !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. MOBILE RESPONSIVENESS & DRAWER
+   -------------------------------------------------------------------------- */
+.admin-mobile-header {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.mobile-header-title {
+  color: var(--text-main) !important;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.admin-mobile-drawer {
+  background: var(--bg-surface) !important;
+  border-left: 1px solid var(--border-subtle) !important;
+}
+
+.drawer-header {
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.drawer-footer {
+  border-top: 1px solid var(--border-subtle) !important;
+}
+
+.drawer-nav-item {
+  color: var(--text-muted) !important;
+}
+
+.drawer-nav-item:hover {
+  color: var(--text-main) !important;
+  background: var(--bg-card-hover) !important;
+}
+
+.drawer-nav-item.active {
+  background: var(--accent-primary-bg) !important;
+  color: var(--accent-primary) !important;
+  border: 1px solid var(--border-accent) !important;
+}
+
+/* Global text overrides for inline hardcoded white */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] .kpi-value,
+[data-theme="light"] [style*="color: #FFFFFF"],
+[data-theme="light"] [style*="color: #ffffff"],
+[data-theme="light"] [style*="color:#FFFFFF"],
+[data-theme="light"] [style*="color:#ffffff"] {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] [style*="background: #12151E"],
+[data-theme="light"] [style*="background:#12151E"] {
+  background: var(--bg-input) !important;
+}
+
+/* Modals & Overlays */
+.modal-overlay {
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(15, 23, 42, 0.45) !important;
+}
+
+[data-theme="light"] .modal-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Timeline & Schedule Matrix Fine-Tuning */
+.timeline-date-nav-bar {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+[data-theme="light"] .timeline-app-cell {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  border-left: 4px solid var(--accent-primary) !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="light"] tr[style*="background: rgba(0,0,0"],
+[data-theme="light"] tr[style*="background: rgba(0, 0, 0"] {
+  background: #F8FAFC !important;
+}
+
+[data-theme="light"] td[style*="background: rgba(0,0,0"],
+[data-theme="light"] td[style*="background: rgba(0, 0, 0"] {
+  background: #F1F5F9 !important;
+}
+
+/* Schedule Day Toggles */
+.schedule-day-toggle {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .schedule-day-toggle {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #64748B;
+}
+
+.schedule-day-toggle.active {
+  background: var(--accent-primary-bg) !important;
+  color: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  font-weight: 700;
+}
+
+/* Status Select Dropdowns */
+[data-theme="light"] .status-select {
+  background: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+[data-theme="light"] .status-select option {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
