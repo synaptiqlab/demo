@@ -365,6 +365,78 @@ body.admin-body {
   background: var(--bg-card);
 }
 
+/* Sticky Master Column in Timeline */
+.timeline-master-col {
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+.timeline-master-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.timeline-master-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.timeline-master-status {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.timeline-master-status.status-working {
+  color: var(--color-success);
+}
+
+.timeline-master-status.status-off {
+  color: var(--text-dim);
+}
+
+/* Mobile: Compact master column to maximize timeline scrollable area */
+@media (max-width: 768px) {
+  .timeline-master-col {
+    width: 98px !important;
+    min-width: 98px !important;
+    max-width: 98px !important;
+    padding: 8px 6px !important;
+  }
+
+  .timeline-master-name {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    word-break: break-word !important;
+  }
+
+  .timeline-master-status {
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    margin-top: 2px !important;
+    letter-spacing: -0.2px !important;
+  }
+}
+
 /* 15-minute slot cell */
 .timeline-slot-cell {
   height: 64px;
