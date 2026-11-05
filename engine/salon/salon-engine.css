@@ -2406,18 +2406,23 @@ body.admin-body {
 
 .admin-layout {
   display: flex;
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   background: var(--bg-deep);
   overflow: hidden;
   box-sizing: border-box;
 }
 
-/* Sidebar (Desktop) */
+/* Sidebar (Desktop & Tablet) */
 .admin-sidebar {
   width: 260px;
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   position: sticky;
   top: 0;
   background: var(--bg-surface) !important;
@@ -2427,10 +2432,16 @@ body.admin-body {
   flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
   z-index: 100;
   scrollbar-width: thin;
   scrollbar-color: var(--border-subtle) transparent;
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  transition: background-color 0.25s ease, border-color 0.25s ease, width 0.2s ease;
 }
 
 .admin-sidebar::-webkit-scrollbar {
@@ -2442,8 +2453,9 @@ body.admin-body {
 }
 
 .admin-sidebar-header {
-  padding: 24px 20px;
+  padding: 20px 18px 16px;
   border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }
 
 .crm-sidebar-brand {
@@ -2452,7 +2464,7 @@ body.admin-body {
 }
 
 .crm-sidebar-name {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.5px;
@@ -2468,24 +2480,33 @@ body.admin-body {
 }
 
 .admin-sidebar-nav {
-  padding: 16px 12px;
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex-grow: 1;
+  flex-shrink: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.admin-sidebar-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .admin-nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
 }
 
 .admin-nav-item:hover {
@@ -2500,16 +2521,25 @@ body.admin-body {
   font-weight: 700;
 }
 
+.admin-sidebar-footer,
+.admin-sidebar > div[style*="margin-top: auto"] {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
 /* Main Content Area */
 .admin-main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow: hidden;
   background: var(--bg-deep);
   min-width: 0;
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 .admin-topbar {
@@ -2517,16 +2547,18 @@ body.admin-body {
 }
 
 .admin-content {
-  padding: 28px;
+  padding: 24px;
   flex-grow: 1;
   height: 100%;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: var(--border-medium) transparent;
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
 }
 
 .admin-content::-webkit-scrollbar {
@@ -2775,6 +2807,209 @@ body.admin-body {
     font-weight: 700 !important;
     margin-top: 2px !important;
     letter-spacing: -0.2px !important;
+  }
+}
+
+/* ==========================================================================
+   PULSECORE TABLET & ADAPTIVE VIEWPORT SIDEBAR SCALING SYSTEM
+   Ensures sidebar fits 100% of visible viewport height in both portrait
+   and landscape orientations without any clipping of header, nav or footer.
+   ========================================================================== */
+
+/* Level 1: Tablet Portrait & Medium Screens (Height <= 960px or Width <= 1080px) */
+@media (max-height: 960px) and (min-width: 769px), (max-width: 1080px) and (min-width: 769px) {
+  .admin-sidebar {
+    width: 240px !important;
+  }
+  .admin-sidebar-header {
+    padding: 14px 14px 11px !important;
+  }
+  .crm-sidebar-name {
+    font-size: 16px !important;
+  }
+  .crm-sidebar-sub {
+    font-size: 10px !important;
+    margin-top: 2px !important;
+  }
+  #timelineCurrentDateDisplay {
+    font-size: 10px !important;
+    margin-top: 3px !important;
+  }
+  .admin-sidebar-header hr,
+  .admin-sidebar-header > div[style*="height: 1px"] {
+    margin: 8px 0 !important;
+  }
+  .admin-sidebar-header button.btn-primary,
+  .admin-sidebar-header .btn-primary {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+  .admin-sidebar-nav {
+    padding: 8px 8px !important;
+    gap: 2px !important;
+  }
+  .admin-nav-item {
+    padding: 7px 10px !important;
+    font-size: 12px !important;
+    gap: 8px !important;
+  }
+  .admin-sidebar-footer,
+  .admin-sidebar > div[style*="margin-top: auto"] {
+    padding: 10px 10px !important;
+  }
+  .admin-sidebar-footer > div:first-child,
+  .admin-sidebar > div[style*="margin-top: auto"] > div[style*="grid"] {
+    gap: 6px !important;
+    margin-bottom: 8px !important;
+  }
+  .admin-sidebar-footer button,
+  .admin-sidebar > div[style*="margin-top: auto"] button {
+    padding: 5.5px 6px !important;
+    font-size: 10.5px !important;
+  }
+  .crm-theme-switcher {
+    margin-bottom: 8px !important;
+    padding: 2px !important;
+  }
+  .crm-theme-btn {
+    padding: 4px 6px !important;
+    font-size: 10.5px !important;
+  }
+  .admin-sidebar-footer a,
+  .admin-sidebar > div[style*="margin-top: auto"] a {
+    padding: 6.5px 10px !important;
+    font-size: 11.5px !important;
+  }
+  .admin-content {
+    padding: 18px 16px !important;
+  }
+}
+
+/* Level 2: Tablet Landscape & Compact Height (Height <= 780px) */
+@media (max-height: 780px) and (min-width: 769px) {
+  .admin-sidebar {
+    width: 228px !important;
+  }
+  .admin-sidebar-header {
+    padding: 10px 12px 8px !important;
+  }
+  .crm-sidebar-name {
+    font-size: 14.5px !important;
+  }
+  .crm-sidebar-sub {
+    font-size: 9px !important;
+    margin-top: 1px !important;
+  }
+  #timelineCurrentDateDisplay {
+    font-size: 9.5px !important;
+    margin-top: 2px !important;
+  }
+  .admin-sidebar-header hr,
+  .admin-sidebar-header > div[style*="height: 1px"] {
+    margin: 6px 0 !important;
+  }
+  .admin-sidebar-header button.btn-primary,
+  .admin-sidebar-header .btn-primary {
+    padding: 6px 8px !important;
+    font-size: 11.5px !important;
+  }
+  .admin-sidebar-nav {
+    padding: 6px 6px !important;
+    gap: 2px !important;
+  }
+  .admin-nav-item {
+    padding: 5.5px 8px !important;
+    font-size: 11.5px !important;
+    gap: 6px !important;
+  }
+  .admin-sidebar-footer,
+  .admin-sidebar > div[style*="margin-top: auto"] {
+    padding: 8px 8px !important;
+  }
+  .admin-sidebar-footer > div:first-child,
+  .admin-sidebar > div[style*="margin-top: auto"] > div[style*="grid"] {
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+  .admin-sidebar-footer button,
+  .admin-sidebar > div[style*="margin-top: auto"] button {
+    padding: 4.5px 5px !important;
+    font-size: 10px !important;
+  }
+  .crm-theme-switcher {
+    margin-bottom: 6px !important;
+    padding: 2px !important;
+  }
+  .crm-theme-btn {
+    padding: 3.5px 5px !important;
+    font-size: 10px !important;
+  }
+  .admin-sidebar-footer a,
+  .admin-sidebar > div[style*="margin-top: auto"] a {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+  }
+  .admin-content {
+    padding: 14px 12px !important;
+  }
+}
+
+/* Level 3: Ultra-compact Height & Split-screen (Height <= 620px) */
+@media (max-height: 620px) and (min-width: 769px) {
+  .admin-sidebar {
+    width: 215px !important;
+  }
+  .admin-sidebar-header {
+    padding: 6px 10px 4px !important;
+  }
+  .crm-sidebar-name {
+    font-size: 13.5px !important;
+  }
+  .crm-sidebar-sub {
+    display: none !important;
+  }
+  #timelineCurrentDateDisplay {
+    display: none !important;
+  }
+  .admin-sidebar-header hr,
+  .admin-sidebar-header > div[style*="height: 1px"] {
+    display: none !important;
+  }
+  .admin-sidebar-header button.btn-primary,
+  .admin-sidebar-header .btn-primary {
+    padding: 4px 6px !important;
+    font-size: 11px !important;
+    margin-top: 3px !important;
+  }
+  .admin-sidebar-nav {
+    padding: 4px 4px !important;
+    gap: 1px !important;
+  }
+  .admin-nav-item {
+    padding: 4px 6px !important;
+    font-size: 11px !important;
+    gap: 5px !important;
+  }
+  .admin-sidebar-footer,
+  .admin-sidebar > div[style*="margin-top: auto"] {
+    padding: 5px 6px !important;
+  }
+  .admin-sidebar-footer > div:first-child,
+  .admin-sidebar > div[style*="margin-top: auto"] > div[style*="grid"] {
+    display: none !important;
+  }
+  .crm-theme-switcher {
+    margin-bottom: 4px !important;
+    padding: 1px !important;
+  }
+  .crm-theme-btn {
+    padding: 3px 4px !important;
+    font-size: 9.5px !important;
+  }
+  .admin-sidebar-footer a,
+  .admin-sidebar > div[style*="margin-top: auto"] a {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
   }
 }
 
