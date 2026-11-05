@@ -726,11 +726,26 @@ function renderTimeline() {
 
   const specialists = window.noirData.getSpecialists();
   const appointments = window.noirData.getAppointments().filter(a => a.date === currentDate);
-  const hours = [
-    "10:00", "11:00", "12:00", "13:00", 
-    "14:00", "15:00", "16:00", "17:00", 
-    "18:00", "19:00", "20:00"
-  ];
+  
+  const START_HOUR = 10;
+  const END_HOUR = 21; // 10:00 to 21:00 = 11 hours
+  const TOTAL_SLOTS = (END_HOUR - START_HOUR) * 4; // 44 slots of 15 min
+
+  function timeToSlot(timeStr) {
+    if (!timeStr) return 0;
+    const parts = timeStr.split(':');
+    const h = parseInt(parts[0], 10);
+    const m = parseInt(parts[1] || '0', 10);
+    const mins = (h - START_HOUR) * 60 + m;
+    return Math.max(0, Math.min(TOTAL_SLOTS - 1, Math.round(mins / 15)));
+  }
+
+  function slotToTime(slot) {
+    const totalMin = START_HOUR * 60 + slot * 15;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  }
 
   const d = new Date(currentDate);
   const dayOfWeek = d.getDay() === 0 ? 7 : d.getDay();
@@ -745,13 +760,24 @@ function renderTimeline() {
       isWorking = sp.workDays.includes(dayOfWeek);
     }
 
+    // Filter appointments for this specialist
+    const spApps = appointments.filter(a => {
+      if (a.status === 'cancelled') return false;
+      if (a.specialistId === sp.id) return true;
+      if (a.specialistName && a.specialistName.includes(sp.name)) return true;
+      return false;
+    });
+
+    // Sort by time
+    spApps.sort((a, b) => timeToSlot(a.time) - timeToSlot(b.time));
+
     html += `
-      <tr style="${!isWorking ? 'opacity: 0.6; background: rgba(0,0,0,0.2);' : ''}">
-        <td style="border-right: 1px solid var(--border-subtle); padding: 10px 14px; width: 220px; min-width: 220px;">
+      <tr style="${!isWorking ? 'opacity: 0.65; background: rgba(0,0,0,0.12);' : ''}">
+        <td style="border-right: 2px solid var(--border-medium); padding: 10px 14px; width: 200px; min-width: 200px; position: sticky; left: 0; background: var(--bg-surface); z-index: 2;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="${sp.avatar}" alt="${sp.name}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-medium); flex-shrink: 0;">
             <div style="overflow: hidden;">
-              <div style="font-size: 14px; font-weight: 800; color: #FFFFFF; white-space: nowrap;">${sp.name}</div>
+              <div style="font-size: 13px; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sp.name}</div>
               <div style="font-size: 11px; color: ${isWorking ? 'var(--color-success)' : 'var(--text-dim)'}; font-weight: 600; white-space: nowrap;">
                 ${isWorking ? '● На смене' : '○ Выходной'}
               </div>
@@ -760,69 +786,76 @@ function renderTimeline() {
         </td>
     `;
 
-    for (let i = 0; i < hours.length; i++) {
-      const h = hours[i];
-      const hNum = parseInt(h.split(':')[0], 10);
-
-      const app = appointments.find(a => {
-        if (a.specialistId !== sp.id && (!a.specialistName || !a.specialistName.includes(sp.name))) {
-          return false;
-        }
-        const appHour = parseInt(a.time.split(':')[0], 10);
-        return appHour === hNum && a.status !== 'cancelled';
-      });
+    let currentSlot = 0;
+    while (currentSlot < TOTAL_SLOTS) {
+      const app = spApps.find(a => timeToSlot(a.time) === currentSlot);
 
       if (app) {
         const dur = app.duration || 60;
+        const spanSlots = Math.max(1, Math.round(dur / 15));
+        const actualColspan = Math.min(spanSlots, TOTAL_SLOTS - currentSlot);
+
         const startMin = parseInt((app.time.split(':')[1] || '0'), 10);
-        const totalEndMin = hNum * 60 + startMin + dur;
+        const startHour = parseInt(app.time.split(':')[0], 10);
+        const totalEndMin = startHour * 60 + startMin + dur;
         const endHour = Math.floor(totalEndMin / 60);
         const endMin = totalEndMin % 60;
         const endTimeStr = String(endHour).padStart(2, '0') + ':' + String(endMin).padStart(2, '0');
-        const spanHours = Math.max(1, Math.ceil(dur / 60));
-        const actualColspan = Math.min(spanHours, hours.length - i);
 
         let statusClass = 'badge-status-confirmed';
-        if (app.status === 'new') statusClass = 'badge-status-new';
-        if (app.status === 'completed') statusClass = 'badge-status-completed';
+        let statusLabel = 'Подтверждена';
+        if (app.status === 'new') {
+          statusClass = 'badge-status-new';
+          statusLabel = 'Новая';
+        } else if (app.status === 'completed') {
+          statusClass = 'badge-status-completed';
+          statusLabel = 'Выполнена';
+        }
 
         html += `
-          <td colspan="${actualColspan}" class="timeline-app-cell" style="background: var(--bg-card); border: 1px solid var(--border-accent); border-left: 4px solid var(--accent-gold); border-radius: var(--radius-sm); padding: 8px 12px; box-shadow: var(--shadow-sm); vertical-align: middle;">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="font-size: 13px; font-weight: 800; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <td colspan="${actualColspan}" class="timeline-app-cell" style="vertical-align: middle;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 2px;">
+              <span class="timeline-app-client" style="font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 ${app.clientName}
               </span>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span class="badge-status ${statusClass}" style="font-size: 10px; padding: 2px 6px;">
-                  ${app.status === 'new' ? 'Новая' : app.status === 'completed' ? 'Выполнена' : 'Подтверждена'}
+              <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+                <span class="badge-status ${statusClass}" style="font-size: 9px; padding: 1px 5px;">
+                  ${statusLabel}
                 </span>
-                <button type="button" class="btn btn-secondary" onclick="openEditAppointmentModal('${app.id}')" style="padding: 2px 7px; font-size: 11px; line-height: 1.2; box-shadow: none;" title="Изменить запись, время или услуги">
-                  ✏️ Изменить
+                <button type="button" class="btn btn-secondary" onclick="openEditAppointmentModal('${app.id}')" style="padding: 1px 5px; font-size: 10px; line-height: 1.2; box-shadow: none;" title="Изменить запись">
+                  ✏️
                 </button>
               </div>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">
+            <div class="timeline-app-service" style="font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">
               ${app.serviceName}
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 10px; color: var(--text-dim);">
-              <span style="font-family: var(--font-mono);">${app.time} – ${endTimeStr} (${dur} мин)</span>
-              <span style="font-weight: 700; color: var(--accent-gold);">${window.noirData.formatMoney(app.price)}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 3px; font-size: 10px;">
+              <span style="font-family: var(--font-mono); font-weight: 600; opacity: 0.85;">${app.time}–${endTimeStr} (${dur} мин)</span>
+              <span class="timeline-app-price" style="font-weight: 800;">${window.noirData.formatMoney(app.price)}</span>
             </div>
           </td>
         `;
-        i += (actualColspan - 1);
-      } else if (!isWorking) {
-        html += `
-          <td style="color: var(--text-dim); text-align: center; background: rgba(0,0,0,0.15);">
-            <span style="opacity: 0.3; font-size: 11px;">вых</span>
-          </td>
-        `;
+        currentSlot += actualColspan;
       } else {
-        html += `
-          <td style="color: var(--text-dim); text-align: center; cursor: pointer;" onclick="openQuickBookingFor('${sp.id}', '${h}')" title="Нажмите, чтобы записать клиента на ${h}">
-            <span style="opacity: 0.25; font-size: 14px;">+</span>
-          </td>
-        `;
+        const slotTime = slotToTime(currentSlot);
+        const isHourEnd = (currentSlot + 1) % 4 === 0;
+        const borderClass = isHourEnd ? 'timeline-slot-hour-end' : 'timeline-slot-quarter';
+
+        if (!isWorking) {
+          html += `
+            <td class="timeline-slot-cell ${borderClass}" style="opacity: 0.35; background: rgba(0,0,0,0.06); font-size: 10px; color: var(--text-dim);">
+              ${currentSlot % 4 === 0 ? 'вых' : ''}
+            </td>
+          `;
+        } else {
+          html += `
+            <td class="timeline-slot-cell slot-clickable ${borderClass}" onclick="openQuickBookingFor('${sp.id}', '${slotTime}')" title="Нажмите, чтобы записать на ${slotTime}">
+              <span class="slot-add-icon">+</span>
+            </td>
+          `;
+        }
+        currentSlot++;
       }
     }
 
@@ -831,21 +864,22 @@ function renderTimeline() {
 
   // Строка нераспределённых записей (Любой свободный мастер)
   const unassignedApps = appointments.filter(a => {
-    return !specialists.some(sp => (a.specialistId === sp.id || (a.specialistName && a.specialistName.includes(sp.name))));
+    return a.status !== 'cancelled' && !specialists.some(sp => (a.specialistId === sp.id || (a.specialistName && a.specialistName.includes(sp.name))));
   });
+  unassignedApps.sort((a, b) => timeToSlot(a.time) - timeToSlot(b.time));
 
   if (unassignedApps.length > 0) {
     html += `
-      <tr style="background: rgba(229, 169, 60, 0.06); border-top: 2px dashed var(--accent-gold);">
-        <td style="border-right: 1px solid var(--border-subtle); padding: 10px 14px; width: 220px; min-width: 220px;">
+      <tr style="background: rgba(245, 158, 11, 0.06); border-top: 2px dashed #F59E0B;">
+        <td style="border-right: 2px solid var(--border-medium); padding: 10px 14px; width: 200px; min-width: 200px; position: sticky; left: 0; background: var(--bg-surface); z-index: 2;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--accent-gold-bg); border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--accent-gold); font-weight: 800; flex-shrink: 0;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #F59E0B; font-weight: 800; flex-shrink: 0;">
               !
             </div>
             <div>
               <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="color: var(--accent-gold); font-size: 14px; font-weight: 800;">Не назначен</span>
-                <span class="badge-status badge-status-new" style="font-size: 9px; padding: 2px 6px;">Требует мастера</span>
+                <span style="color: #F59E0B; font-size: 13px; font-weight: 800;">Не назначен</span>
+                <span class="badge-status badge-status-new" style="font-size: 9px; padding: 1px 5px;">Требует мастера</span>
               </div>
               <div style="font-size: 11px; color: var(--text-dim);">Любой свободный мастер</div>
             </div>
@@ -853,40 +887,44 @@ function renderTimeline() {
         </td>
     `;
 
-    for (let i = 0; i < hours.length; i++) {
-      const h = hours[i];
-      const hNum = parseInt(h.split(':')[0], 10);
-      const app = unassignedApps.find(a => parseInt(a.time.split(':')[0], 10) === hNum);
-
+    let currentSlot = 0;
+    while (currentSlot < TOTAL_SLOTS) {
+      const app = unassignedApps.find(a => timeToSlot(a.time) === currentSlot);
       if (app) {
         const dur = app.duration || 60;
+        const spanSlots = Math.max(1, Math.round(dur / 15));
+        const actualColspan = Math.min(spanSlots, TOTAL_SLOTS - currentSlot);
+
         const startMin = parseInt((app.time.split(':')[1] || '0'), 10);
-        const totalEndMin = hNum * 60 + startMin + dur;
+        const startHour = parseInt(app.time.split(':')[0], 10);
+        const totalEndMin = startHour * 60 + startMin + dur;
         const endHour = Math.floor(totalEndMin / 60);
         const endMin = totalEndMin % 60;
         const endTimeStr = String(endHour).padStart(2, '0') + ':' + String(endMin).padStart(2, '0');
-        const spanHours = Math.max(1, Math.ceil(dur / 60));
-        const actualColspan = Math.min(spanHours, hours.length - i);
 
         html += `
-          <td colspan="${actualColspan}" class="timeline-app-cell" style="background: var(--bg-card); border: 1px solid var(--color-warning); border-left: 4px solid var(--color-warning); border-radius: var(--radius-sm); padding: 8px 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="font-size: 13px; font-weight: 800; color: #FFFFFF;">${app.clientName}</span>
-              <button type="button" class="btn btn-primary" onclick="openEditAppointmentModal('${app.id}')" style="padding: 2px 7px; font-size: 10px; line-height: 1.2;">
+          <td colspan="${actualColspan}" class="timeline-app-cell" style="background: rgba(245, 158, 11, 0.12) !important; border: 1px solid rgba(245, 158, 11, 0.35) !important; border-left: 4px solid #F59E0B !important; vertical-align: middle;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 2px;">
+              <span style="font-size: 12px; font-weight: 800; color: #FFFFFF;">${app.clientName}</span>
+              <button type="button" class="btn btn-primary" onclick="openEditAppointmentModal('${app.id}')" style="padding: 1px 6px; font-size: 10px; line-height: 1.2;">
                 ✏️ Назначить
               </button>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">${app.serviceName}</div>
-            <div style="font-size: 10px; color: var(--color-warning); margin-top: 2px;">
-              ⚠️ Выберите мастера
+            <div style="font-size: 11px; color: #FCD34D;">${app.serviceName}</div>
+            <div style="font-size: 10px; color: #F59E0B; margin-top: 2px; font-family: var(--font-mono);">
+              ${app.time}–${endTimeStr} (${dur} мин)
             </div>
           </td>
         `;
-        i += (actualColspan - 1);
+        currentSlot += actualColspan;
       } else {
-        html += `<td style="color: var(--text-dim); text-align: center; opacity: 0.2;">—</td>`;
+        const isHourEnd = (currentSlot + 1) % 4 === 0;
+        const borderClass = isHourEnd ? 'timeline-slot-hour-end' : 'timeline-slot-quarter';
+        html += `<td class="timeline-slot-cell ${borderClass}" style="color: var(--text-dim); opacity: 0.18;">—</td>`;
+        currentSlot++;
       }
     }
+
     html += `</tr>`;
   }
 
