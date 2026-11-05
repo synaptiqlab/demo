@@ -792,17 +792,26 @@ textarea:focus {
 [data-theme="light"] #adminClientModal .client-modal-card,
 [data-theme="light"] #adminClientModal .client-modal-header,
 [data-theme="light"] #adminClientModal .client-modal-body,
-[data-theme="light"] #adminClientModal .client-modal-footer {
+[data-theme="light"] #adminClientModal .client-modal-footer,
+[data-theme="light"] #adminSpecialistModal .modal-card,
+[data-theme="light"] #adminSpecialistModal .client-modal-card,
+[data-theme="light"] #adminSpecialistModal .client-modal-header,
+[data-theme="light"] #adminSpecialistModal .client-modal-body,
+[data-theme="light"] #adminSpecialistModal .client-modal-footer {
   background: #F1F5F9 !important; /* Cool slate-blue gray theme canvas */
 }
 
 [data-theme="light"] #adminClientModal .modal-header,
-[data-theme="light"] #adminClientModal .client-modal-header {
+[data-theme="light"] #adminClientModal .client-modal-header,
+[data-theme="light"] #adminSpecialistModal .modal-header,
+[data-theme="light"] #adminSpecialistModal .client-modal-header {
   border-bottom: 1px solid #E2E8F0 !important;
 }
 
 [data-theme="light"] #adminClientModal .modal-footer,
-[data-theme="light"] #adminClientModal .client-modal-footer {
+[data-theme="light"] #adminClientModal .client-modal-footer,
+[data-theme="light"] #adminSpecialistModal .modal-footer,
+[data-theme="light"] #adminSpecialistModal .client-modal-footer {
   border-top: 1px solid #E2E8F0 !important;
 }
 
@@ -810,17 +819,26 @@ textarea:focus {
 [data-theme="dark"] #adminClientModal .client-modal-card,
 [data-theme="dark"] #adminClientModal .client-modal-header,
 [data-theme="dark"] #adminClientModal .client-modal-body,
-[data-theme="dark"] #adminClientModal .client-modal-footer {
+[data-theme="dark"] #adminClientModal .client-modal-footer,
+[data-theme="dark"] #adminSpecialistModal .modal-card,
+[data-theme="dark"] #adminSpecialistModal .client-modal-card,
+[data-theme="dark"] #adminSpecialistModal .client-modal-header,
+[data-theme="dark"] #adminSpecialistModal .client-modal-body,
+[data-theme="dark"] #adminSpecialistModal .client-modal-footer {
   background: #090A0E !important;
 }
 
 [data-theme="dark"] #adminClientModal .modal-header,
-[data-theme="dark"] #adminClientModal .client-modal-header {
+[data-theme="dark"] #adminClientModal .client-modal-header,
+[data-theme="dark"] #adminSpecialistModal .modal-header,
+[data-theme="dark"] #adminSpecialistModal .client-modal-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 [data-theme="dark"] #adminClientModal .modal-footer,
-[data-theme="dark"] #adminClientModal .client-modal-footer {
+[data-theme="dark"] #adminClientModal .client-modal-footer,
+[data-theme="dark"] #adminSpecialistModal .modal-footer,
+[data-theme="dark"] #adminSpecialistModal .client-modal-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
