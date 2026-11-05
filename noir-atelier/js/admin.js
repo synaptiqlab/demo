@@ -338,9 +338,32 @@ function closePinRecoveryAndFocus() {
     pinInp.focus();
   }
 }
-window.closePinRecoveryAndFocus = closePinRecoveryAndFocus;
+// Демо-режим витрины: блокирует изменение мастер-PIN для сохранения стабильного публичного доступа (PIN 1234)
+const IS_DEMO_MODE = true;
+
+function openDemoPinNoticeModal() {
+  const modal = document.getElementById('demoPinNoticeModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+  }
+}
+window.openDemoPinNoticeModal = openDemoPinNoticeModal;
+
+function closeDemoPinNoticeModal() {
+  const modal = document.getElementById('demoPinNoticeModal');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+window.closeDemoPinNoticeModal = closeDemoPinNoticeModal;
 
 function openPinChangeModal() {
+  if (IS_DEMO_MODE) {
+    openDemoPinNoticeModal();
+    return;
+  }
   const modal = document.getElementById('adminPinChangeModal');
   const err = document.getElementById('pinChangeErrorMsg');
   const succ = document.getElementById('pinChangeSuccessMsg');
@@ -379,6 +402,10 @@ window.closePinChangeModal = closePinChangeModal;
 
 function handleAdminPinChangeSubmit(e) {
   e.preventDefault();
+  if (IS_DEMO_MODE) {
+    openDemoPinNoticeModal();
+    return;
+  }
   const curVal = document.getElementById('currentPinInput').value.trim();
   const newVal = document.getElementById('newPinInput').value.trim();
   const confVal = document.getElementById('confirmNewPinInput').value.trim();
