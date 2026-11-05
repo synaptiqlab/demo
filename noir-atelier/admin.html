@@ -288,21 +288,21 @@
           <span>📅</span>
           <span>Расписание на день</span>
         </div>
-        <div class="drawer-nav-item" data-tab="specialists" onclick="handleDrawerNavClick('specialists')">
-          <span>👥</span>
-          <span>Мастера и смены</span>
-        </div>
         <div class="drawer-nav-item" data-tab="appointments" onclick="handleDrawerNavClick('appointments')">
           <span>📋</span>
           <span>Журнал записей</span>
         </div>
-        <div class="drawer-nav-item" data-tab="services" onclick="handleDrawerNavClick('services')">
-          <span>🏷️</span>
-          <span>Прейскурант и услуги</span>
+        <div class="drawer-nav-item" data-tab="specialists" onclick="handleDrawerNavClick('specialists')">
+          <span>👥</span>
+          <span>Мастера и смены</span>
         </div>
         <div class="drawer-nav-item" data-tab="clients" onclick="handleDrawerNavClick('clients')">
           <span>👤</span>
           <span>База клиентов</span>
+        </div>
+        <div class="drawer-nav-item" data-tab="services" onclick="handleDrawerNavClick('services')">
+          <span>🏷️</span>
+          <span>Прейскурант и услуги</span>
         </div>
         <div class="drawer-nav-item" data-tab="payroll" onclick="handleDrawerNavClick('payroll')">
           <span>💰</span>
@@ -322,8 +322,8 @@
             <span>Светлая</span>
           </button>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="openPinChangeModal(); closeMobileAdminDrawer();" style="width: 100%; font-size: 12px; margin-bottom: 8px;">
-          🔒 Сменить PIN-код
+        <button type="button" class="btn btn-secondary" onclick="openPinChangeModal(); closeMobileAdminDrawer();" style="width: 100%; font-size: 12px; margin-bottom: 8px; opacity: 0.85;" title="В демо-версии смена PIN заблокирована">
+          🔒 Сменить PIN-код (Демо)
         </button>
         <a href="index.html" class="btn btn-secondary" style="width: 100%; font-size: 12px; text-align: center;">
           ← На витрину сайта
@@ -351,21 +351,21 @@
           <span>📅</span>
           <span>Расписание на день</span>
         </div>
-        <div class="admin-nav-item" data-tab="specialists">
-          <span>👥</span>
-          <span>Мастера и смены</span>
-        </div>
         <div class="admin-nav-item" data-tab="appointments">
           <span>📋</span>
           <span>Журнал записей</span>
         </div>
-        <div class="admin-nav-item" data-tab="services">
-          <span>🏷️</span>
-          <span>Прейскурант и услуги</span>
+        <div class="admin-nav-item" data-tab="specialists">
+          <span>👥</span>
+          <span>Мастера и смены</span>
         </div>
         <div class="admin-nav-item" data-tab="clients">
           <span>👤</span>
           <span>База клиентов</span>
+        </div>
+        <div class="admin-nav-item" data-tab="services">
+          <span>🏷️</span>
+          <span>Прейскурант и услуги</span>
         </div>
         <div class="admin-nav-item" data-tab="payroll">
           <span>💰</span>
@@ -379,7 +379,7 @@
             <span>🔄</span>
             <span>Обновить</span>
           </button>
-          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm);" title="Сменить PIN-код администратора">
+          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm); opacity: 0.85;" title="В демо-версии смена PIN заблокирована">
             <span>🔒</span>
             <span>Сменить PIN</span>
           </button>
@@ -1785,6 +1785,39 @@
       <div class="modal-footer" style="display: flex; justify-content: flex-end; padding: 14px 28px;">
         <button type="button" class="btn btn-primary modal-close-trigger" style="padding: 9px 24px; font-weight: 700;">
           Понятно, закрыть
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Уведомление об ограничении смены PIN в демо-версии -->
+  <div class="modal-overlay" id="demoPinNoticeModal" onclick="if(event.target === this) closeDemoPinNoticeModal()" style="display: none; z-index: 10005;">
+    <div class="modal-card" style="max-width: 440px; padding: 28px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px; margin: 0;">
+          <span>🔒</span>
+          <span>Ограничение демо-версии</span>
+        </h3>
+        <button type="button" class="btn btn-secondary" onclick="closeDemoPinNoticeModal()" style="padding: 4px 10px; font-size: 13px; border-radius: var(--radius-sm);">✕</button>
+      </div>
+
+      <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+          <span>ℹ️</span>
+          <span>Смена мастер-PIN заблокирована</span>
+        </div>
+        <p style="font-size: 12px; color: var(--text-sub); line-height: 1.5; margin: 0;">
+          В этой демонстрационной витрине функция смены PIN-кода отключена для сохранения публичного доступа (PIN по умолчанию: <b style="color: #FFFFFF;">1234</b>).
+        </p>
+      </div>
+
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 22px; font-size: 12px; color: var(--text-sub); line-height: 1.5;">
+        🛡️ <b style="color: #FFFFFF;">В коммерческой версии:</b> каждому заведению назначается индивидуальный зашифрованный PIN-код с двухфакторным подтверждением личности через закрытую группу Telegram.
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-primary" onclick="closeDemoPinNoticeModal()" style="padding: 9px 22px; font-size: 12px; font-weight: 700;">
+          Понятно
         </button>
       </div>
     </div>
