@@ -22,23 +22,23 @@
   };
 
   const SALON_HTML_TEMPLATE = `<!-- PIN Lock Screen -->
-  <div id="pinLockScreen" style="position: fixed; inset: 0; background: var(--bg-deep); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-    <div style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: 40px; max-width: 400px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
+  <div id="pinLockScreen">
+    <div id="pinLockCard">
       <div style="margin-bottom: 22px;">
-        <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.6px; color: var(--text-main); line-height: 1.1;">NOIR Atelier</div>
+        <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.6px; color: var(--text-main); line-height: 1.1;">${config.name || 'NOIR'} Atelier</div>
         <div style="font-size: 11px; font-weight: 700; color: var(--accent-primary); letter-spacing: 1.2px; text-transform: uppercase; margin-top: 5px;">CRM &amp; Business Management</div>
       </div>
       <h3 style="font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Вход в систему</h3>
       <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Введите PIN-код администратора (демо: 1234)</p>
       
       <form id="pinAuthForm">
-        <div class="form-group">
-          <input type="password" id="pinInput" class="form-input" placeholder="••••" maxlength="8" style="text-align: center; font-size: 24px; letter-spacing: 8px; font-family: var(--font-mono);" autofocus required>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <input type="password" id="pinInput" class="form-input" placeholder="••••" maxlength="8" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" style="text-align: center; font-size: 24px; letter-spacing: 8px; font-family: var(--font-mono);" autofocus required>
         </div>
-        <div id="pinErrorMsg" style="display: none; color: var(--color-danger); font-size: 13px; margin-bottom: 16px;">
+        <div id="pinErrorMsg" style="display: none; color: var(--color-danger); font-size: 13px; margin-bottom: 16px; font-weight: 600;">
           Неверный PIN-код. Проверьте правильность ввода
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px 20px; font-weight: 700; font-size: 14px;">
           Войти в систему →
         </button>
         <div style="margin-top: 18px;">
@@ -1800,9 +1800,13 @@
  * Управление расписанием мастеров, живой редактор записей, смены и прейскурант
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initAdmin();
+  });
+} else {
   initAdmin();
-});
+}
 
 const ADMIN_PIN = "1234";
 let currentDate = new Date().toISOString().split('T')[0];
@@ -1927,18 +1931,14 @@ function setupAuth() {
     openPinRecoveryModal();
   }
 
-  try {
-    if (isAutoLogin) {
-      sessionStorage.setItem('noir_admin_auth', 'true');
-    }
-  } catch (e) {}
-
   let isAuth = isAutoLogin;
   try {
-    if (sessionStorage.getItem('noir_admin_auth') === 'true') {
+    if (sessionStorage.getItem('noir_admin_auth') === 'true' || localStorage.getItem('noir_admin_auth') === 'true') {
       isAuth = true;
     }
   } catch (e) {}
+
+  const tenantId = window.currentSalonTenant || (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || 'noir-atelier';
 
   // Проверка сессии или параметра autologin
   if (isAuth || (pinScreen && pinScreen.style.display === 'none')) {
@@ -1946,14 +1946,20 @@ function setupAuth() {
     if (mainLayout) mainLayout.style.display = 'flex';
 
     // Автоматическое получение HMAC токена если его нет в текущей сессии
-    if (!sessionStorage.getItem('noir_admin_token')) {
+    let token = sessionStorage.getItem('noir_admin_token');
+    if (!token) {
+      try { token = localStorage.getItem('noir_admin_token'); } catch(e) {}
+    }
+
+    if (!token) {
       fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenant_id: "noir-atelier", pin: "1234" })
+        body: JSON.stringify({ tenant_id: tenantId, pin: "1234" })
       }).then(r => r.json()).then(d => {
         if (d && d.token) {
           sessionStorage.setItem('noir_admin_token', d.token);
+          try { localStorage.setItem('noir_admin_token', d.token); } catch(e) {}
           if (window.noirData && typeof window.noirData.syncFromCloud === 'function') {
             window.noirData.syncFromCloud();
           }
@@ -1965,12 +1971,22 @@ function setupAuth() {
     return;
   }
 
-
   // Экспортируем глобальный обработчик завершения сессии
   window.handleSessionExpired = function() {
+    if (window.isSalonDemoMode) {
+      console.warn("Session 401 suppressed in demo mode");
+      return;
+    }
+    const pScreen = document.getElementById('pinLockScreen');
+    if (pScreen && pScreen.style.display !== 'none') return;
+
     sessionStorage.removeItem('noir_admin_auth');
     sessionStorage.removeItem('noir_admin_token');
-    const pScreen = document.getElementById('pinLockScreen');
+    try {
+      localStorage.removeItem('noir_admin_auth');
+      localStorage.removeItem('noir_admin_token');
+    } catch(e) {}
+
     const mLayout = document.getElementById('adminMainLayout');
     const pError = document.getElementById('pinErrorMsg');
     if (mLayout) mLayout.style.display = 'none';
@@ -1982,13 +1998,19 @@ function setupAuth() {
   };
 
   if (pinForm) {
+    if (pinForm._authAttached) return;
+    pinForm._authAttached = true;
+
     pinForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const entered = pinInput ? pinInput.value.trim() : '';
       if (!entered) return;
 
       const submitBtn = pinForm.querySelector('button[type="submit"]');
-      if (submitBtn) submitBtn.disabled = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Проверка...';
+      }
 
       let isValid = false;
       let token = null;
@@ -1998,7 +2020,7 @@ function setupAuth() {
         const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tenant_id: "noir-atelier", pin: entered })
+          body: JSON.stringify({ tenant_id: tenantId, pin: entered })
         });
         const resData = await resp.json();
         if (resData && resData.success) {
@@ -2011,13 +2033,22 @@ function setupAuth() {
         console.warn("ClientBase PIN check offline, using local verification:", err);
         isValid = window.noirData ? window.noirData.verifyAdminPin(entered) : (entered === "1234");
       } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Войти в систему →';
+        }
       }
       
       if (isValid) {
         sessionStorage.setItem('noir_admin_auth', 'true');
+        try {
+          localStorage.setItem('noir_admin_auth', 'true');
+          localStorage.setItem('noir_admin_auth_time', Date.now().toString());
+        } catch(e) {}
+
         if (token) {
           sessionStorage.setItem('noir_admin_token', token);
+          try { localStorage.setItem('noir_admin_token', token); } catch(e) {}
         }
         if (pinScreen) pinScreen.style.display = 'none';
         if (mainLayout) mainLayout.style.display = 'flex';
@@ -2027,7 +2058,10 @@ function setupAuth() {
           pinError.textContent = errorMsg;
           pinError.style.display = 'block';
         }
-        if (pinInput) pinInput.value = '';
+        if (pinInput) {
+          pinInput.value = '';
+          pinInput.focus();
+        }
       }
     });
   }
