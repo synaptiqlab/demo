@@ -1465,6 +1465,27 @@ window.openEditAppointmentModal = function(appId) {
   document.getElementById('editAppStatus').value = app.status || 'confirmed';
   document.getElementById('editAppComment').value = app.comment || '';
 
+  // Динамический фильтр доступных услуг для выбранного мастера
+  const updateEditAppAddServiceOptions = function(specialistId) {
+    const addServiceSel = document.getElementById('editAppAddServiceSelect');
+    if (!addServiceSel) return;
+    const allServices = window.noirData.getServices();
+    const allSpecialists = window.noirData.getSpecialists();
+
+    let filtered = allServices;
+    if (specialistId && specialistId !== 'any') {
+      const sp = allSpecialists.find(s => s.id === specialistId);
+      if (sp && Array.isArray(sp.categories) && sp.categories.length > 0) {
+        filtered = allServices.filter(s => sp.categories.includes(s.categoryId));
+      }
+    }
+
+    addServiceSel.innerHTML = `
+      <option value="">-- Выберите услугу для добавления в чек --</option>
+      ${filtered.map(s => `<option value="${s.id}">${s.name} (${window.noirData.formatMoney(s.price)} • ${s.duration} мин)</option>`).join('')}
+    `;
+  };
+
   // Селектор мастеров
   const specSel = document.getElementById('editAppSpecialist');
   if (specSel) {
@@ -1473,17 +1494,13 @@ window.openEditAppointmentModal = function(appId) {
       <option value="any">Любой свободный мастер</option>
       ${specialists.map(sp => `<option value="${sp.id}" ${sp.id === app.specialistId ? 'selected' : ''}>${sp.name} (${sp.role.split(',')[0]})</option>`).join('')}
     `;
+    specSel.onchange = function() {
+      updateEditAppAddServiceOptions(specSel.value);
+    };
   }
 
-  // Селектор добавления доп. услуги
-  const addServiceSel = document.getElementById('editAppAddServiceSelect');
-  if (addServiceSel) {
-    const allServices = window.noirData.getServices();
-    addServiceSel.innerHTML = `
-      <option value="">-- Выберите услугу для добавления в чек --</option>
-      ${allServices.map(s => `<option value="${s.id}">${s.name} (${window.noirData.formatMoney(s.price)} • ${s.duration} мин)</option>`).join('')}
-    `;
-  }
+  // Селектор добавления доп. услуги с первичной фильтрацией
+  updateEditAppAddServiceOptions(app.specialistId || 'any');
 
   // Инициализация списка услуг
   if (app.items && Array.isArray(app.items) && app.items.length > 0) {
@@ -1823,7 +1840,22 @@ ${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i
   }
 
   if (adminServiceSel) {
-    adminServiceSel.addEventListener('change', updateQuickBookingDiscountDisplay);
+    adminServiceSel.addEventListener('change', () => {
+      if (window.noirQuickFilter) {
+        window.noirQuickFilter.onServiceChange();
+      } else {
+        updateQuickBookingDiscountDisplay();
+      }
+    });
+  }
+
+  const adminSpecialistSel = document.getElementById('adminSpecialistSelect');
+  if (adminSpecialistSel) {
+    adminSpecialistSel.addEventListener('change', () => {
+      if (window.noirQuickFilter) {
+        window.noirQuickFilter.onSpecialistChange();
+      }
+    });
   }
 
   // Поиск в журнале
@@ -2060,6 +2092,144 @@ ${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i
   }
 }
 
+// ==========================================================================
+// СВЯЗАННЫЙ ДВУНАПРАВЛЕННЫЙ ФИЛЬТР: УСЛУГА <-> МАСТЕР (Quick Booking)
+// ==========================================================================
+window.noirQuickFilter = {
+  isUpdating: false,
+
+  renderServices(specialistId, targetServiceId = null) {
+    const serviceSel = document.getElementById('adminServiceSelect');
+    if (!serviceSel) return;
+
+    const allServices = window.noirData.getServices();
+    const allSpecialists = window.noirData.getSpecialists();
+    const currentSrvId = targetServiceId !== null ? targetServiceId : serviceSel.value;
+
+    let filtered = allServices;
+    if (specialistId && specialistId !== 'any') {
+      const sp = allSpecialists.find(s => s.id === specialistId);
+      if (sp && Array.isArray(sp.categories) && sp.categories.length > 0) {
+        filtered = allServices.filter(s => sp.categories.includes(s.categoryId));
+      }
+    }
+
+    let html = '';
+    filtered.forEach(s => {
+      html += `<option value="${s.id}">${s.name} (${window.noirData.formatMoney(s.price)} • ${s.duration} мин)</option>`;
+    });
+
+    serviceSel.innerHTML = html;
+
+    // Восстанавливаем выбранную услугу, если она доступна в отфильтрованном списке
+    const stillValid = filtered.some(s => s.id === currentSrvId);
+    if (stillValid) {
+      serviceSel.value = currentSrvId;
+    } else if (filtered.length > 0) {
+      serviceSel.value = filtered[0].id;
+    } else {
+      serviceSel.value = '';
+    }
+  },
+
+  renderSpecialists(serviceId, targetSpecId = null) {
+    const specSel = document.getElementById('adminSpecialistSelect');
+    if (!specSel) return;
+
+    const allServices = window.noirData.getServices();
+    const allSpecialists = window.noirData.getSpecialists();
+    const currentSpecId = targetSpecId !== null ? targetSpecId : specSel.value;
+
+    let filtered = allSpecialists;
+    if (serviceId) {
+      const srv = allServices.find(s => s.id === serviceId);
+      if (srv && srv.categoryId) {
+        filtered = allSpecialists.filter(sp => {
+          if (!sp.categories || sp.categories.length === 0) return true;
+          return sp.categories.includes(srv.categoryId);
+        });
+      }
+    }
+
+    let html = '<option value="any">Любой свободный мастер</option>';
+    filtered.forEach(sp => {
+      const roleShort = (sp.role || '').split(',')[0];
+      html += `<option value="${sp.id}">${sp.name} (${roleShort})</option>`;
+    });
+
+    specSel.innerHTML = html;
+
+    // Если ранее выбранный мастер есть в списке подходящих — оставляем его
+    const stillValid = (currentSpecId === 'any') || filtered.some(sp => sp.id === currentSpecId);
+    if (stillValid && currentSpecId) {
+      specSel.value = currentSpecId;
+    } else {
+      specSel.value = 'any';
+    }
+  },
+
+  onServiceChange() {
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+    try {
+      const serviceSel = document.getElementById('adminServiceSelect');
+      const specSel = document.getElementById('adminSpecialistSelect');
+      const srvId = serviceSel ? serviceSel.value : '';
+      const currentSpec = specSel ? specSel.value : 'any';
+
+      this.renderSpecialists(srvId, currentSpec);
+      if (typeof window.updateQuickBookingDiscountDisplay === 'function') {
+        window.updateQuickBookingDiscountDisplay();
+      }
+    } finally {
+      this.isUpdating = false;
+    }
+  },
+
+  onSpecialistChange() {
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+    try {
+      const serviceSel = document.getElementById('adminServiceSelect');
+      const specSel = document.getElementById('adminSpecialistSelect');
+      const specId = specSel ? specSel.value : 'any';
+      const currentSrv = serviceSel ? serviceSel.value : '';
+
+      this.renderServices(specId, currentSrv);
+      if (typeof window.updateQuickBookingDiscountDisplay === 'function') {
+        window.updateQuickBookingDiscountDisplay();
+      }
+    } finally {
+      this.isUpdating = false;
+    }
+  },
+
+  init(initialSpecId = 'any') {
+    const serviceSel = document.getElementById('adminServiceSelect');
+    const specSel = document.getElementById('adminSpecialistSelect');
+    if (!serviceSel || !specSel) return;
+
+    this.isUpdating = true;
+    try {
+      if (initialSpecId && initialSpecId !== 'any') {
+        this.renderServices(initialSpecId);
+        const srvId = serviceSel.value;
+        this.renderSpecialists(srvId, initialSpecId);
+      } else {
+        this.renderServices('any');
+        const srvId = serviceSel.value;
+        this.renderSpecialists(srvId, 'any');
+      }
+    } finally {
+      this.isUpdating = false;
+    }
+
+    if (typeof window.updateQuickBookingDiscountDisplay === 'function') {
+      window.updateQuickBookingDiscountDisplay();
+    }
+  }
+};
+
 window.openQuickBookingFor = function(specialistId, time) {
   const quickModal = document.getElementById('adminQuickBookingModal');
   if (!quickModal) return;
@@ -2067,32 +2237,20 @@ window.openQuickBookingFor = function(specialistId, time) {
   const errBox = document.getElementById('quickBookingConflictAlert');
   if (errBox) errBox.style.display = 'none';
 
-  const serviceSel = document.getElementById('adminServiceSelect');
-  const specSel = document.getElementById('adminSpecialistSelect');
   const dateInput = document.getElementById('adminBookingDate');
   const timeInput = document.getElementById('adminBookingTime');
 
   if (dateInput) dateInput.value = currentDate;
   if (timeInput) {
-    timeInput.value = time;
+    timeInput.value = time || '12:00';
     window.roundTimeInput(timeInput);
   }
 
-  if (serviceSel) {
-    const services = window.noirData.getServices();
-    serviceSel.innerHTML = services.map(s => `
-      <option value="${s.id}">${s.name} (${window.noirData.formatMoney(s.price)})</option>
-    `).join('');
+  // Запуск двунаправленной инициализации фильтра (Мастер <-> Услуга)
+  if (window.noirQuickFilter) {
+    window.noirQuickFilter.init(specialistId || 'any');
   }
 
-  if (specSel) {
-    const specialists = window.noirData.getSpecialists();
-    specSel.innerHTML = specialists.map(sp => `
-      <option value="${sp.id}" ${sp.id === specialistId ? 'selected' : ''}>${sp.name}</option>
-    `).join('');
-  }
-
-  updateQuickBookingDiscountDisplay();
   quickModal.classList.add('active');
 };
 
