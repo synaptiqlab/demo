@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=20261105_timeline_15m">
+  <link rel="stylesheet" href="css/admin.css?v=20261105_conflict_15m">
   <style>
     /* Admin specific fine-tuning */
     .timeline-table th {
@@ -852,8 +852,14 @@
               <input type="date" id="editAppDate" class="form-input" required>
             </div>
             <div>
-              <label class="form-label">Время начала *</label>
-              <input type="time" id="editAppTime" class="form-input" required>
+              <label class="form-label">Время начала (шаг 15 мин) *</label>
+              <input type="time" id="editAppTime" class="form-input" step="900" required onblur="roundTimeInput(this)" onchange="roundTimeInput(this)">
+              <div style="display: flex; gap: 4px; margin-top: 6px;">
+                <button type="button" class="btn btn-secondary" onclick="setEditTimeMinute(0)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:00</button>
+                <button type="button" class="btn btn-secondary" onclick="setEditTimeMinute(15)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:15</button>
+                <button type="button" class="btn btn-secondary" onclick="setEditTimeMinute(30)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:30</button>
+                <button type="button" class="btn btn-secondary" onclick="setEditTimeMinute(45)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:45</button>
+              </div>
             </div>
             <div>
               <label class="form-label">Статус записи</label>
@@ -901,6 +907,10 @@
           <div class="form-group">
             <label class="form-label">Комментарий мастера / пожелания</label>
             <textarea id="editAppComment" class="form-textarea" rows="2" placeholder="Заметки о стрижке, формуле тонирования или аллергии..."></textarea>
+          </div>
+
+          <div id="editAppConflictAlert" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 14px; font-size: 12px; color: #EF4444; line-height: 1.4; font-weight: 600;">
+            <!-- Dynamic conflict text -->
           </div>
         </div>
 
@@ -972,9 +982,19 @@
               <input type="date" id="adminBookingDate" class="form-input" required>
             </div>
             <div>
-              <label class="form-label">Время *</label>
-              <input type="time" id="adminBookingTime" class="form-input" required>
+              <label class="form-label">Время (шаг 15 мин) *</label>
+              <input type="time" id="adminBookingTime" class="form-input" step="900" required onblur="roundTimeInput(this)" onchange="roundTimeInput(this)">
+              <div style="display: flex; gap: 4px; margin-top: 6px;">
+                <button type="button" class="btn btn-secondary" onclick="setQuickTimeMinute(0)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:00</button>
+                <button type="button" class="btn btn-secondary" onclick="setQuickTimeMinute(15)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:15</button>
+                <button type="button" class="btn btn-secondary" onclick="setQuickTimeMinute(30)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:30</button>
+                <button type="button" class="btn btn-secondary" onclick="setQuickTimeMinute(45)" style="padding: 2px 7px; font-size: 11px; flex: 1;">:45</button>
+              </div>
             </div>
+          </div>
+
+          <div id="quickBookingConflictAlert" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 14px; font-size: 12px; color: #EF4444; line-height: 1.4; font-weight: 600;">
+            <!-- Dynamic conflict text -->
           </div>
         </div>
 
@@ -1730,7 +1750,7 @@
   </style>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=20261105_timeline_15m"></script>
-  <script src="js/admin.js?v=20261105_timeline_15m"></script>
+  <script src="js/data.js?v=20261105_conflict_15m"></script>
+  <script src="js/admin.js?v=20261105_conflict_15m"></script>
 </body>
 </html>
