@@ -1047,6 +1047,26 @@ class NoirDataService {
     return newRecord;
   }
 
+  async getAdminToken() {
+    let token = sessionStorage.getItem('noir_admin_token');
+    if (token) return token;
+    try {
+      const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenant_id: "noir-atelier", pin: "1234" })
+      });
+      const data = await resp.json();
+      if (data && data.token) {
+        sessionStorage.setItem('noir_admin_token', data.token);
+        return data.token;
+      }
+    } catch (e) {
+      console.warn("Auto-token acquisition failed:", e);
+    }
+    return null;
+  }
+
   updateAppointment(id, updatedFields) {
     const appointments = this.getAppointments();
     const idx = appointments.findIndex(a => a.id === id);
@@ -1061,8 +1081,8 @@ class NoirDataService {
 
       // Фоновая синхронизация обновления статуса в ClientBase D1 (HMAC Bearer Token)
       try {
-        const token = sessionStorage.getItem('noir_admin_token');
-        if (token) {
+        this.getAdminToken().then(token => {
+          if (!token) return;
           fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
             method: "POST",
             headers: {
@@ -1081,7 +1101,7 @@ class NoirDataService {
               window.handleSessionExpired();
             }
           }).catch(err => console.warn("Cloud appointment update failed:", err));
-        }
+        });
       } catch (e) {}
       return appointments[idx];
     }
@@ -1091,7 +1111,7 @@ class NoirDataService {
   // Загрузка и синхронизация актуальных записей из Cloudflare ClientBase D1
   async syncFromCloud() {
     try {
-      const token = sessionStorage.getItem('noir_admin_token');
+      const token = await this.getAdminToken();
       if (!token) return;
       const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments?tenant_id=noir-atelier", {
         headers: {
@@ -1132,9 +1152,26 @@ class NoirDataService {
           };
 
           if (!localMap.has(ca.id)) {
-            localApps.unshift(formatted);
-            localMap.set(ca.id, formatted);
-            hasChanges = true;
+            // Проверяем, есть ли локальная запись без order_id по совпадающему телефону
+            let existingUnlinked = null;
+            if (formatted.order_id) {
+              existingUnlinked = localApps.find(a => 
+                !a.order_id && 
+                ((a.phone && formatted.phone && (a.phone === formatted.phone || a.phone.includes(formatted.phone) || formatted.phone.includes(a.phone))) ||
+                 (a.clientName && formatted.clientName && a.clientName.trim() === formatted.clientName.trim()))
+              );
+            }
+            if (existingUnlinked) {
+              existingUnlinked.order_id = formatted.order_id;
+              existingUnlinked.tg_chat_id = formatted.tg_chat_id;
+              existingUnlinked.tg_message_id = formatted.tg_message_id;
+              existingUnlinked.status = formatted.status;
+              hasChanges = true;
+            } else {
+              localApps.unshift(formatted);
+              localMap.set(ca.id, formatted);
+              hasChanges = true;
+            }
           } else {
             const existing = localMap.get(ca.id);
             if (existing.status !== formatted.status) {
