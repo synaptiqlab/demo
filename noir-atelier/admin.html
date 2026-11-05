@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=20261105_categories_v1">
+  <link rel="stylesheet" href="css/admin.css?v=20261105_pin_lock_v4">
   <style>
     /* Admin specific fine-tuning */
     .timeline-table th {
@@ -322,7 +322,7 @@
             <span>Светлая</span>
           </button>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="openPinChangeModal(); closeMobileAdminDrawer();" style="width: 100%; font-size: 12px; margin-bottom: 8px; opacity: 0.85;" title="В демо-версии смена PIN заблокирована">
+        <button type="button" class="btn btn-secondary" disabled style="width: 100%; font-size: 12px; margin-bottom: 8px; opacity: 0.45; cursor: not-allowed; pointer-events: none; border-color: var(--border-subtle);" title="Смена PIN заблокирована в демо-версии">
           🔒 Сменить PIN-код (Демо)
         </button>
         <a href="index.html" class="btn btn-secondary" style="width: 100%; font-size: 12px; text-align: center;">
@@ -379,7 +379,7 @@
             <span>🔄</span>
             <span>Обновить</span>
           </button>
-          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm); opacity: 0.85;" title="В демо-версии смена PIN заблокирована">
+          <button type="button" class="btn btn-secondary" disabled style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm); opacity: 0.45; cursor: not-allowed; pointer-events: none; border-color: var(--border-subtle);" title="Смена PIN заблокирована в демо-версии">
             <span>🔒</span>
             <span>Сменить PIN</span>
           </button>
@@ -1913,7 +1913,7 @@
   </style>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=20261105_categories_v2"></script>
-  <script src="js/admin.js?v=20261105_categories_v2"></script>
+  <script src="js/data.js?v=20261105_pin_lock_v4"></script>
+  <script src="js/admin.js?v=20261105_pin_lock_v4"></script>
 </body>
 </html>
