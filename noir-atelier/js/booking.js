@@ -247,14 +247,7 @@ function handleNextStep() {
 
     bookingState.clientName = name;
     bookingState.phone = phone;
-    bookingState.comment = comment;
-
-    let finalComment = bookingState.comment;
-    if (bookingState.discountPercent > 0) {
-      const discountAmount = Math.round(bookingState.basePrice * bookingState.discountPercent / 100);
-      const discountNote = `Лояльность: скидка ${bookingState.discountPercent}% (-${window.noirData.formatMoney(discountAmount)})`;
-      finalComment = finalComment ? (finalComment + ' | ' + discountNote) : discountNote;
-    }
+    bookingState.comment = comment ? comment.trim() : '';
 
     // Сохраняем в базу LocalStorage
     const newRecord = window.noirData.addAppointment({
@@ -269,15 +262,22 @@ function handleNextStep() {
       duration: bookingState.duration,
       price: bookingState.price,
       discountPercent: bookingState.discountPercent,
-      comment: finalComment
+      comment: bookingState.comment || ""
     });
 
     // Отправляем запись в единый бот SYNAPTIQ CRM Assistant
     try {
+      const extraLines = [];
+      if (bookingState.discountPercent > 0) {
+        extraLines.push(`⭐ Скидка лояльности: ${bookingState.discountPercent}%`);
+      }
+      if (bookingState.comment) {
+        extraLines.push(`💬 Пожелания: ${bookingState.comment}`);
+      }
+
       const bookingSummaryText = `💇 Услуга: ${bookingState.serviceName}
 👤 Мастер: ${bookingState.specialistName}
-📅 Дата и время: ${bookingState.date} в ${bookingState.time} (${bookingState.duration} мин)
-${bookingState.discountPercent > 0 ? `⭐ Скидка лояльности: ${bookingState.discountPercent}%\n` : ''}${finalComment ? `💬 Пожелания: ${finalComment}` : ''}`;
+📅 Дата и время: ${bookingState.date} в ${bookingState.time} (${bookingState.duration} мин)${extraLines.length > 0 ? '\n' + extraLines.join('\n') : ''}`;
 
       fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/order", {
         method: "POST",
