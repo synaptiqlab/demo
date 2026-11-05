@@ -37,8 +37,23 @@ function setupLiveSync() {
     }
   });
 
-  // Автоматическое обновление данных при переключении на вкладку браузера
-  window.addEventListener('focus', () => {
+  // Реакция на синхронизацию с облачной базой D1 (синхронизация из Telegram-бота)
+  window.addEventListener('noir_appointments_synced', () => {
+    updateKPIs();
+    if (currentTab === 'timeline') renderTimeline();
+    if (currentTab === 'specialists') renderSpecialistsSchedule();
+    if (currentTab === 'appointments') renderJournal();
+  });
+
+  // Быстрый пульс (Heartbeat) синхронизации каждые 3 секунды
+  setInterval(async () => {
+    if (sessionStorage.getItem('noir_admin_token') && window.noirData && typeof window.noirData.syncFromCloud === 'function') {
+      await window.noirData.syncFromCloud();
+    }
+  }, 3000);
+
+  // Мгновенная синхронизация при возврате на вкладку браузера
+  const syncOnActive = () => {
     updateKPIs();
     if (currentTab === 'timeline') renderTimeline();
     if (currentTab === 'specialists') renderSpecialistsSchedule();
@@ -46,6 +61,15 @@ function setupLiveSync() {
     if (currentTab === 'services') renderServicesAdmin();
     if (currentTab === 'clients') renderClientsAdmin();
     if (currentTab === 'payroll') renderPayrollAdmin();
+
+    if (sessionStorage.getItem('noir_admin_token') && window.noirData && typeof window.noirData.syncFromCloud === 'function') {
+      window.noirData.syncFromCloud();
+    }
+  };
+
+  window.addEventListener('focus', syncOnActive);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) syncOnActive();
   });
 }
 
@@ -80,6 +104,23 @@ function setupAuth() {
   if (isAuth || (pinScreen && pinScreen.style.display === 'none')) {
     if (pinScreen) pinScreen.style.display = 'none';
     if (mainLayout) mainLayout.style.display = 'flex';
+
+    // Автоматическое получение HMAC токена если его нет в текущей сессии
+    if (!sessionStorage.getItem('noir_admin_token')) {
+      fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenant_id: "noir-atelier", pin: "1234" })
+      }).then(r => r.json()).then(d => {
+        if (d && d.token) {
+          sessionStorage.setItem('noir_admin_token', d.token);
+          if (window.noirData && typeof window.noirData.syncFromCloud === 'function') {
+            window.noirData.syncFromCloud();
+          }
+        }
+      }).catch(err => console.warn("Auto-token fetch failed:", err));
+    }
+
     loadDashboard();
     return;
   }
@@ -1474,8 +1515,26 @@ ${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i
             client_phone: phone,
             order_title: orderSummaryText,
             total_amount: finalPrice,
-            currency: "VND"
+            currency: "VND",
+            appointment_id: createdRecord.id,
+            service_id: srvId || "",
+            service_name: srv ? srv.name : "Услуга",
+            specialist_id: specId || "",
+            specialist_name: sp ? sp.name : "Любой свободный мастер",
+            app_date: date,
+            app_time: time,
+            duration: srv ? srv.duration : 60,
+            discount_percent: discount || 0,
+            comment: createdRecord.comment || ""
           })
+        }).then(r => r.json()).then(resData => {
+          if (resData && resData.order_id) {
+            window.noirData.updateAppointment(createdRecord.id, {
+              order_id: resData.order_id,
+              tg_chat_id: resData.tg_chat_id,
+              tg_message_id: resData.tg_message_id
+            });
+          }
         }).catch(e => console.warn("CRM bot dispatch error:", e));
       } catch (dispatchErr) {
         console.warn("CRM dispatch error:", dispatchErr);
