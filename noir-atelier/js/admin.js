@@ -1276,8 +1276,39 @@ window.handleQuickStatusChange = function(appId, newStatus) {
 };
 
 // ==========================================
-// 4. ПРЕЙСКУРАНТ / УСЛУГИ АДМИН
+// 4. ПРЕЙСКУРАНТ / УСЛУГИ АДМИН (АККОРДЕОНЫ КАТЕГОРИЙ)
 // ==========================================
+window.noirCategoryAccordionState = window.noirCategoryAccordionState || new Set();
+
+function pluralizeServices(count) {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod100 >= 11 && mod100 <= 19) return 'услуг';
+  if (mod10 === 1) return 'услуга';
+  if (mod10 >= 2 && mod10 <= 4) return 'услуги';
+  return 'услуг';
+}
+
+window.toggleCategoryAccordion = function(catId) {
+  if (window.noirCategoryAccordionState.has(catId)) {
+    window.noirCategoryAccordionState.delete(catId);
+  } else {
+    window.noirCategoryAccordionState.add(catId);
+  }
+  renderServicesAdmin();
+};
+
+window.toggleAllCategoryAccordions = function() {
+  const categories = window.noirData.getCategories();
+  const allOpen = categories.length > 0 && categories.every(c => window.noirCategoryAccordionState.has(c.id));
+  if (allOpen) {
+    window.noirCategoryAccordionState.clear();
+  } else {
+    categories.forEach(c => window.noirCategoryAccordionState.add(c.id));
+  }
+  renderServicesAdmin();
+};
+
 function renderServicesAdmin() {
   const container = document.getElementById('adminServicesContainer');
   if (!container) return;
@@ -1285,26 +1316,68 @@ function renderServicesAdmin() {
   const categories = window.noirData.getCategories();
   const services = window.noirData.getServices();
 
+  // Если состояние ещё не инициализировано, раскрываем первую категорию по умолчанию
+  if (window.noirCategoryAccordionState.size === 0 && categories.length > 0 && !window.noirCategoryAccordionTouched) {
+    window.noirCategoryAccordionState.add(categories[0].id);
+    window.noirCategoryAccordionTouched = true;
+  }
+
+  const allOpen = categories.length > 0 && categories.every(c => window.noirCategoryAccordionState.has(c.id));
+  const toggleBtn = document.getElementById('toggleAllCategoriesBtn');
+  if (toggleBtn) {
+    toggleBtn.innerHTML = allOpen ? '📁 Свернуть все' : '📂 Развернуть все';
+  }
+
   let html = '';
-  categories.forEach(cat => {
+  categories.forEach((cat) => {
     const catServices = services.filter(s => s.categoryId === cat.id);
+    const isOpen = window.noirCategoryAccordionState.has(cat.id);
+    const popularCount = catServices.filter(s => s.popular).length;
+
     html += `
-      <div style="background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); padding: 20px; margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h4 style="font-size: 16px; font-weight: 800; color: #FFFFFF;">
-            ${cat.name}
-          </h4>
-          <button type="button" class="btn btn-secondary" onclick="openCreateServiceModal('${cat.id}')" style="padding: 4px 12px; font-size: 12px;">
-            + Добавить услугу
-          </button>
+      <div class="service-category-accordion">
+        <div class="service-accordion-header ${isOpen ? 'expanded' : ''}" onclick="toggleCategoryAccordion('${cat.id}')">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span style="font-size: 18px;">${cat.icon || '✂️'}</span>
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0;">
+                  ${cat.name}
+                </h4>
+                <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: var(--accent-primary-bg); color: var(--accent-primary); border: 1px solid var(--border-accent);">
+                  ${catServices.length} ${pluralizeServices(catServices.length)}
+                </span>
+                ${popularCount > 0 ? `
+                  <span style="font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: rgba(201, 162, 77, 0.15); color: var(--accent-gold); border: 1px solid rgba(201, 162, 77, 0.35);">
+                    ⭐ ${popularCount} хит
+                  </span>
+                ` : ''}
+              </div>
+              <div style="font-size: 12px; color: var(--text-dim); margin-top: 3px;">
+                ${cat.desc || 'Услуги данного направления'}
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button type="button" class="btn btn-secondary" onclick="event.stopPropagation(); openCreateServiceModal('${cat.id}')" style="padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: var(--radius-sm);">
+              + Добавить услугу
+            </button>
+            <span class="service-accordion-chevron">▼</span>
+          </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
+
+        <div class="service-accordion-body" style="display: ${isOpen ? 'block' : 'none'};">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
     `;
 
     if (catServices.length === 0) {
       html += `
-        <div style="padding: 16px; text-align: center; color: var(--text-dim); font-size: 13px; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px dashed var(--border-subtle);">
-          В этой категории пока нет услуг. Нажмите «+ Добавить услугу» выше.
+        <div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 13px; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px dashed var(--border-subtle);">
+          В этом направлении пока нет добавленных услуг.<br>
+          <button type="button" class="btn btn-primary" onclick="openCreateServiceModal('${cat.id}')" style="margin-top: 10px; padding: 6px 14px; font-size: 12px; font-weight: 700;">
+            + Добавить первую услугу
+          </button>
         </div>
       `;
     } else {
@@ -1315,9 +1388,9 @@ function renderServicesAdmin() {
         const includesCount = (s.includes && Array.isArray(s.includes)) ? s.includes.length : 0;
 
         html += `
-          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-            <div style="max-width: 70%;">
-              <div style="font-weight: 700; color: #FFFFFF; font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); gap: 12px; flex-wrap: wrap;">
+            <div style="max-width: 70%; min-width: 260px;">
+              <div style="font-weight: 700; color: var(--text-main); font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 ${s.name} ${popularBadge}
               </div>
               <div style="font-size: 12px; color: var(--text-dim); margin-top: 3px;">
@@ -1329,11 +1402,11 @@ function renderServicesAdmin() {
                 </div>
               ` : ''}
             </div>
-            <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="display: flex; align-items: center; gap: 14px; margin-left: auto;">
               <span style="font-weight: 800; color: var(--accent-gold); font-size: 14px; white-space: nowrap;">
                 ${window.noirData.formatMoney(s.price)}
               </span>
-              <button type="button" class="btn btn-secondary" onclick="openEditServiceModal('${s.id}')" style="padding: 5px 12px; font-size: 12px; white-space: nowrap;">
+              <button type="button" class="btn btn-secondary" onclick="openEditServiceModal('${s.id}')" style="padding: 5px 12px; font-size: 12px; white-space: nowrap; font-weight: 700;">
                 Редактировать
               </button>
             </div>
@@ -1342,7 +1415,7 @@ function renderServicesAdmin() {
       });
     }
 
-    html += `</div></div>`;
+    html += `</div></div></div>`;
   });
 
   container.innerHTML = html;
@@ -2418,6 +2491,73 @@ function populateCategoryCheckboxes(selectedCategories = []) {
 // ==========================================
 // 6. УПРАВЛЕНИЕ УСЛУГАМИ (СОЗДАНИЕ / РЕДАКТИРОВАНИЕ / УДАЛЕНИЕ)
 // ==========================================
+window.openAddCategoryModal = function() {
+  const modal = document.getElementById('adminAddCategoryModal');
+  if (!modal) return;
+  const nameInp = document.getElementById('newCategoryName');
+  const descInp = document.getElementById('newCategoryDesc');
+  if (nameInp) nameInp.value = '';
+  if (descInp) descInp.value = '';
+  const err = document.getElementById('newCategoryErrorAlert');
+  if (err) err.style.display = 'none';
+  modal.classList.add('active');
+  modal.style.display = 'flex';
+  setTimeout(() => nameInp?.focus(), 50);
+};
+
+window.closeAddCategoryModal = function() {
+  const modal = document.getElementById('adminAddCategoryModal');
+  if (!modal) return;
+  modal.classList.remove('active');
+  modal.style.display = 'none';
+};
+
+window.handleAddCategorySubmit = function(e) {
+  e.preventDefault();
+  const nameInput = document.getElementById('newCategoryName');
+  const name = nameInput ? nameInput.value.trim() : '';
+  const descInput = document.getElementById('newCategoryDesc');
+  const desc = descInput ? descInput.value.trim() : '';
+  const err = document.getElementById('newCategoryErrorAlert');
+
+  if (!name) {
+    if (err) {
+      err.textContent = 'Пожалуйста, укажите название категории!';
+      err.style.display = 'block';
+    }
+    return;
+  }
+
+  // Проверка на дубликат названия
+  const existing = window.noirData.getCategories().find(c => c.name.toLowerCase() === name.toLowerCase());
+  if (existing) {
+    if (err) {
+      err.textContent = `Категория «${name}» уже существует!`;
+      err.style.display = 'block';
+    }
+    return;
+  }
+
+  const createdCat = window.noirData.addCategory({ name, desc });
+  closeAddCategoryModal();
+
+  // Обновляем селектор в модалке редактирования услуги и сразу выбираем новую категорию
+  populateServiceCategorySelect(createdCat.id);
+
+  // Автоматически раскрываем аккордеон новой категории
+  if (window.noirCategoryAccordionState) {
+    window.noirCategoryAccordionState.add(createdCat.id);
+  }
+
+  // Перерендериваем прейскурант
+  renderServicesAdmin();
+
+  // Обновляем чекбоксы специализаций мастеров
+  if (typeof populateCategoryCheckboxes === 'function') {
+    populateCategoryCheckboxes();
+  }
+};
+
 function populateServiceCategorySelect(selectedCategoryId = null) {
   const select = document.getElementById('serviceEditCategory');
   if (!select) return;
