@@ -27,12 +27,12 @@
   <!-- PulseCore Smart Engine Resolver -->
   <script>
     window.__ENGINE_PREFIX = (location.pathname.includes('/salons/') || location.pathname.includes('\\salons\\')) ? '../../engine/salon' : '../engine/salon';
-    document.write('<link rel="stylesheet" href="' + window.__ENGINE_PREFIX + '/salon-engine.css?v=20261106_core_v7">');
+    document.write('<link rel="stylesheet" href="' + window.__ENGINE_PREFIX + '/salon-engine.css?v=20261106_core_v8">');
   </script>
   
   <!-- Tenant Specific Data & Configuration -->
-  <script src="js/salon.config.js?v=20261106_core_v7"></script>
-  <script src="js/data.js?v=20261106_core_v7"></script>
+  <script src="js/salon.config.js?v=20261106_core_v8"></script>
+  <script src="js/data.js?v=20261106_core_v8"></script>
 </head>
 <body class="admin-body">
   <!-- PulseCore Mount Point: Single Point of Ingestion -->
@@ -41,7 +41,7 @@
   <!-- PulseCore Salon Engine Bundle Injection -->
   <script>
     const coreScript = document.createElement('script');
-    coreScript.src = window.__ENGINE_PREFIX + '/salon-engine.js?v=20261106_core_v7';
+    coreScript.src = window.__ENGINE_PREFIX + '/salon-engine.js?v=20261106_core_v8';
     coreScript.async = false;
     document.body.appendChild(coreScript);
   </script>
