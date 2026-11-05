@@ -767,8 +767,9 @@ class NoirDataService {
       localStorage.setItem(this.STORAGE_KEYS.SPECIALISTS, JSON.stringify(DEFAULT_SPECIALISTS));
     }
     const existingApps = localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS);
-    if (!existingApps || existingApps.includes("Константин Васильев") || !existingApps.includes("NOIR-091")) {
-      localStorage.setItem(this.STORAGE_KEYS.APPOINTMENTS, JSON.stringify(generateDemoAppointments()));
+    if (!existingApps) {
+      // Cloud-First: начинаем с чистого списка, данные мгновенно подтягиваются из Cloud D1
+      localStorage.setItem(this.STORAGE_KEYS.APPOINTMENTS, JSON.stringify([]));
     }
     if (!localStorage.getItem(this.STORAGE_KEYS.CLIENTS)) {
       localStorage.setItem(this.STORAGE_KEYS.CLIENTS, JSON.stringify(DEFAULT_CLIENTS));
@@ -936,6 +937,21 @@ class NoirDataService {
 
   saveSpecialists(specialists) {
     localStorage.setItem(this.STORAGE_KEYS.SPECIALISTS, JSON.stringify(specialists));
+    // Фоновая синхронизация с Cloudflare ClientBase D1
+    try {
+      this.getAdminToken().then(token => {
+        if (!token) return;
+        const tenant = (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || window.currentSalonTenant || "noir-atelier";
+        fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/specialists", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ tenant_id: tenant, specialists })
+        }).catch(err => console.warn("Cloud specialists sync failed:", err));
+      });
+    } catch (e) {}
   }
 
   addSpecialist(spec) {
@@ -1062,21 +1078,18 @@ class NoirDataService {
 
     // Автоматическая фоновая синхронизация с Cloudflare ClientBase D1 (HMAC Bearer Token)
     try {
-      const token = sessionStorage.getItem('noir_admin_token');
-      if (token) {
+      this.getAdminToken().then(token => {
+        if (!token) return;
+        const tenant = (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || window.currentSalonTenant || "noir-atelier";
         fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify({ ...newRecord, tenant_id: "noir-atelier" })
-        }).then(res => {
-          if (res.status === 401 && typeof window.handleSessionExpired === 'function') {
-            window.handleSessionExpired();
-          }
+          body: JSON.stringify({ ...newRecord, tenant_id: tenant })
         }).catch(err => console.warn("Cloud appointment sync failed:", err));
-      }
+      });
     } catch (e) {}
 
     return newRecord;
@@ -1149,6 +1162,25 @@ class NoirDataService {
   }
 
   // Загрузка и синхронизация актуальных записей из Cloudflare ClientBase D1
+  // Синхронизация мастеров и графиков смен из Cloudflare ClientBase D1
+  async syncSpecialistsFromCloud() {
+    try {
+      const tenant = (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || window.currentSalonTenant || "noir-atelier";
+      const resp = await fetch(`https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/specialists?tenant_id=${tenant}`);
+      const data = await resp.json();
+      if (data && data.success && Array.isArray(data.specialists) && data.specialists.length > 0) {
+        const local = localStorage.getItem(this.STORAGE_KEYS.SPECIALISTS);
+        const incoming = JSON.stringify(data.specialists);
+        if (local !== incoming) {
+          localStorage.setItem(this.STORAGE_KEYS.SPECIALISTS, incoming);
+          window.dispatchEvent(new CustomEvent('noir_specialists_synced'));
+        }
+      }
+    } catch (e) {
+      console.warn("Cloud specialists sync failed:", e);
+    }
+  }
+
   async syncFromCloud(isRetry = false) {
     try {
       const token = await this.getAdminToken();
@@ -1178,69 +1210,36 @@ class NoirDataService {
       }
       const data = await resp.json();
       if (data && data.success && Array.isArray(data.appointments)) {
-        const localApps = this.getAppointments();
-        const localMap = new Map(localApps.map(a => [a.id, a]));
-        let hasChanges = false;
+        // Cloud-First: формируем канонический список записей из Cloud D1
+        const formattedList = data.appointments.map(ca => ({
+          id: ca.id,
+          clientName: ca.client_name,
+          phone: ca.client_phone,
+          serviceId: ca.service_id,
+          serviceName: ca.service_name,
+          specialistId: ca.specialist_id,
+          specialistName: ca.specialist_name,
+          date: ca.app_date,
+          time: ca.app_time,
+          duration: Number(ca.duration) || 60,
+          price: Number(ca.price) || 0,
+          discountPercent: Number(ca.discount_percent) || 0,
+          status: ca.status || "scheduled",
+          comment: ca.comment || "",
+          order_id: ca.order_id || null,
+          tg_chat_id: ca.tg_chat_id || null,
+          tg_message_id: ca.tg_message_id || null,
+          createdAt: ca.created_at || new Date().toISOString()
+        }));
 
-        data.appointments.forEach(ca => {
-          const formatted = {
-            id: ca.id,
-            clientName: ca.client_name,
-            phone: ca.client_phone,
-            serviceId: ca.service_id,
-            serviceName: ca.service_name,
-            specialistId: ca.specialist_id,
-            specialistName: ca.specialist_name,
-            date: ca.app_date,
-            time: ca.app_time,
-            duration: Number(ca.duration) || 60,
-            price: Number(ca.price) || 0,
-            discountPercent: Number(ca.discount_percent) || 0,
-            status: ca.status || "scheduled",
-            comment: ca.comment || "",
-            order_id: ca.order_id || null,
-            tg_chat_id: ca.tg_chat_id || null,
-            tg_message_id: ca.tg_message_id || null
-          };
+        // Сортировка по дате и времени (убывание)
+        formattedList.sort((a, b) => (b.date + ' ' + b.time).localeCompare(a.date + ' ' + a.time));
 
-          if (!localMap.has(ca.id)) {
-            // Проверяем, есть ли локальная запись без order_id по совпадающему телефону
-            let existingUnlinked = null;
-            if (formatted.order_id) {
-              existingUnlinked = localApps.find(a => 
-                !a.order_id && 
-                ((a.phone && formatted.phone && (a.phone === formatted.phone || a.phone.includes(formatted.phone) || formatted.phone.includes(a.phone))) ||
-                 (a.clientName && formatted.clientName && a.clientName.trim() === formatted.clientName.trim()))
-              );
-            }
-            if (existingUnlinked) {
-              existingUnlinked.order_id = formatted.order_id;
-              existingUnlinked.tg_chat_id = formatted.tg_chat_id;
-              existingUnlinked.tg_message_id = formatted.tg_message_id;
-              existingUnlinked.status = formatted.status;
-              hasChanges = true;
-            } else {
-              localApps.unshift(formatted);
-              localMap.set(ca.id, formatted);
-              hasChanges = true;
-            }
-          } else {
-            const existing = localMap.get(ca.id);
-            if (existing.status !== formatted.status) {
-              existing.status = formatted.status;
-              hasChanges = true;
-            }
-            if (!existing.order_id && formatted.order_id) {
-              existing.order_id = formatted.order_id;
-              existing.tg_chat_id = formatted.tg_chat_id;
-              existing.tg_message_id = formatted.tg_message_id;
-              hasChanges = true;
-            }
-          }
-        });
+        const currentLocal = localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS);
+        const incomingJson = JSON.stringify(formattedList);
 
-        if (hasChanges) {
-          this.saveAppointments(localApps);
+        if (currentLocal !== incomingJson) {
+          localStorage.setItem(this.STORAGE_KEYS.APPOINTMENTS, incomingJson);
           window.dispatchEvent(new CustomEvent('noir_appointments_synced'));
         }
       }
@@ -1253,6 +1252,21 @@ class NoirDataService {
     let appointments = this.getAppointments();
     appointments = appointments.filter(a => a.id !== id);
     this.saveAppointments(appointments);
+
+    // Удаление из облачной базы Cloudflare D1
+    try {
+      this.getAdminToken().then(token => {
+        if (!token) return;
+        const tenant = (window.SALON_CONFIG && (window.SALON_CONFIG.slug || window.SALON_CONFIG.tenantId)) || window.currentSalonTenant || "noir-atelier";
+        fetch(`https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments?id=${encodeURIComponent(id)}&tenant_id=${encodeURIComponent(tenant)}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }).catch(err => console.warn("Cloud appointment delete failed:", err));
+      });
+    } catch(e) {}
+
     return true;
   }
 
