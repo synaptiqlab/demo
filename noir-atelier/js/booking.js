@@ -289,8 +289,26 @@ function handleNextStep() {
           client_phone: bookingState.phone,
           order_title: bookingSummaryText,
           total_amount: bookingState.price,
-          currency: "VND"
+          currency: "VND",
+          appointment_id: newRecord.id,
+          service_id: bookingState.serviceId || "",
+          service_name: bookingState.serviceName,
+          specialist_id: bookingState.specialistId || "",
+          specialist_name: bookingState.specialistName,
+          app_date: bookingState.date,
+          app_time: bookingState.time,
+          duration: bookingState.duration || 60,
+          discount_percent: bookingState.discountPercent || 0,
+          comment: bookingState.comment || ""
         })
+      }).then(r => r.json()).then(resData => {
+        if (resData && resData.order_id) {
+          window.noirData.updateAppointment(newRecord.id, {
+            order_id: resData.order_id,
+            tg_chat_id: resData.tg_chat_id,
+            tg_message_id: resData.tg_message_id
+          });
+        }
       }).catch(e => console.warn("CRM bot booking dispatch error:", e));
     } catch (e) {
       console.warn("CRM dispatch error:", e);
