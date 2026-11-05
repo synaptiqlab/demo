@@ -944,6 +944,16 @@ class NoirDataService {
     return null;
   }
 
+  deleteSpecialist(id) {
+    const specialists = this.getSpecialists();
+    const filtered = specialists.filter(s => s.id !== id);
+    if (filtered.length !== specialists.length) {
+      this.saveSpecialists(filtered);
+      return true;
+    }
+    return false;
+  }
+
   getAppointments() {
     try {
       return JSON.parse(localStorage.getItem(this.STORAGE_KEYS.APPOINTMENTS)) || [];
