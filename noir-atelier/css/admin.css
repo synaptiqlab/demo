@@ -719,43 +719,16 @@ textarea:focus {
   border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
 }
 
-[data-theme="dark"] .client-avatar.avatar-vip,
-[data-theme="dark"] #clientModalAvatar.avatar-vip {
-  background: rgba(99, 102, 241, 0.2) !important;
-  color: #A5B4FC !important;
-  border: 1.5px solid rgba(99, 102, 241, 0.5) !important;
-}
-
-[data-theme="dark"] .client-avatar.avatar-regular,
-[data-theme="dark"] #clientModalAvatar.avatar-regular {
-  background: rgba(16, 185, 129, 0.18) !important;
-  color: #6EE7B7 !important;
-  border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
-}
-
-/* Clean & Light in Light Mode */
+/* Clean & Light in Light Mode (Pure neutral light palette) */
 [data-theme="light"] .client-avatar,
 [data-theme="light"] #clientModalAvatar {
-  background: #E2E8F0 !important;
+  background: #F1F5F9 !important;
   color: #334155 !important;
   border: 1.5px solid #CBD5E1 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
 }
 
-[data-theme="light"] .client-avatar.avatar-vip,
-[data-theme="light"] #clientModalAvatar.avatar-vip {
-  background: #EEF2FF !important;
-  color: #4F46E5 !important;
-  border: 1.5px solid #C7D2FE !important;
-}
-
-[data-theme="light"] .client-avatar.avatar-regular,
-[data-theme="light"] #clientModalAvatar.avatar-regular {
-  background: #ECFDF5 !important;
-  color: #059669 !important;
-  border: 1.5px solid #A7F3D0 !important;
-}
-
-/* Client Status Badges */
+/* Client Status Badges (VIP / Regular / New indicated by badge, not avatar circle) */
 .badge-client {
   padding: 2px 8px;
   border-radius: 10px;
@@ -810,5 +783,234 @@ textarea:focus {
   font-size: 11px;
   font-weight: 800;
 }
+
+/* --------------------------------------------------------------------------
+   11. CLIENT MODAL: SEPARATED WHITE CARDS ON COOL SLATE CANVAS
+   -------------------------------------------------------------------------- */
+/* Modal Card & Body Background */
+[data-theme="light"] #adminClientModal .modal-card,
+[data-theme="light"] #adminClientModal .client-modal-card,
+[data-theme="light"] #adminClientModal .client-modal-header,
+[data-theme="light"] #adminClientModal .client-modal-body,
+[data-theme="light"] #adminClientModal .client-modal-footer {
+  background: #F1F5F9 !important; /* Cool slate-blue gray theme canvas */
+}
+
+[data-theme="light"] #adminClientModal .modal-header,
+[data-theme="light"] #adminClientModal .client-modal-header {
+  border-bottom: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="light"] #adminClientModal .modal-footer,
+[data-theme="light"] #adminClientModal .client-modal-footer {
+  border-top: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="dark"] #adminClientModal .modal-card,
+[data-theme="dark"] #adminClientModal .client-modal-card,
+[data-theme="dark"] #adminClientModal .client-modal-header,
+[data-theme="dark"] #adminClientModal .client-modal-body,
+[data-theme="dark"] #adminClientModal .client-modal-footer {
+  background: #090A0E !important;
+}
+
+[data-theme="dark"] #adminClientModal .modal-header,
+[data-theme="dark"] #adminClientModal .client-modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] #adminClientModal .modal-footer,
+[data-theme="dark"] #adminClientModal .client-modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Top 4 KPI Blocks: Pure White in Light Mode, Dark Card in Dark Mode */
+.client-modal-kpi-item {
+  border-radius: var(--radius-md) !important;
+  padding: 12px 14px !important;
+  text-align: center !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-theme="light"] .client-modal-kpi-item {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="dark"] .client-modal-kpi-item {
+  background: #181C26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.client-kpi-label {
+  font-size: 11px !important;
+  color: var(--text-dim) !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+}
+
+.client-kpi-val {
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  color: var(--text-main) !important;
+  margin-top: 4px;
+}
+
+.client-kpi-accent {
+  color: var(--accent-primary) !important;
+}
+
+.client-kpi-success {
+  color: var(--color-success) !important;
+}
+
+.client-kpi-master {
+  font-size: 13px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 6px !important;
+}
+
+/* The 3 Distinct Client Content Blocks */
+.client-modal-block {
+  border-radius: var(--radius-md) !important;
+  padding: 18px 20px !important;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .client-modal-block {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="dark"] .client-modal-block {
+  background: #181C26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.client-block-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.2px;
+}
+
+/* Loyalty Sub-Card inside Block 1 */
+[data-theme="light"] .client-loyalty-card {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="dark"] .client-loyalty-card {
+  background: #13171F !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Block 3: Visits Accordion */
+.client-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
+  transition: opacity 0.2s ease;
+}
+
+.client-accordion-header:hover {
+  opacity: 0.85;
+}
+
+.client-accordion-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.client-block-title-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.client-history-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-primary);
+  background: var(--accent-primary-bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-accent);
+}
+
+.client-accordion-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.accordion-toggle-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.accordion-toggle-arrow {
+  font-size: 10px;
+  color: var(--accent-primary);
+  transition: transform 0.25s ease;
+}
+
+.client-accordion-header.expanded .accordion-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+.client-accordion-body {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+/* Visit Cards inside Accordion History List */
+[data-theme="light"] #clientModalVisitsHistoryList > div {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+[data-theme="dark"] #clientModalVisitsHistoryList > div {
+  background: #13171F !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* Responsive Modal Layout */
+@media (max-width: 768px) {
+  .client-modal-sections-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .client-modal-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
 
 
