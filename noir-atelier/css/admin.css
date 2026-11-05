@@ -913,7 +913,17 @@ textarea:focus {
 [data-theme="light"] #adminEditAppointmentModal .client-modal-card,
 [data-theme="light"] #adminEditAppointmentModal .client-modal-header,
 [data-theme="light"] #adminEditAppointmentModal .client-modal-body,
-[data-theme="light"] #adminEditAppointmentModal .client-modal-footer {
+[data-theme="light"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="light"] #adminServiceModal .modal-card,
+[data-theme="light"] #adminServiceModal .client-modal-card,
+[data-theme="light"] #adminServiceModal .client-modal-header,
+[data-theme="light"] #adminServiceModal .client-modal-body,
+[data-theme="light"] #adminServiceModal .client-modal-footer,
+[data-theme="light"] #adminAddCategoryModal .modal-card,
+[data-theme="light"] #adminAddCategoryModal .client-modal-card,
+[data-theme="light"] #adminAddCategoryModal .client-modal-header,
+[data-theme="light"] #adminAddCategoryModal .client-modal-body,
+[data-theme="light"] #adminAddCategoryModal .client-modal-footer {
   background: #F1F5F9 !important; /* Cool slate-blue gray theme canvas */
 }
 
@@ -924,7 +934,11 @@ textarea:focus {
 [data-theme="light"] #adminQuickBookingModal .modal-header,
 [data-theme="light"] #adminQuickBookingModal .client-modal-header,
 [data-theme="light"] #adminEditAppointmentModal .modal-header,
-[data-theme="light"] #adminEditAppointmentModal .client-modal-header {
+[data-theme="light"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="light"] #adminServiceModal .modal-header,
+[data-theme="light"] #adminServiceModal .client-modal-header,
+[data-theme="light"] #adminAddCategoryModal .modal-header,
+[data-theme="light"] #adminAddCategoryModal .client-modal-header {
   border-bottom: 1px solid #E2E8F0 !important;
 }
 
@@ -935,7 +949,11 @@ textarea:focus {
 [data-theme="light"] #adminQuickBookingModal .modal-footer,
 [data-theme="light"] #adminQuickBookingModal .client-modal-footer,
 [data-theme="light"] #adminEditAppointmentModal .modal-footer,
-[data-theme="light"] #adminEditAppointmentModal .client-modal-footer {
+[data-theme="light"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="light"] #adminServiceModal .modal-footer,
+[data-theme="light"] #adminServiceModal .client-modal-footer,
+[data-theme="light"] #adminAddCategoryModal .modal-footer,
+[data-theme="light"] #adminAddCategoryModal .client-modal-footer {
   border-top: 1px solid #E2E8F0 !important;
 }
 
@@ -958,7 +976,17 @@ textarea:focus {
 [data-theme="dark"] #adminEditAppointmentModal .client-modal-card,
 [data-theme="dark"] #adminEditAppointmentModal .client-modal-header,
 [data-theme="dark"] #adminEditAppointmentModal .client-modal-body,
-[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer {
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="dark"] #adminServiceModal .modal-card,
+[data-theme="dark"] #adminServiceModal .client-modal-card,
+[data-theme="dark"] #adminServiceModal .client-modal-header,
+[data-theme="dark"] #adminServiceModal .client-modal-body,
+[data-theme="dark"] #adminServiceModal .client-modal-footer,
+[data-theme="dark"] #adminAddCategoryModal .modal-card,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-card,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-header,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-body,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-footer {
   background: #090A0E !important;
 }
 
@@ -969,7 +997,11 @@ textarea:focus {
 [data-theme="dark"] #adminQuickBookingModal .modal-header,
 [data-theme="dark"] #adminQuickBookingModal .client-modal-header,
 [data-theme="dark"] #adminEditAppointmentModal .modal-header,
-[data-theme="dark"] #adminEditAppointmentModal .client-modal-header {
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="dark"] #adminServiceModal .modal-header,
+[data-theme="dark"] #adminServiceModal .client-modal-header,
+[data-theme="dark"] #adminAddCategoryModal .modal-header,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -980,8 +1012,83 @@ textarea:focus {
 [data-theme="dark"] #adminQuickBookingModal .modal-footer,
 [data-theme="dark"] #adminQuickBookingModal .client-modal-footer,
 [data-theme="dark"] #adminEditAppointmentModal .modal-footer,
-[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer {
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="dark"] #adminServiceModal .modal-footer,
+[data-theme="dark"] #adminServiceModal .client-modal-footer,
+[data-theme="dark"] #adminAddCategoryModal .modal-footer,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Service Category Accordions */
+.service-category-accordion {
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .service-category-accordion {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] .service-category-accordion {
+  background: #181C26;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.service-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+[data-theme="light"] .service-accordion-header:hover {
+  background: #F8FAFC;
+}
+
+[data-theme="dark"] .service-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.service-accordion-header.expanded {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+[data-theme="light"] .service-accordion-header.expanded {
+  border-bottom-color: #E2E8F0;
+}
+
+[data-theme="dark"] .service-accordion-header.expanded {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.service-accordion-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 10px;
+  color: var(--accent-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-accordion-header.expanded .service-accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.service-accordion-body {
+  padding: 16px 20px 20px 20px;
 }
 
 /* Pinned Header & Sticky Footer for all Client Modals to guarantee Save Button is ALWAYS visible */
