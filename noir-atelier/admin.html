@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=20261105_bifilter_v2">
+  <link rel="stylesheet" href="css/admin.css?v=20261105_masterfirst_v1">
   <style>
     /* Admin specific fine-tuning */
     .timeline-table th {
@@ -982,24 +982,24 @@
             </div>
           </div>
 
-          <!-- БЛОК 2: Выбор услуги и мастера (связанный фильтр) -->
+          <!-- БЛОК 2: Выбор мастера и услуги (связанный фильтр) -->
           <div class="client-modal-block" style="margin-bottom: 14px;">
             <div class="client-block-title">
               <span>✂️</span>
-              <span>Услуга и мастер (умный фильтр)</span>
+              <span>Мастер и услуга (умный фильтр)</span>
             </div>
 
             <div class="form-group" style="margin-bottom: 12px;">
-              <label class="form-label" style="font-size: 11px;">Услуга *</label>
-              <select id="adminServiceSelect" class="form-select" required style="padding: 8px 12px; font-size: 13px;">
+              <label class="form-label" style="font-size: 11px;">Мастер *</label>
+              <select id="adminSpecialistSelect" class="form-select" required style="padding: 8px 12px; font-size: 13px;">
                 <!-- Rendered dynamically with auto-filter -->
               </select>
             </div>
 
             <div class="form-group" style="margin-bottom: 0;">
-              <label class="form-label" style="font-size: 11px;">Мастер *</label>
-              <select id="adminSpecialistSelect" class="form-select" required style="padding: 8px 12px; font-size: 13px;">
-                <!-- Rendered dynamically with auto-filter -->
+              <label class="form-label" style="font-size: 11px;">Услуга *</label>
+              <select id="adminServiceSelect" class="form-select" required style="padding: 8px 12px; font-size: 13px;">
+                <option value="">-- Выберите услугу из каталога --</option>
               </select>
             </div>
           </div>
@@ -1798,7 +1798,7 @@
   </style>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=20261105_bifilter_v2"></script>
-  <script src="js/admin.js?v=20261105_bifilter_v2"></script>
+  <script src="js/data.js?v=20261105_masterfirst_v1"></script>
+  <script src="js/admin.js?v=20261105_masterfirst_v1"></script>
 </body>
 </html>
