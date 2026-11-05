@@ -1338,7 +1338,6 @@ function renderServicesAdmin() {
       <div class="service-category-accordion">
         <div class="service-accordion-header ${isOpen ? 'expanded' : ''}" onclick="toggleCategoryAccordion('${cat.id}')">
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <span style="font-size: 18px;">${cat.icon || '✂️'}</span>
             <div>
               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0;">
