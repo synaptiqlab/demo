@@ -1069,7 +1069,13 @@ class NoirDataService {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ ...appointments[idx], tenant_id: "noir-atelier" })
+            body: JSON.stringify({
+              ...appointments[idx],
+              tenant_id: "noir-atelier",
+              order_id: appointments[idx].order_id || appointments[idx].orderId || null,
+              tg_chat_id: appointments[idx].tg_chat_id || appointments[idx].tgChatId || null,
+              tg_message_id: appointments[idx].tg_message_id || appointments[idx].tgMessageId || null
+            })
           }).then(res => {
             if (res.status === 401 && typeof window.handleSessionExpired === 'function') {
               window.handleSessionExpired();
@@ -1119,7 +1125,10 @@ class NoirDataService {
             price: Number(ca.price) || 0,
             discountPercent: Number(ca.discount_percent) || 0,
             status: ca.status || "scheduled",
-            comment: ca.comment || ""
+            comment: ca.comment || "",
+            order_id: ca.order_id || null,
+            tg_chat_id: ca.tg_chat_id || null,
+            tg_message_id: ca.tg_message_id || null
           };
 
           if (!localMap.has(ca.id)) {
@@ -1132,11 +1141,18 @@ class NoirDataService {
               existing.status = formatted.status;
               hasChanges = true;
             }
+            if (!existing.order_id && formatted.order_id) {
+              existing.order_id = formatted.order_id;
+              existing.tg_chat_id = formatted.tg_chat_id;
+              existing.tg_message_id = formatted.tg_message_id;
+              hasChanges = true;
+            }
           }
         });
 
         if (hasChanges) {
           this.saveAppointments(localApps);
+          window.dispatchEvent(new CustomEvent('noir_appointments_synced'));
         }
       }
     } catch (err) {
@@ -1152,19 +1168,7 @@ class NoirDataService {
   }
 
   updateAppointmentStatus(id, newStatus) {
-    const appointments = this.getAppointments();
-    const item = appointments.find(a => a.id === id);
-    if (item) {
-      item.status = newStatus;
-      this.saveAppointments(appointments);
-      try {
-        this.syncClientForAppointment(item);
-      } catch (e) {
-        console.error("Error syncing client:", e);
-      }
-      return true;
-    }
-    return false;
+    return !!this.updateAppointment(id, { status: newStatus });
   }
 
   // ==========================================
