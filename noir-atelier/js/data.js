@@ -1025,13 +1025,23 @@ class NoirDataService {
       console.error("Error syncing client for appointment:", e);
     }
 
-    // Автоматическая фоновая синхронизация с Cloudflare ClientBase D1
+    // Автоматическая фоновая синхронизация с Cloudflare ClientBase D1 (HMAC Bearer Token)
     try {
-      fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newRecord, tenant_id: "noir-atelier" })
-      }).catch(err => console.warn("Cloud appointment sync failed:", err));
+      const token = sessionStorage.getItem('noir_admin_token');
+      if (token) {
+        fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ ...newRecord, tenant_id: "noir-atelier" })
+        }).then(res => {
+          if (res.status === 401 && typeof window.handleSessionExpired === 'function') {
+            window.handleSessionExpired();
+          }
+        }).catch(err => console.warn("Cloud appointment sync failed:", err));
+      }
     } catch (e) {}
 
     return newRecord;
@@ -1049,17 +1059,89 @@ class NoirDataService {
         console.error("Error syncing client:", e);
       }
 
-      // Фоновая синхронизация обновления статуса в ClientBase D1
+      // Фоновая синхронизация обновления статуса в ClientBase D1 (HMAC Bearer Token)
       try {
-        fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...appointments[idx], tenant_id: "noir-atelier" })
-        }).catch(err => console.warn("Cloud appointment update failed:", err));
+        const token = sessionStorage.getItem('noir_admin_token');
+        if (token) {
+          fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ ...appointments[idx], tenant_id: "noir-atelier" })
+          }).then(res => {
+            if (res.status === 401 && typeof window.handleSessionExpired === 'function') {
+              window.handleSessionExpired();
+            }
+          }).catch(err => console.warn("Cloud appointment update failed:", err));
+        }
       } catch (e) {}
       return appointments[idx];
     }
     return null;
+  }
+
+  // Загрузка и синхронизация актуальных записей из Cloudflare ClientBase D1
+  async syncFromCloud() {
+    try {
+      const token = sessionStorage.getItem('noir_admin_token');
+      if (!token) return;
+      const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/appointments?tenant_id=noir-atelier", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (resp.status === 401) {
+        if (typeof window.handleSessionExpired === 'function') {
+          window.handleSessionExpired();
+        }
+        return;
+      }
+      const data = await resp.json();
+      if (data && data.success && Array.isArray(data.appointments)) {
+        const localApps = this.getAppointments();
+        const localMap = new Map(localApps.map(a => [a.id, a]));
+        let hasChanges = false;
+
+        data.appointments.forEach(ca => {
+          const formatted = {
+            id: ca.id,
+            clientName: ca.client_name,
+            phone: ca.client_phone,
+            serviceId: ca.service_id,
+            serviceName: ca.service_name,
+            specialistId: ca.specialist_id,
+            specialistName: ca.specialist_name,
+            date: ca.app_date,
+            time: ca.app_time,
+            duration: Number(ca.duration) || 60,
+            price: Number(ca.price) || 0,
+            discountPercent: Number(ca.discount_percent) || 0,
+            status: ca.status || "scheduled",
+            comment: ca.comment || ""
+          };
+
+          if (!localMap.has(ca.id)) {
+            localApps.unshift(formatted);
+            localMap.set(ca.id, formatted);
+            hasChanges = true;
+          } else {
+            const existing = localMap.get(ca.id);
+            if (existing.status !== formatted.status) {
+              existing.status = formatted.status;
+              hasChanges = true;
+            }
+          }
+        });
+
+        if (hasChanges) {
+          this.saveAppointments(localApps);
+        }
+      }
+    } catch (err) {
+      console.warn("Cloud sync down failed:", err);
+    }
   }
 
   deleteAppointment(id) {
