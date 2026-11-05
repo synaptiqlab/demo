@@ -1,0 +1,1697 @@
+/**
+ * PulseCore™ Technology • Salon Engine Shared Core Stylesheet
+ * Product: Salon Engine CRM & Operations
+ * Version: 2.5.0 (Shared CDN Core)
+ * Ecosystem: VietSites & SYNAPTIQ Lab
+ */
+
+/* ==========================================================================
+   NOIR Hair Atelier - Dark Luxury Design System
+   Universal Salon & Barbershop Showcase Platform
+   ========================================================================== */
+
+:root {
+  /* Color Palette: Deep Luxury Noir */
+  --bg-deep: #08090C;
+  --bg-main: #0D0F14;
+  --bg-surface: #141720;
+  --bg-card: #181C26;
+  --bg-card-hover: #1F2432;
+  --bg-input: #12151E;
+  --bg-glass: rgba(20, 24, 34, 0.75);
+
+  /* Borders & Accents */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(229, 169, 60, 0.35);
+
+  /* Gold / Amber Accents */
+  --accent-gold: #E5A93C;
+  --accent-gold-light: #FCD34D;
+  --accent-gold-dark: #B45309;
+  --accent-gold-bg: rgba(229, 169, 60, 0.12);
+  --accent-gold-glow: 0 0 24px rgba(229, 169, 60, 0.25);
+
+  /* Status Colors */
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-danger: #EF4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.12);
+  --color-info: #3B82F6;
+  --color-info-bg: rgba(59, 130, 246, 0.12);
+
+  /* Typography Colors */
+  --text-main: #FFFFFF;
+  --text-sub: #E2E8F0;
+  --text-muted: #94A3B8;
+  --text-dim: #64748B;
+
+  /* Typography Families */
+  --font-main: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* Border Radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+
+  /* Container */
+  --container-max: 1200px;
+}
+
+/* Base Reset & Core */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-main);
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 0%, #151924 0%, var(--bg-deep) 65%);
+  background-attachment: fixed;
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13, 15, 20, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: all 0.3s ease;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo-img {
+  height: 42px;
+  width: auto;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  position: relative;
+  padding: 6px 0;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--accent-gold);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Primary Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FCD34D 0%, #E5A93C 50%, #B45309 100%);
+  color: #08090C;
+  box-shadow: 0 4px 16px rgba(229, 169, 60, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229, 169, 60, 0.45);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border: 1px solid var(--border-medium);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+.btn-crm-pill {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  transition: all 0.2s ease;
+}
+
+.btn-crm-pill:hover {
+  background: rgba(229, 169, 60, 0.15);
+  color: var(--accent-gold);
+  border-color: var(--border-accent);
+}
+
+
+
+/* ==========================================================================
+   Universal B2B CRM Design System
+   Independent SaaS Architecture • Light & Dark Themes
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. THEME TOKENS: DARK (Default)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  /* Color Palette: Slate / Obsidian Dark */
+  --bg-deep: #090A0E;
+  --bg-main: #0E1015;
+  --bg-surface: #13171F;
+  --bg-card: #181C26;
+  --bg-card-hover: #1F2533;
+  --bg-input: #10131A;
+  --bg-glass: rgba(19, 23, 31, 0.85);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-accent: rgba(99, 102, 241, 0.4);
+
+  /* Universal B2B Accent: Indigo */
+  --accent-primary: #6366F1;
+  --accent-primary-hover: #4F46E5;
+  --accent-primary-light: #818CF8;
+  --accent-primary-bg: rgba(99, 102, 241, 0.14);
+  --accent-primary-glow: 0 0 24px rgba(99, 102, 241, 0.25);
+
+  /* Legacy variable mapping to modern accent */
+  --accent-gold: var(--accent-primary);
+  --accent-gold-light: var(--accent-primary-light);
+  --accent-gold-dark: var(--accent-primary-hover);
+  --accent-gold-bg: var(--accent-primary-bg);
+  --accent-gold-glow: var(--accent-primary-glow);
+
+  /* Status Colors */
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.14);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.14);
+  --color-danger: #EF4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.14);
+  --color-info: #3B82F6;
+  --color-info-bg: rgba(59, 130, 246, 0.14);
+
+  /* Typography */
+  --text-main: #F8FAFC;
+  --text-sub: #E2E8F0;
+  --text-muted: #94A3B8;
+  --text-dim: #64748B;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   2. THEME TOKENS: LIGHT
+   -------------------------------------------------------------------------- */
+[data-theme="light"] {
+  /* Color Palette: Crisp Minimalist Slate / White */
+  --bg-deep: #F1F5F9;
+  --bg-main: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-input: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.9);
+
+  /* Borders */
+  --border-subtle: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-accent: rgba(79, 70, 229, 0.35);
+
+  /* Universal B2B Accent: Royal Indigo */
+  --accent-primary: #4F46E5;
+  --accent-primary-hover: #4338CA;
+  --accent-primary-light: #6366F1;
+  --accent-primary-bg: rgba(79, 70, 229, 0.08);
+  --accent-primary-glow: 0 0 16px rgba(79, 70, 229, 0.18);
+
+  /* Legacy variable mapping to modern accent */
+  --accent-gold: var(--accent-primary);
+  --accent-gold-light: var(--accent-primary-light);
+  --accent-gold-dark: var(--accent-primary-hover);
+  --accent-gold-bg: var(--accent-primary-bg);
+  --accent-gold-glow: var(--accent-primary-glow);
+
+  /* Status Colors */
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #D97706;
+  --color-warning-bg: #FEF3C7;
+  --color-danger: #DC2626;
+  --color-danger-bg: #FEF2F2;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+
+  /* Typography */
+  --text-main: #0F172A;
+  --text-sub: #334155;
+  --text-muted: #64748B;
+  --text-dim: #94A3B8;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.09);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+}
+
+/* --------------------------------------------------------------------------
+   3. BASE LAYOUT & CRM CORE
+   -------------------------------------------------------------------------- */
+html, body.admin-body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 769px) {
+  html, body.admin-body {
+    overflow: hidden;
+  }
+}
+
+body.admin-body {
+  background: var(--bg-deep) !important;
+  color: var(--text-sub) !important;
+  font-family: var(--font-main);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  max-height: 100vh;
+  background: var(--bg-deep);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Sidebar (Desktop) */
+.admin-sidebar {
+  width: 260px;
+  height: 100vh;
+  max-height: 100vh;
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 2px;
+}
+
+.admin-sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.crm-sidebar-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.crm-sidebar-name {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.crm-sidebar-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 3px;
+}
+
+.admin-sidebar-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-nav-item:hover {
+  color: var(--text-main);
+  background: var(--bg-card-hover);
+}
+
+.admin-nav-item.active {
+  background: var(--accent-primary-bg) !important;
+  color: var(--accent-primary) !important;
+  border: 1px solid var(--border-accent) !important;
+  font-weight: 700;
+}
+
+/* Main Content Area */
+.admin-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background: var(--bg-deep);
+  min-width: 0;
+}
+
+.admin-topbar {
+  display: none !important;
+}
+
+.admin-content {
+  padding: 28px;
+  flex-grow: 1;
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+}
+
+.admin-content::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-content::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   4. THEME SWITCHER (SEGMENTED CONTROL)
+   -------------------------------------------------------------------------- */
+.crm-theme-switcher {
+  display: flex;
+  background: var(--bg-main);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.crm-theme-switcher-topbar {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+.crm-theme-switcher-topbar .crm-theme-btn {
+  padding: 5px 9px;
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  .crm-theme-switcher-topbar {
+    display: none !important;
+  }
+}
+
+.crm-theme-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: calc(var(--radius-sm) - 3px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.crm-theme-btn svg {
+  flex-shrink: 0;
+}
+
+.crm-theme-btn:hover {
+  color: var(--text-main);
+}
+
+.crm-theme-btn.active {
+  background: var(--bg-card);
+  color: var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .theme-btn-dark {
+  background: #202532;
+  color: #818CF8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  font-weight: 700;
+}
+
+[data-theme="light"] .theme-btn-light {
+  background: #FFFFFF;
+  color: #4F46E5;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   5. CARDS, KPI & CONTAINERS
+   -------------------------------------------------------------------------- */
+.kpi-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease;
+}
+
+.kpi-title {
+  color: var(--text-dim) !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.kpi-value {
+  color: var(--text-main) !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+}
+
+.kpi-sub {
+  color: var(--accent-primary) !important;
+}
+
+.admin-card,
+.modal-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+  box-shadow: var(--shadow-card);
+}
+
+/* --------------------------------------------------------------------------
+   6. TABLES & DATA LISTS
+   -------------------------------------------------------------------------- */
+.timeline-table {
+  min-width: 1380px;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.timeline-table th {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  border-bottom: 2px solid var(--border-medium) !important;
+}
+
+.timeline-th-hour {
+  border-right: 1px solid var(--border-medium) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  letter-spacing: 0.5px;
+}
+
+.timeline-table td {
+  border-color: var(--border-subtle) !important;
+  background: var(--bg-card);
+}
+
+/* Sticky Master Column in Timeline */
+.timeline-master-col {
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+.timeline-master-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.timeline-master-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.timeline-master-status {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.timeline-master-status.status-working {
+  color: var(--color-success);
+}
+
+.timeline-master-status.status-off {
+  color: var(--text-dim);
+}
+
+/* Mobile: Compact master column to maximize timeline scrollable area & layout resets */
+@media (max-width: 768px) {
+  html, body.admin-body {
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  .admin-layout {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    flex-direction: column !important;
+  }
+  .admin-sidebar {
+    display: none !important;
+  }
+  .admin-main {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .admin-content {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 14px 12px !important;
+  }
+
+  .timeline-master-col {
+    width: 98px !important;
+    min-width: 98px !important;
+    max-width: 98px !important;
+    padding: 8px 6px !important;
+  }
+
+  .timeline-master-name {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    word-break: break-word !important;
+  }
+
+  .timeline-master-status {
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    margin-top: 2px !important;
+    letter-spacing: -0.2px !important;
+  }
+}
+
+/* 15-minute slot cell */
+.timeline-slot-cell {
+  height: 64px;
+  min-width: 26px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0 !important;
+  user-select: none;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.timeline-slot-hour-end {
+  border-right: 1px solid var(--border-medium) !important;
+}
+
+.timeline-slot-quarter {
+  border-right: 1px dashed rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="light"] .timeline-slot-quarter {
+  border-right: 1px dashed rgba(0, 0, 0, 0.06) !important;
+}
+
+.timeline-slot-cell.slot-clickable:hover {
+  background: rgba(16, 185, 129, 0.09) !important;
+  cursor: pointer;
+}
+
+.timeline-slot-cell.slot-clickable:hover .slot-add-icon {
+  opacity: 0.9 !important;
+  color: var(--color-success) !important;
+}
+
+.slot-add-icon {
+  opacity: 0.12;
+  font-size: 13px;
+  font-weight: 700;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+/* APPOINTMENT CARD: TRANSLUCENT GREEN WITH BOLD GREEN LEFT STRIPE */
+.timeline-app-cell {
+  border-radius: var(--radius-sm) !important;
+  padding: 7px 11px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  vertical-align: middle !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-app-cell:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Dark theme: Semi-transparent Emerald */
+[data-theme="dark"] .timeline-app-cell {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border: 1px solid rgba(16, 185, 129, 0.32) !important;
+  border-left: 4px solid #10B981 !important;
+}
+
+[data-theme="dark"] .timeline-app-client {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .timeline-app-service {
+  color: #A7F3D0 !important;
+}
+
+[data-theme="dark"] .timeline-app-price {
+  color: #34D399 !important;
+}
+
+/* Light theme: Fresh Minty Green with crisp text */
+[data-theme="light"] .timeline-app-cell {
+  background: #ECFDF5 !important;
+  border: 1px solid #A7F3D0 !important;
+  border-left: 4px solid #059669 !important;
+}
+
+[data-theme="light"] .timeline-app-client {
+  color: #064E3B !important;
+}
+
+[data-theme="light"] .timeline-app-service {
+  color: #047857 !important;
+}
+
+[data-theme="light"] .timeline-app-price {
+  color: #059669 !important;
+}
+
+table {
+  color: var(--text-sub);
+}
+
+th {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--border-medium) !important;
+}
+
+td {
+  border-color: var(--border-subtle) !important;
+  color: var(--text-sub) !important;
+}
+
+tr:hover td {
+  background: var(--bg-card-hover) !important;
+}
+
+.client-list-row {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+.client-list-row:hover {
+  border-color: var(--border-medium) !important;
+  background: var(--bg-card-hover) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. BUTTONS & CONTROLS
+   -------------------------------------------------------------------------- */
+.btn-primary {
+  background: var(--accent-primary) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: var(--accent-primary-glow) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-primary:hover {
+  background: var(--accent-primary-hover) !important;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover) !important;
+  border-color: var(--border-accent) !important;
+}
+
+/* Status Badges */
+.badge-status-new {
+  background: var(--color-warning-bg) !important;
+  color: var(--color-warning) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+.badge-status-confirmed {
+  background: var(--color-info-bg) !important;
+  color: var(--color-info) !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+
+.badge-status-completed {
+  background: var(--color-success-bg) !important;
+  color: var(--color-success) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+.badge-status-cancelled {
+  background: var(--color-danger-bg) !important;
+  color: var(--color-danger) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Status select dropdown */
+.status-select {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+}
+
+.status-select option {
+  background: var(--bg-surface) !important;
+  color: var(--text-main) !important;
+}
+
+/* Forms & Inputs */
+.form-input,
+.form-select,
+textarea {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-medium) !important;
+  color: var(--text-main) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: var(--accent-primary) !important;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-primary-bg) !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. MOBILE RESPONSIVENESS & DRAWER
+   -------------------------------------------------------------------------- */
+.admin-mobile-header {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.mobile-header-title {
+  color: var(--text-main) !important;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.admin-mobile-drawer {
+  background: var(--bg-surface) !important;
+  border-left: 1px solid var(--border-subtle) !important;
+}
+
+.drawer-header {
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.drawer-footer {
+  border-top: 1px solid var(--border-subtle) !important;
+}
+
+.drawer-nav-item {
+  color: var(--text-muted) !important;
+}
+
+.drawer-nav-item:hover {
+  color: var(--text-main) !important;
+  background: var(--bg-card-hover) !important;
+}
+
+.drawer-nav-item.active {
+  background: var(--accent-primary-bg) !important;
+  color: var(--accent-primary) !important;
+  border: 1px solid var(--border-accent) !important;
+}
+
+/* Global text overrides for inline hardcoded white */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] .kpi-value,
+[data-theme="light"] [style*="color: #FFFFFF"],
+[data-theme="light"] [style*="color: #ffffff"],
+[data-theme="light"] [style*="color:#FFFFFF"],
+[data-theme="light"] [style*="color:#ffffff"] {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] [style*="background: #12151E"],
+[data-theme="light"] [style*="background:#12151E"] {
+  background: var(--bg-input) !important;
+}
+
+/* Modals & Overlays */
+.modal-overlay {
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(15, 23, 42, 0.45) !important;
+}
+
+[data-theme="light"] .modal-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Timeline & Schedule Matrix Fine-Tuning */
+.timeline-date-nav-bar {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+[data-theme="light"] .timeline-app-cell {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  border-left: 4px solid var(--accent-primary) !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="light"] tr[style*="background: rgba(0,0,0"],
+[data-theme="light"] tr[style*="background: rgba(0, 0, 0"] {
+  background: #F8FAFC !important;
+}
+
+[data-theme="light"] td[style*="background: rgba(0,0,0"],
+[data-theme="light"] td[style*="background: rgba(0, 0, 0"] {
+  background: #F1F5F9 !important;
+}
+
+/* Schedule Day Toggles */
+.schedule-day-toggle {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .schedule-day-toggle {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #64748B;
+}
+
+.schedule-day-toggle.active {
+  background: var(--accent-primary-bg) !important;
+  color: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  font-weight: 700;
+}
+
+/* Status Select Dropdowns */
+[data-theme="light"] .status-select {
+  background: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+[data-theme="light"] .status-select option {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. MOBILE BURGER & CONTROLS (HIGH CONTRAST)
+   -------------------------------------------------------------------------- */
+.btn-mobile-burger {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: var(--radius-sm) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-mobile-burger span {
+  display: block !important;
+  width: 18px !important;
+  height: 2px !important;
+  border-radius: 2px !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Burger in Dark Theme */
+[data-theme="dark"] .btn-mobile-burger {
+  background: #181C26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+
+[data-theme="dark"] .btn-mobile-burger span {
+  background: #F8FAFC !important;
+}
+
+[data-theme="dark"] .btn-mobile-burger:hover {
+  background: #202634 !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Burger in Light Theme (Fixed visibility: dark bars on white button) */
+[data-theme="light"] .btn-mobile-burger {
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+}
+
+[data-theme="light"] .btn-mobile-burger span {
+  background: #0F172A !important;
+}
+
+[data-theme="light"] .btn-mobile-burger:hover {
+  background: #F8FAFC !important;
+  border-color: #94A3B8 !important;
+}
+
+/* Drawer Close Button (✕) */
+.drawer-close-btn {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-theme="dark"] .drawer-close-btn {
+  background: #181C26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="light"] .drawer-close-btn {
+  background: #F1F5F9 !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. CLIENT DATABASE AVATARS & BADGES (NEUTRAL & LIGHT PALETTE)
+   -------------------------------------------------------------------------- */
+.client-avatar,
+#clientModalAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+/* Neutral in Dark Mode */
+[data-theme="dark"] .client-avatar,
+[data-theme="dark"] #clientModalAvatar {
+  background: #1A202C !important;
+  color: #E2E8F0 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+/* Clean & Light in Light Mode (Pure neutral light palette) */
+[data-theme="light"] .client-avatar,
+[data-theme="light"] #clientModalAvatar {
+  background: #F1F5F9 !important;
+  color: #334155 !important;
+  border: 1.5px solid #CBD5E1 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* Client Status Badges (VIP / Regular / New indicated by badge, not avatar circle) */
+.badge-client {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+[data-theme="dark"] .badge-client-new {
+  background: rgba(255, 255, 255, 0.07);
+  color: #94A3B8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .badge-client-new {
+  background: #F1F5F9;
+  color: #64748B;
+  border: 1px solid #CBD5E1;
+}
+
+[data-theme="dark"] .badge-client-vip {
+  background: rgba(99, 102, 241, 0.2);
+  color: #A5B4FC;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
+[data-theme="light"] .badge-client-vip {
+  background: #EEF2FF;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
+}
+
+[data-theme="dark"] .badge-client-regular {
+  background: rgba(16, 185, 129, 0.18);
+  color: #6EE7B7;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+[data-theme="light"] .badge-client-regular {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.badge-client-discount {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+   11. CLIENT MODAL: SEPARATED WHITE CARDS ON COOL SLATE CANVAS
+   -------------------------------------------------------------------------- */
+/* Modal Card & Body Background */
+[data-theme="light"] #adminClientModal .modal-card,
+[data-theme="light"] #adminClientModal .client-modal-card,
+[data-theme="light"] #adminClientModal .client-modal-header,
+[data-theme="light"] #adminClientModal .client-modal-body,
+[data-theme="light"] #adminClientModal .client-modal-footer,
+[data-theme="light"] #adminSpecialistModal .modal-card,
+[data-theme="light"] #adminSpecialistModal .client-modal-card,
+[data-theme="light"] #adminSpecialistModal .client-modal-header,
+[data-theme="light"] #adminSpecialistModal .client-modal-body,
+[data-theme="light"] #adminSpecialistModal .client-modal-footer,
+[data-theme="light"] #adminQuickBookingModal .modal-card,
+[data-theme="light"] #adminQuickBookingModal .client-modal-card,
+[data-theme="light"] #adminQuickBookingModal .client-modal-header,
+[data-theme="light"] #adminQuickBookingModal .client-modal-body,
+[data-theme="light"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="light"] #adminEditAppointmentModal .modal-card,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-card,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-body,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="light"] #adminServiceModal .modal-card,
+[data-theme="light"] #adminServiceModal .client-modal-card,
+[data-theme="light"] #adminServiceModal .client-modal-header,
+[data-theme="light"] #adminServiceModal .client-modal-body,
+[data-theme="light"] #adminServiceModal .client-modal-footer,
+[data-theme="light"] #adminAddCategoryModal .modal-card,
+[data-theme="light"] #adminAddCategoryModal .client-modal-card,
+[data-theme="light"] #adminAddCategoryModal .client-modal-header,
+[data-theme="light"] #adminAddCategoryModal .client-modal-body,
+[data-theme="light"] #adminAddCategoryModal .client-modal-footer {
+  background: #F1F5F9 !important; /* Cool slate-blue gray theme canvas */
+}
+
+[data-theme="light"] #adminClientModal .modal-header,
+[data-theme="light"] #adminClientModal .client-modal-header,
+[data-theme="light"] #adminSpecialistModal .modal-header,
+[data-theme="light"] #adminSpecialistModal .client-modal-header,
+[data-theme="light"] #adminQuickBookingModal .modal-header,
+[data-theme="light"] #adminQuickBookingModal .client-modal-header,
+[data-theme="light"] #adminEditAppointmentModal .modal-header,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="light"] #adminServiceModal .modal-header,
+[data-theme="light"] #adminServiceModal .client-modal-header,
+[data-theme="light"] #adminAddCategoryModal .modal-header,
+[data-theme="light"] #adminAddCategoryModal .client-modal-header {
+  border-bottom: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="light"] #adminClientModal .modal-footer,
+[data-theme="light"] #adminClientModal .client-modal-footer,
+[data-theme="light"] #adminSpecialistModal .modal-footer,
+[data-theme="light"] #adminSpecialistModal .client-modal-footer,
+[data-theme="light"] #adminQuickBookingModal .modal-footer,
+[data-theme="light"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="light"] #adminEditAppointmentModal .modal-footer,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="light"] #adminServiceModal .modal-footer,
+[data-theme="light"] #adminServiceModal .client-modal-footer,
+[data-theme="light"] #adminAddCategoryModal .modal-footer,
+[data-theme="light"] #adminAddCategoryModal .client-modal-footer {
+  border-top: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="dark"] #adminClientModal .modal-card,
+[data-theme="dark"] #adminClientModal .client-modal-card,
+[data-theme="dark"] #adminClientModal .client-modal-header,
+[data-theme="dark"] #adminClientModal .client-modal-body,
+[data-theme="dark"] #adminClientModal .client-modal-footer,
+[data-theme="dark"] #adminSpecialistModal .modal-card,
+[data-theme="dark"] #adminSpecialistModal .client-modal-card,
+[data-theme="dark"] #adminSpecialistModal .client-modal-header,
+[data-theme="dark"] #adminSpecialistModal .client-modal-body,
+[data-theme="dark"] #adminSpecialistModal .client-modal-footer,
+[data-theme="dark"] #adminQuickBookingModal .modal-card,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-card,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-header,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-body,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="dark"] #adminEditAppointmentModal .modal-card,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-card,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-body,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="dark"] #adminServiceModal .modal-card,
+[data-theme="dark"] #adminServiceModal .client-modal-card,
+[data-theme="dark"] #adminServiceModal .client-modal-header,
+[data-theme="dark"] #adminServiceModal .client-modal-body,
+[data-theme="dark"] #adminServiceModal .client-modal-footer,
+[data-theme="dark"] #adminAddCategoryModal .modal-card,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-card,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-header,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-body,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-footer {
+  background: #090A0E !important;
+}
+
+[data-theme="dark"] #adminClientModal .modal-header,
+[data-theme="dark"] #adminClientModal .client-modal-header,
+[data-theme="dark"] #adminSpecialistModal .modal-header,
+[data-theme="dark"] #adminSpecialistModal .client-modal-header,
+[data-theme="dark"] #adminQuickBookingModal .modal-header,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-header,
+[data-theme="dark"] #adminEditAppointmentModal .modal-header,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="dark"] #adminServiceModal .modal-header,
+[data-theme="dark"] #adminServiceModal .client-modal-header,
+[data-theme="dark"] #adminAddCategoryModal .modal-header,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] #adminClientModal .modal-footer,
+[data-theme="dark"] #adminClientModal .client-modal-footer,
+[data-theme="dark"] #adminSpecialistModal .modal-footer,
+[data-theme="dark"] #adminSpecialistModal .client-modal-footer,
+[data-theme="dark"] #adminQuickBookingModal .modal-footer,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="dark"] #adminEditAppointmentModal .modal-footer,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer,
+[data-theme="dark"] #adminServiceModal .modal-footer,
+[data-theme="dark"] #adminServiceModal .client-modal-footer,
+[data-theme="dark"] #adminAddCategoryModal .modal-footer,
+[data-theme="dark"] #adminAddCategoryModal .client-modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Service Category Accordions */
+.service-category-accordion {
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .service-category-accordion {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] .service-category-accordion {
+  background: #181C26;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.service-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+[data-theme="light"] .service-accordion-header:hover {
+  background: #F8FAFC;
+}
+
+[data-theme="dark"] .service-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.service-accordion-header.expanded {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+[data-theme="light"] .service-accordion-header.expanded {
+  border-bottom-color: #E2E8F0;
+}
+
+[data-theme="dark"] .service-accordion-header.expanded {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.service-accordion-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 10px;
+  color: var(--accent-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-accordion-header.expanded .service-accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.service-accordion-body {
+  padding: 16px 20px 20px 20px;
+}
+
+/* Pinned Header & Sticky Footer for all Client Modals to guarantee Save Button is ALWAYS visible */
+.client-modal-card {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 88vh !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+.client-modal-card form {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.client-modal-card .client-modal-header {
+  flex-shrink: 0 !important;
+}
+
+.client-modal-card .client-modal-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.client-modal-card .client-modal-footer {
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 20 !important;
+  margin-top: auto !important;
+}
+
+/* Top 4 KPI Blocks: Pure White in Light Mode, Dark Card in Dark Mode */
+.client-modal-kpi-item {
+  border-radius: var(--radius-md) !important;
+  padding: 12px 14px !important;
+  text-align: center !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-theme="light"] .client-modal-kpi-item {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="dark"] .client-modal-kpi-item {
+  background: #181C26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.client-kpi-label {
+  font-size: 11px !important;
+  color: var(--text-dim) !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+}
+
+.client-kpi-val {
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  color: var(--text-main) !important;
+  margin-top: 4px;
+}
+
+.client-kpi-accent {
+  color: var(--accent-primary) !important;
+}
+
+.client-kpi-success {
+  color: var(--color-success) !important;
+}
+
+.client-kpi-master {
+  font-size: 13px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 6px !important;
+}
+
+/* The 3 Distinct Client Content Blocks */
+.client-modal-block {
+  border-radius: var(--radius-md) !important;
+  padding: 18px 20px !important;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .client-modal-block {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="dark"] .client-modal-block {
+  background: #181C26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.client-block-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.2px;
+}
+
+/* Loyalty Sub-Card inside Block 1 */
+[data-theme="light"] .client-loyalty-card {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="dark"] .client-loyalty-card {
+  background: #13171F !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Block 3: Visits Accordion */
+.client-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
+  transition: opacity 0.2s ease;
+}
+
+.client-accordion-header:hover {
+  opacity: 0.85;
+}
+
+.client-accordion-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.client-block-title-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.client-history-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-primary);
+  background: var(--accent-primary-bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-accent);
+}
+
+.client-accordion-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.accordion-toggle-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.accordion-toggle-arrow {
+  font-size: 10px;
+  color: var(--accent-primary);
+  transition: transform 0.25s ease;
+}
+
+.client-accordion-header.expanded .accordion-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+.client-accordion-body {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+/* Visit Cards inside Accordion History List */
+[data-theme="light"] #clientModalVisitsHistoryList > div {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+[data-theme="dark"] #clientModalVisitsHistoryList > div {
+  background: #13171F !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* Responsive Modal Layout */
+@media (max-width: 768px) {
+  .client-modal-sections-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .client-modal-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+
+
+
