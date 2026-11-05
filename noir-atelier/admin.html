@@ -3,14 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOIR CRM | Панель управления расписанием и записями</title>
+  <title>NOIR Atelier &bull; CRM &amp; Управление</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('noir_crm_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } catch(e) {}
+    })();
+  </script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css?v=20261105_b2b">
   <style>
     /* Admin specific fine-tuning */
     .timeline-table th {
@@ -153,9 +163,11 @@
 
   <!-- PIN Lock Screen -->
   <div id="pinLockScreen" style="position: fixed; inset: 0; background: var(--bg-deep); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-    <div style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: 40px; max-width: 400px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
-      <img src="assets/logo.svg" alt="NOIR" style="height: 38px; margin-bottom: 20px;">
-      <h3 style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Вход в NOIR CRM</h3>
+      <div style="margin-bottom: 22px;">
+        <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.6px; color: var(--text-main); line-height: 1.1;">NOIR Atelier</div>
+        <div style="font-size: 11px; font-weight: 700; color: var(--accent-primary); letter-spacing: 1.2px; text-transform: uppercase; margin-top: 5px;">CRM &amp; Business Management</div>
+      </div>
+      <h3 style="font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Вход в систему</h3>
       <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Введите PIN-код администратора (демо: 1234)</p>
       
       <form id="pinAuthForm">
@@ -243,9 +255,8 @@
     <!-- Mobile Top Header (Visible only on < 768px) -->
     <header class="admin-mobile-header">
       <div class="mobile-header-brand">
-        <img src="assets/favicon.svg" alt="NOIR CRM" class="mobile-header-logo">
         <div>
-          <div class="mobile-header-title">NOIR CRM</div>
+          <div class="mobile-header-title" style="font-weight: 800; letter-spacing: -0.3px;">NOIR Atelier</div>
           <div class="mobile-header-sub" id="mobileActiveTabLabel">Расписание на день</div>
         </div>
       </div>
@@ -265,12 +276,9 @@
     <div class="admin-drawer-overlay" id="adminDrawerOverlay" onclick="closeMobileAdminDrawer()"></div>
     <div class="admin-mobile-drawer" id="adminMobileDrawer">
       <div class="drawer-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <img src="assets/favicon.svg" alt="NOIR" style="height: 28px; width: 28px; object-fit: contain;">
-          <div>
-            <div style="font-size: 14px; font-weight: 800; color: #FFFFFF;">NOIR CRM</div>
-            <div style="font-size: 11px; color: var(--text-dim);">Панель управления</div>
-          </div>
+        <div>
+          <div style="font-size: 16px; font-weight: 900; letter-spacing: -0.3px; color: var(--text-main);">NOIR Atelier</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-primary); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px;">CRM Panel</div>
         </div>
         <button type="button" class="drawer-close-btn" onclick="closeMobileAdminDrawer()">✕</button>
       </div>
@@ -303,6 +311,17 @@
       </nav>
 
       <div class="drawer-footer">
+        <!-- Theme Switcher (Mobile Drawer) - Directly above PIN change button -->
+        <div class="crm-theme-switcher" style="margin-bottom: 12px;">
+          <button type="button" class="crm-theme-btn theme-btn-dark" onclick="setTheme('dark')" id="themeBtnDarkMobile" title="Тёмная тема">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <span>Тёмная</span>
+          </button>
+          <button type="button" class="crm-theme-btn theme-btn-light" onclick="setTheme('light')" id="themeBtnLightMobile" title="Светлая тема">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <span>Светлая</span>
+          </button>
+        </div>
         <button type="button" class="btn btn-secondary" onclick="openPinChangeModal(); closeMobileAdminDrawer();" style="width: 100%; font-size: 12px; margin-bottom: 8px;">
           🔒 Сменить PIN-код
         </button>
@@ -315,11 +334,9 @@
     <!-- Sidebar (Desktop) -->
     <aside class="admin-sidebar">
       <div class="admin-sidebar-header">
-        <a href="index.html">
-          <img src="assets/logo.svg" alt="NOIR CRM" style="height: 32px;">
-        </a>
-        <div style="font-size: 11px; color: var(--accent-gold); font-weight: 700; margin-top: 6px; letter-spacing: 1px; text-transform: uppercase;">
-          CRM &amp; Schedule System
+        <div class="crm-sidebar-brand">
+          <span class="crm-sidebar-name">NOIR Atelier</span>
+          <span class="crm-sidebar-sub">CRM &amp; Operations</span>
         </div>
       </div>
 
@@ -350,7 +367,18 @@
         </div>
       </nav>
 
-      <div style="padding: 20px; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+      <div style="padding: 16px 14px; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+        <!-- Theme Switcher (Desktop Sidebar) - Directly above website button -->
+        <div class="crm-theme-switcher" style="margin-bottom: 12px;">
+          <button type="button" class="crm-theme-btn theme-btn-dark" onclick="setTheme('dark')" id="themeBtnDarkDesktop" title="Тёмная тема">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <span>Тёмная</span>
+          </button>
+          <button type="button" class="crm-theme-btn theme-btn-light" onclick="setTheme('light')" id="themeBtnLightDesktop" title="Светлая тема">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <span>Светлая</span>
+          </button>
+        </div>
         <a href="index.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; text-align: center;">
           ← На витрину сайта
         </a>
@@ -362,12 +390,23 @@
       <!-- Topbar -->
       <header class="admin-topbar">
         <div>
-          <h2 style="font-size: 18px; font-weight: 800; color: #FFFFFF;">NOIR Hair Atelier &bull; Управление</h2>
+          <h2 style="font-size: 18px; font-weight: 800; color: var(--text-main); letter-spacing: -0.3px;">NOIR Atelier &bull; Управление</h2>
           <div style="font-size: 12px; color: var(--text-dim);" id="timelineCurrentDateDisplay">Сегодня</div>
         </div>
 
         <div style="display: flex; align-items: center; gap: 10px;">
-          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 6px 12px; font-size: 12px; border-color: rgba(255, 255, 255, 0.15); display: flex; align-items: center; gap: 6px;" title="Изменить PIN-код администратора">
+          <!-- Topbar Theme Switcher -->
+          <div class="crm-theme-switcher crm-theme-switcher-topbar">
+            <button type="button" class="crm-theme-btn theme-btn-dark" onclick="setTheme('dark')" id="themeBtnDarkTopbar" title="Тёмная тема">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              <span>Тёмная</span>
+            </button>
+            <button type="button" class="crm-theme-btn theme-btn-light" onclick="setTheme('light')" id="themeBtnLightTopbar" title="Светлая тема">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              <span>Светлая</span>
+            </button>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="openPinChangeModal()" style="padding: 6px 12px; font-size: 12px; border-color: var(--border-medium); display: flex; align-items: center; gap: 6px;" title="Изменить PIN-код администратора">
             <span>🔒</span>
             <span>Сменить PIN</span>
           </button>
