@@ -1,15 +1,11 @@
 /**
  * PulseCore™ Technology • Salon Engine Shared Core Stylesheet
  * Product: Salon Engine CRM & Operations
- * Version: 3.1.0 (Full Monolithic Fidelity Bundle)
+ * Version: 3.2.0 (Full Fidelity Monolithic CDN Core)
  * Ecosystem: VietSites & SYNAPTIQ Lab
- * 
- * Contains 100% of base design system (style.css) + 100% of CRM desktop/mobile architecture (admin.css).
  */
 
-/* ==========================================================================
-   PART 1: BASE SYSTEM & CORE COMPONENTS (style.css)
-   ========================================================================== */
+/* 1. BASE DESIGN SYSTEM & COMPONENTS (style.css) */
 /* ==========================================================================
    NOIR Hair Atelier - Dark Luxury Design System
    Universal Salon & Barbershop Showcase Platform
@@ -2269,9 +2265,7 @@ button, input, select, textarea {
 }
 
 
-/* ==========================================================================
-   PART 2: CRM DASHBOARD APP LAYOUT, TIMELINE & WORKFLOWS (admin.css)
-   ========================================================================== */
+/* 2. DESKTOP DASHBOARD APP LAYOUT & CRM CORE (admin.css) */
 /* ==========================================================================
    Universal B2B CRM Design System
    Independent SaaS Architecture • Light & Dark Themes
@@ -3728,6 +3722,12 @@ textarea:focus {
   }
 }
 
+
+
+
+
+/* 3. DESKTOP REFINEMENTS (KPI, SCROLLBARS, CRISP TABLES) */
+
 /* ==========================================================================
    DESKTOP CORE REFINEMENTS: KPI CARDS, TIMELINE SCROLL & CRISP TABLES
    ========================================================================== */
@@ -3871,5 +3871,261 @@ textarea:focus {
 
 
 
+/* ==========================================================================
+   PULSECORE FIDELITY FIXES: FLUID JOURNAL, CLIENT/PAYROLL GRIDS & THEME CONTRAST
+   ========================================================================== */
 
+/* 1. FLUID RESPONSIVE JOURNAL TABLE (DESKTOP) */
+.journal-table-wrapper {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  box-sizing: border-box !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--accent-primary) var(--bg-surface) !important;
+}
 
+.journal-table-wrapper::-webkit-scrollbar {
+  height: 8px !important;
+}
+.journal-table-wrapper::-webkit-scrollbar-track {
+  background: var(--bg-surface) !important;
+  border-radius: 4px;
+}
+.journal-table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-medium) !important;
+  border-radius: 4px;
+}
+
+.journal-table {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.journal-table th {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  padding: 12px 16px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.4px;
+  text-transform: uppercase !important;
+  border-bottom: 2px solid var(--border-medium) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  white-space: nowrap !important;
+}
+
+.journal-table th:last-child {
+  border-right: none !important;
+}
+
+.journal-table td {
+  padding: 13px 16px !important;
+  font-size: 13px !important;
+  color: var(--text-main) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  background: var(--bg-card) !important;
+  vertical-align: middle !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.journal-table td:last-child {
+  border-right: none !important;
+}
+
+.journal-table tr:hover td {
+  background: var(--bg-card-hover) !important;
+}
+
+/* Light Theme Journal Table */
+[data-theme="light"] .journal-table-wrapper {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+[data-theme="light"] .journal-table th {
+  background: #F8FAFC !important;
+  color: #64748B !important;
+  border-bottom: 2px solid #CBD5E1 !important;
+  border-right: 1px solid #E2E8F0 !important;
+}
+[data-theme="light"] .journal-table td {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  border-right: 1px solid #F1F5F9 !important;
+}
+[data-theme="light"] .journal-table tr:hover td {
+  background: #F8FAFC !important;
+}
+
+/* 2. CLIENT LIST ROW DESKTOP & RESPONSIVE GRID */
+.client-list-row {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1.4fr) 85px 140px minmax(170px, 1fr) auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 14px 20px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  margin-bottom: 10px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  transition: border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.client-list-row:hover {
+  border-color: var(--border-medium) !important;
+  background: var(--bg-card-hover) !important;
+}
+
+@media (max-width: 1366px) {
+  .client-list-row {
+    grid-template-columns: minmax(220px, 1.2fr) 70px 125px minmax(150px, 1fr) auto !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .client-list-row {
+    grid-template-columns: minmax(200px, 1fr) 65px 115px minmax(130px, 1fr) auto !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .client-list-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+  }
+}
+
+/* 3. PAYROLL MASTER ROW DESKTOP & RESPONSIVE GRID */
+.payroll-master-row {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1.4fr) 75px 140px 140px 190px auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 20px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+@media (max-width: 1366px) {
+  .payroll-master-row {
+    grid-template-columns: minmax(220px, 1.2fr) 60px 125px 125px 175px auto !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .payroll-master-row {
+    grid-template-columns: minmax(200px, 1fr) 55px 115px 115px 165px auto !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .payroll-master-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    padding: 14px !important;
+  }
+  .payroll-master-row > div {
+    width: 100% !important;
+  }
+}
+
+/* 4. THEME CONTRAST & MOBILE WHITE-ON-WHITE ELIMINATION */
+.mobile-app-time {
+  color: var(--text-main) !important;
+}
+.mobile-app-client-name {
+  color: var(--text-main) !important;
+}
+.detail-val {
+  color: var(--text-main) !important;
+}
+.pill-val {
+  color: var(--text-main) !important;
+}
+.mobile-header-title {
+  color: var(--text-main) !important;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .client-list-row {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+[data-theme="light"] .client-list-row:hover {
+  background: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+}
+[data-theme="light"] .mobile-app-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+}
+[data-theme="light"] .mobile-app-time,
+[data-theme="light"] .mobile-app-client-name,
+[data-theme="light"] .detail-val,
+[data-theme="light"] .pill-val {
+  color: #0F172A !important;
+}
+[data-theme="light"] .pill-lbl {
+  color: #64748B !important;
+}
+[data-theme="light"] .client-mobile-stats-strip {
+  background: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+}
+[data-theme="light"] .kpi-card {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+}
+[data-theme="light"] .kpi-title {
+  color: #64748B !important;
+}
+[data-theme="light"] .kpi-value {
+  color: #0F172A !important;
+}
+[data-theme="light"] .admin-sidebar {
+  background: #FFFFFF !important;
+  border-right-color: #E2E8F0 !important;
+}
+[data-theme="light"] .crm-sidebar-name {
+  color: #0F172A !important;
+}
+[data-theme="light"] .admin-nav-item {
+  color: #475569 !important;
+}
+[data-theme="light"] .admin-nav-item:hover {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+[data-theme="light"] .schedule-control-bar,
+[data-theme="light"] .timeline-date-nav-bar,
+[data-theme="light"] .clients-tab-header-box {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
