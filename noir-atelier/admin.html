@@ -9,7 +9,12 @@
   <script>
     (function() {
       try {
-        var savedTheme = localStorage.getItem('noir_crm_theme') || 'dark';
+        var params = new URLSearchParams(window.location.search);
+        var urlTheme = params.get('theme');
+        if (urlTheme === 'light' || urlTheme === 'dark') {
+          localStorage.setItem('noir_crm_theme', urlTheme);
+        }
+        var savedTheme = localStorage.getItem('noir_crm_theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
       } catch(e) {}
     })();
