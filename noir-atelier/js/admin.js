@@ -23,9 +23,16 @@ function initAdmin() {
 
 // Universal B2B Theme Controller
 function initTheme() {
-  let saved = 'dark';
+  let saved = 'light';
   try {
-    saved = localStorage.getItem('noir_crm_theme') || 'dark';
+    const params = new URLSearchParams(window.location.search);
+    const urlTheme = params.get('theme');
+    if (urlTheme === 'light' || urlTheme === 'dark') {
+      saved = urlTheme;
+      localStorage.setItem('noir_crm_theme', urlTheme);
+    } else {
+      saved = localStorage.getItem('noir_crm_theme') || 'light';
+    }
   } catch (e) {}
   setTheme(saved, false);
 }
