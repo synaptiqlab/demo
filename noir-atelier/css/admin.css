@@ -903,21 +903,39 @@ textarea:focus {
 [data-theme="light"] #adminSpecialistModal .client-modal-card,
 [data-theme="light"] #adminSpecialistModal .client-modal-header,
 [data-theme="light"] #adminSpecialistModal .client-modal-body,
-[data-theme="light"] #adminSpecialistModal .client-modal-footer {
+[data-theme="light"] #adminSpecialistModal .client-modal-footer,
+[data-theme="light"] #adminQuickBookingModal .modal-card,
+[data-theme="light"] #adminQuickBookingModal .client-modal-card,
+[data-theme="light"] #adminQuickBookingModal .client-modal-header,
+[data-theme="light"] #adminQuickBookingModal .client-modal-body,
+[data-theme="light"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="light"] #adminEditAppointmentModal .modal-card,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-card,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-body,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-footer {
   background: #F1F5F9 !important; /* Cool slate-blue gray theme canvas */
 }
 
 [data-theme="light"] #adminClientModal .modal-header,
 [data-theme="light"] #adminClientModal .client-modal-header,
 [data-theme="light"] #adminSpecialistModal .modal-header,
-[data-theme="light"] #adminSpecialistModal .client-modal-header {
+[data-theme="light"] #adminSpecialistModal .client-modal-header,
+[data-theme="light"] #adminQuickBookingModal .modal-header,
+[data-theme="light"] #adminQuickBookingModal .client-modal-header,
+[data-theme="light"] #adminEditAppointmentModal .modal-header,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-header {
   border-bottom: 1px solid #E2E8F0 !important;
 }
 
 [data-theme="light"] #adminClientModal .modal-footer,
 [data-theme="light"] #adminClientModal .client-modal-footer,
 [data-theme="light"] #adminSpecialistModal .modal-footer,
-[data-theme="light"] #adminSpecialistModal .client-modal-footer {
+[data-theme="light"] #adminSpecialistModal .client-modal-footer,
+[data-theme="light"] #adminQuickBookingModal .modal-footer,
+[data-theme="light"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="light"] #adminEditAppointmentModal .modal-footer,
+[data-theme="light"] #adminEditAppointmentModal .client-modal-footer {
   border-top: 1px solid #E2E8F0 !important;
 }
 
@@ -930,22 +948,77 @@ textarea:focus {
 [data-theme="dark"] #adminSpecialistModal .client-modal-card,
 [data-theme="dark"] #adminSpecialistModal .client-modal-header,
 [data-theme="dark"] #adminSpecialistModal .client-modal-body,
-[data-theme="dark"] #adminSpecialistModal .client-modal-footer {
+[data-theme="dark"] #adminSpecialistModal .client-modal-footer,
+[data-theme="dark"] #adminQuickBookingModal .modal-card,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-card,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-header,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-body,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="dark"] #adminEditAppointmentModal .modal-card,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-card,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-header,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-body,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer {
   background: #090A0E !important;
 }
 
 [data-theme="dark"] #adminClientModal .modal-header,
 [data-theme="dark"] #adminClientModal .client-modal-header,
 [data-theme="dark"] #adminSpecialistModal .modal-header,
-[data-theme="dark"] #adminSpecialistModal .client-modal-header {
+[data-theme="dark"] #adminSpecialistModal .client-modal-header,
+[data-theme="dark"] #adminQuickBookingModal .modal-header,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-header,
+[data-theme="dark"] #adminEditAppointmentModal .modal-header,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 [data-theme="dark"] #adminClientModal .modal-footer,
 [data-theme="dark"] #adminClientModal .client-modal-footer,
 [data-theme="dark"] #adminSpecialistModal .modal-footer,
-[data-theme="dark"] #adminSpecialistModal .client-modal-footer {
+[data-theme="dark"] #adminSpecialistModal .client-modal-footer,
+[data-theme="dark"] #adminQuickBookingModal .modal-footer,
+[data-theme="dark"] #adminQuickBookingModal .client-modal-footer,
+[data-theme="dark"] #adminEditAppointmentModal .modal-footer,
+[data-theme="dark"] #adminEditAppointmentModal .client-modal-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Pinned Header & Sticky Footer for all Client Modals to guarantee Save Button is ALWAYS visible */
+.client-modal-card {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 88vh !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+.client-modal-card form {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.client-modal-card .client-modal-header {
+  flex-shrink: 0 !important;
+}
+
+.client-modal-card .client-modal-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.client-modal-card .client-modal-footer {
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 20 !important;
+  margin-top: auto !important;
 }
 
 /* Top 4 KPI Blocks: Pure White in Light Mode, Dark Card in Dark Mode */
