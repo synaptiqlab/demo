@@ -853,6 +853,31 @@ class NoirDataService {
     }
   }
 
+  saveCategories(categories) {
+    localStorage.setItem(this.STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+  }
+
+  addCategory({ name, desc = "", icon = "" }) {
+    const categories = this.getCategories();
+    const cleanName = (name || "").trim();
+    // Генерируем безопасный id категории
+    const baseSlug = cleanName.toLowerCase()
+      .replace(/[^\w\s-]/gi, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+    const catId = baseSlug ? 'cat-' + baseSlug.slice(0, 24) + '-' + Date.now().toString().slice(-4) : 'cat-' + Date.now();
+
+    const newCategory = {
+      id: catId,
+      name: cleanName,
+      desc: (desc || "").trim() || `Услуги направления «${cleanName}»`,
+      icon: icon || ""
+    };
+    categories.push(newCategory);
+    this.saveCategories(categories);
+    return newCategory;
+  }
+
   getServices() {
     try {
       return JSON.parse(localStorage.getItem(this.STORAGE_KEYS.SERVICES)) || DEFAULT_SERVICES;
