@@ -1906,6 +1906,38 @@ window.openQuickBookingFor = function(specialistId, time) {
   quickModal.classList.add('active');
 };
 
+window.updateSpecialistModalPreview = function() {
+  const name = (document.getElementById('specEditName')?.value || '').trim();
+  const avatar = (document.getElementById('specEditAvatar')?.value || '').trim();
+  const img = document.getElementById('specialistModalAvatarImg');
+  const mono = document.getElementById('specialistModalMonogram');
+
+  if (avatar && img && mono) {
+    img.src = avatar;
+    img.style.display = 'block';
+    mono.style.display = 'none';
+  } else if (img && mono) {
+    img.style.display = 'none';
+    mono.style.display = 'inline-block';
+    mono.textContent = getClientMonogram(name) || 'М';
+  }
+};
+
+window.onSpecialistNameInput = function(name) {
+  const id = document.getElementById('specEditId')?.value;
+  const titleEl = document.getElementById('specialistModalTitle');
+  if (titleEl) {
+    titleEl.textContent = id
+      ? ('Редактирование профиля: ' + (name.trim() || 'Мастер'))
+      : (name.trim() ? ('Новый мастер: ' + name.trim()) : 'Новый мастер ателье');
+  }
+  window.updateSpecialistModalPreview();
+};
+
+window.onSpecialistAvatarInput = function(url) {
+  window.updateSpecialistModalPreview();
+};
+
 window.openCreateSpecialistModal = function() {
   const modal = document.getElementById('adminSpecialistModal');
   if (!modal) return;
@@ -1920,10 +1952,16 @@ window.openCreateSpecialistModal = function() {
   document.getElementById('specEditAvatar').value = "";
   const commInput = document.getElementById('specEditCommission');
   if (commInput) commInput.value = "40";
+  const badge = document.getElementById('specCommissionBadge');
+  if (badge) badge.textContent = "40%";
+
+  const delBtn = document.getElementById('specDeleteBtn');
+  if (delBtn) delBtn.style.display = 'none';
 
   populateCategoryCheckboxes([]);
   document.querySelectorAll('#specWorkDaysCheckboxes input').forEach(ch => ch.checked = true);
 
+  window.updateSpecialistModalPreview();
   modal.classList.add('active');
 };
 
@@ -1941,8 +1979,14 @@ window.openEditSpecialistModal = function(specId) {
   document.getElementById('specEditRole').value = spec.role;
   document.getElementById('specEditExperience').value = spec.experience || "";
   document.getElementById('specEditAvatar').value = spec.avatar || "";
+  const commVal = spec.commissionPercent != null ? spec.commissionPercent : 40;
   const commInput = document.getElementById('specEditCommission');
-  if (commInput) commInput.value = spec.commissionPercent != null ? spec.commissionPercent : 40;
+  if (commInput) commInput.value = commVal;
+  const badge = document.getElementById('specCommissionBadge');
+  if (badge) badge.textContent = commVal + "%";
+
+  const delBtn = document.getElementById('specDeleteBtn');
+  if (delBtn) delBtn.style.display = 'inline-flex';
 
   populateCategoryCheckboxes(spec.categories || []);
 
@@ -1951,12 +1995,38 @@ window.openEditSpecialistModal = function(specId) {
     ch.checked = days.includes(parseInt(ch.value, 10));
   });
 
+  window.updateSpecialistModalPreview();
   modal.classList.add('active');
 };
 
 window.setSpecCommission = function(val) {
   const commInput = document.getElementById('specEditCommission');
   if (commInput) commInput.value = val;
+  const badge = document.getElementById('specCommissionBadge');
+  if (badge) badge.textContent = val + "%";
+};
+
+window.deleteCurrentSpecialist = function() {
+  const specId = document.getElementById('specEditId')?.value;
+  if (!specId) return;
+
+  const specialists = window.noirData.getSpecialists();
+  const spec = specialists.find(s => s.id === specId);
+  const specName = spec ? spec.name : 'этого мастера';
+
+  if (!confirm(`Вы действительно хотите удалить мастера «${specName}» из системы?`)) {
+    return;
+  }
+
+  const success = window.noirData.deleteSpecialist(specId);
+  if (success) {
+    const modal = document.getElementById('adminSpecialistModal');
+    if (modal) modal.classList.remove('active');
+    updateKPIs();
+    renderSpecialistsSchedule();
+    renderTimeline();
+    if (currentTab === 'payroll') renderPayrollAdmin();
+  }
 };
 
 function populateCategoryCheckboxes(selectedCategories = []) {
