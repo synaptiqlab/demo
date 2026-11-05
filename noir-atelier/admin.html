@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +8,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
+  <!-- Zero-Flicker Theme Initializer: По умолчанию светлая тема; при выборе тёмной — сохраняется и применяется мгновенно до рендера -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('noir_crm_theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch(e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
   <!-- PulseCore Smart Engine Resolver (поддерживает локальное открытие file://, localhost и GitHub Pages) -->
   <script>
-    window.__ENGINE_PREFIX = (location.pathname.includes('/salons/') || location.pathname.includes('\\salons\\')) ? '../../engine/salon' : '../engine/salon';
-    document.write('<link rel="stylesheet" href="' + window.__ENGINE_PREFIX + '/salon-engine.css?v=20261106_core_v5">');
+    window.__ENGINE_PREFIX = (location.pathname.includes('/salons/') || location.pathname.includes('\salons\')) ? '../../engine/salon' : '../engine/salon';
+    document.write('<link rel="stylesheet" href="' + window.__ENGINE_PREFIX + '/salon-engine.css?v=20261106_core_v6">');
   </script>
   
   <!-- Tenant Specific Data & Configuration -->
-  <script src="js/salon.config.js?v=20261106_core_v5"></script>
-  <script src="js/data.js?v=20261106_core_v5"></script>
+  <script src="js/salon.config.js?v=20261106_core_v6"></script>
+  <script src="js/data.js?v=20261106_core_v6"></script>
 </head>
 <body class="admin-body">
   <!-- PulseCore Mount Point: Single Point of Ingestion -->
   <div id="salonAppRoot"></div>
 
-  <!-- PulseCore Salon Engine Bundle Injection -->
+  <!-- PulseCore Salon Engine Bundle Injection: Синхронная загрузка гарантирует правильный порядок до DOMContentLoaded -->
   <script>
-    const coreScript = document.createElement('script');
-    coreScript.src = window.__ENGINE_PREFIX + '/salon-engine.js?v=20261106_core_v5';
-    document.body.appendChild(coreScript);
+    document.write('<script src="' + window.__ENGINE_PREFIX + '/salon-engine.js?v=20261106_core_v6"><\/script>');
   </script>
 </body>
 </html>
