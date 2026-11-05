@@ -117,31 +117,60 @@
 /* --------------------------------------------------------------------------
    3. BASE LAYOUT & CRM CORE
    -------------------------------------------------------------------------- */
+html, body.admin-body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 769px) {
+  html, body.admin-body {
+    overflow: hidden;
+  }
+}
+
 body.admin-body {
   background: var(--bg-deep) !important;
   color: var(--text-sub) !important;
   font-family: var(--font-main);
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   background: var(--bg-deep);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Sidebar (Desktop) */
 .admin-sidebar {
   width: 260px;
+  height: 100vh;
+  max-height: 100vh;
+  position: sticky;
+  top: 0;
   background: var(--bg-surface) !important;
   border-right: 1px solid var(--border-subtle) !important;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
   transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 2px;
 }
 
 .admin-sidebar-header {
@@ -203,11 +232,14 @@ body.admin-body {
   font-weight: 700;
 }
 
-/* Main Content & Topbar */
+/* Main Content Area */
 .admin-main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   background: var(--bg-deep);
   min-width: 0;
 }
@@ -219,8 +251,22 @@ body.admin-body {
 .admin-content {
   padding: 28px;
   flex-grow: 1;
+  height: 100%;
+  max-height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   min-width: 0;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+}
+
+.admin-content::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-content::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
 }
 
 /* --------------------------------------------------------------------------
@@ -408,8 +454,35 @@ body.admin-body {
   color: var(--text-dim);
 }
 
-/* Mobile: Compact master column to maximize timeline scrollable area */
+/* Mobile: Compact master column to maximize timeline scrollable area & layout resets */
 @media (max-width: 768px) {
+  html, body.admin-body {
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  .admin-layout {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    flex-direction: column !important;
+  }
+  .admin-sidebar {
+    display: none !important;
+  }
+  .admin-main {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .admin-content {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 14px 12px !important;
+  }
+
   .timeline-master-col {
     width: 98px !important;
     min-width: 98px !important;
