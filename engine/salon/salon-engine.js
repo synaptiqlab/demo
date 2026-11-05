@@ -22,8 +22,8 @@
   };
 
   const SALON_HTML_TEMPLATE = `<!-- PIN Lock Screen -->
-  <div id="pinLockScreen">
-    <div id="pinLockCard">
+  <div id="pinLockScreen" style="position: fixed; inset: 0; background: var(--bg-deep); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div id="pinLockCard" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: 40px; max-width: 400px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
       <div style="margin-bottom: 22px;">
         <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.6px; color: var(--text-main); line-height: 1.1;">${config.name || 'NOIR'} Atelier</div>
         <div style="font-size: 11px; font-weight: 700; color: var(--accent-primary); letter-spacing: 1.2px; text-transform: uppercase; margin-top: 5px;">CRM &amp; Business Management</div>
@@ -1800,13 +1800,7 @@
  * Управление расписанием мастеров, живой редактор записей, смены и прейскурант
  */
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initAdmin();
-  });
-} else {
-  initAdmin();
-}
+// initAdmin is called at the end of engine bundle after all declarations
 
 const ADMIN_PIN = "1234";
 let currentDate = new Date().toISOString().split('T')[0];
@@ -5907,4 +5901,16 @@ window.printWeeklyPayrollSummary = function(startDate, endDate) {
 
 
 
+
+  // ==========================================
+  // PULSECORE ENGINE INGESTION & BOOTSTRAP
+  // Runs after ALL state, variables, and controllers are fully initialized
+  // ==========================================
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+    });
+  } else {
+    initAdmin();
+  }
 })();
