@@ -234,7 +234,7 @@
         </div>
       </nav>
 
-      <div style="padding: 16px 14px; border-top: 1px solid var(--border-subtle); margin-top: auto;">
+      <div class="admin-sidebar-footer" style="padding: 16px 14px; border-top: 1px solid var(--border-subtle); margin-top: auto;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
           <button type="button" class="btn btn-secondary" id="timelineRefreshBtn" style="padding: 7px 8px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: var(--radius-sm);" title="Обновить данные расписания">
             <span>🔄</span>
