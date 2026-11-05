@@ -346,10 +346,25 @@ body.admin-body {
 /* --------------------------------------------------------------------------
    6. TABLES & DATA LISTS
    -------------------------------------------------------------------------- */
+.timeline-table {
+  min-width: 1380px;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
 .timeline-table th {
   background: var(--bg-surface) !important;
   color: var(--text-muted) !important;
   border-bottom: 2px solid var(--border-medium) !important;
+}
+
+.timeline-th-hour {
+  border-right: 1px solid var(--border-medium) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  letter-spacing: 0.5px;
 }
 
 .timeline-table td {
@@ -357,8 +372,99 @@ body.admin-body {
   background: var(--bg-card);
 }
 
-.timeline-table td:hover {
-  background: var(--bg-card-hover) !important;
+/* 15-minute slot cell */
+.timeline-slot-cell {
+  height: 64px;
+  min-width: 26px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0 !important;
+  user-select: none;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.timeline-slot-hour-end {
+  border-right: 1px solid var(--border-medium) !important;
+}
+
+.timeline-slot-quarter {
+  border-right: 1px dashed rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="light"] .timeline-slot-quarter {
+  border-right: 1px dashed rgba(0, 0, 0, 0.06) !important;
+}
+
+.timeline-slot-cell.slot-clickable:hover {
+  background: rgba(16, 185, 129, 0.09) !important;
+  cursor: pointer;
+}
+
+.timeline-slot-cell.slot-clickable:hover .slot-add-icon {
+  opacity: 0.9 !important;
+  color: var(--color-success) !important;
+}
+
+.slot-add-icon {
+  opacity: 0.12;
+  font-size: 13px;
+  font-weight: 700;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+/* APPOINTMENT CARD: TRANSLUCENT GREEN WITH BOLD GREEN LEFT STRIPE */
+.timeline-app-cell {
+  border-radius: var(--radius-sm) !important;
+  padding: 7px 11px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  vertical-align: middle !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-app-cell:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Dark theme: Semi-transparent Emerald */
+[data-theme="dark"] .timeline-app-cell {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border: 1px solid rgba(16, 185, 129, 0.32) !important;
+  border-left: 4px solid #10B981 !important;
+}
+
+[data-theme="dark"] .timeline-app-client {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .timeline-app-service {
+  color: #A7F3D0 !important;
+}
+
+[data-theme="dark"] .timeline-app-price {
+  color: #34D399 !important;
+}
+
+/* Light theme: Fresh Minty Green with crisp text */
+[data-theme="light"] .timeline-app-cell {
+  background: #ECFDF5 !important;
+  border: 1px solid #A7F3D0 !important;
+  border-left: 4px solid #059669 !important;
+}
+
+[data-theme="light"] .timeline-app-client {
+  color: #064E3B !important;
+}
+
+[data-theme="light"] .timeline-app-service {
+  color: #047857 !important;
+}
+
+[data-theme="light"] .timeline-app-price {
+  color: #059669 !important;
 }
 
 table {
