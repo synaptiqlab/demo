@@ -1351,6 +1351,93 @@ function renderServicesAdmin() {
 // ==========================================
 // 5. РЕДАКТИРОВАНИЕ ЗАПИСИ (СМЕНА МАСТЕРА, ВРЕМЕНИ, УСЛУГ)
 // ==========================================
+
+// Округление минут времени до шага в 15 минут (:00, :15, :30, :45)
+window.roundTimeInput = function(input) {
+  if (!input || !input.value) return;
+  const parts = input.value.trim().split(':');
+  if (parts.length < 2) return;
+
+  let h = parseInt(parts[0], 10);
+  let m = parseInt(parts[1], 10);
+  if (isNaN(h)) h = 10;
+  if (isNaN(m)) m = 0;
+
+  let roundedM = Math.round(m / 15) * 15;
+  if (roundedM >= 60) {
+    h = (h + 1) % 24;
+    roundedM = 0;
+  }
+  input.value = String(h).padStart(2, '0') + ':' + String(roundedM).padStart(2, '0');
+};
+
+window.setQuickTimeMinute = function(min) {
+  const inp = document.getElementById('adminBookingTime');
+  if (!inp) return;
+  const currentVal = inp.value || '12:00';
+  const h = (currentVal.split(':')[0] || '12').padStart(2, '0');
+  inp.value = h + ':' + String(min).padStart(2, '0');
+};
+
+window.setEditTimeMinute = function(min) {
+  const inp = document.getElementById('editAppTime');
+  if (!inp) return;
+  const currentVal = inp.value || '12:00';
+  const h = (currentVal.split(':')[0] || '12').padStart(2, '0');
+  inp.value = h + ':' + String(min).padStart(2, '0');
+};
+
+// Проверка пересечения времени записей для мастера
+window.checkAppointmentTimeConflict = function({ id, specialistId, date, time, duration }) {
+  if (!date || !time) return { hasConflict: false };
+
+  const [newH, newM] = time.split(':').map(v => parseInt(v, 10));
+  const newStartMin = newH * 60 + (newM || 0);
+  const newEndMin = newStartMin + (duration || 60);
+
+  const appointments = window.noirData.getAppointments();
+  const specialists = window.noirData.getSpecialists();
+  const targetSpecialist = specialists.find(s => s.id === specialistId);
+
+  for (const a of appointments) {
+    if (a.status === 'cancelled') continue;
+    if (id && String(a.id) === String(id)) continue;
+    if (a.date !== date) continue;
+
+    // Сверяем мастера (только если выбран конкретный специалист)
+    if (specialistId && specialistId !== 'any') {
+      const matchId = (a.specialistId === specialistId);
+      const matchName = targetSpecialist && a.specialistName && a.specialistName.includes(targetSpecialist.name);
+      if (!matchId && !matchName) continue;
+    } else {
+      continue;
+    }
+
+    const [aH, aM] = (a.time || '10:00').split(':').map(v => parseInt(v, 10));
+    const aStartMin = aH * 60 + (aM || 0);
+    const aEndMin = aStartMin + (a.duration || 60);
+
+    // Математическое условие пересечения полуинтервалов: [newStart, newEnd) пересекается с [aStart, aEnd)
+    if (newStartMin < aEndMin && newEndMin > aStartMin) {
+      const aEndHour = Math.floor(aEndMin / 60);
+      const aEndMinute = aEndMin % 60;
+      const aEndTimeStr = String(aEndHour).padStart(2, '0') + ':' + String(aEndMinute).padStart(2, '0');
+
+      return {
+        hasConflict: true,
+        conflictApp: a,
+        conflictStart: a.time,
+        conflictEnd: aEndTimeStr,
+        specialistName: a.specialistName || (targetSpecialist ? targetSpecialist.name : 'Мастер'),
+        clientName: a.clientName || 'Гость',
+        serviceName: a.serviceName || 'Услуга'
+      };
+    }
+  }
+
+  return { hasConflict: false };
+};
+
 let currentEditingAppItems = [];
 
 window.openEditAppointmentModal = function(appId) {
@@ -1361,13 +1448,20 @@ window.openEditAppointmentModal = function(appId) {
   const app = appointments.find(a => a.id === appId);
   if (!app) return;
 
+  const conflictAlert = document.getElementById('editAppConflictAlert');
+  if (conflictAlert) conflictAlert.style.display = 'none';
+
   document.getElementById('editAppModalTitle').textContent = `Изменить запись #${app.id}`;
   document.getElementById('editAppSubtitle').textContent = `Клиент: ${app.clientName} • ${app.date} в ${app.time}`;
   document.getElementById('editAppId').value = app.id;
   document.getElementById('editAppClientName').value = app.clientName || '';
   document.getElementById('editAppClientPhone').value = app.phone || '';
   document.getElementById('editAppDate').value = app.date;
-  document.getElementById('editAppTime').value = app.time;
+  const editTimeInp = document.getElementById('editAppTime');
+  if (editTimeInp) {
+    editTimeInp.value = app.time;
+    window.roundTimeInput(editTimeInp);
+  }
   document.getElementById('editAppStatus').value = app.status || 'confirmed';
   document.getElementById('editAppComment').value = app.comment || '';
 
@@ -1489,16 +1583,14 @@ function setupModals() {
       const clientName = document.getElementById('editAppClientName').value.trim();
       const phone = document.getElementById('editAppClientPhone').value.trim();
       const date = document.getElementById('editAppDate').value;
-      const time = document.getElementById('editAppTime').value;
+      
+      const timeInp = document.getElementById('editAppTime');
+      if (timeInp) window.roundTimeInput(timeInp);
+      const time = timeInp ? timeInp.value : '';
+
       const specialistId = document.getElementById('editAppSpecialist').value;
       const status = document.getElementById('editAppStatus').value;
       const comment = document.getElementById('editAppComment').value.trim();
-
-      let specialistName = "Любой свободный мастер";
-      if (specialistId !== 'any') {
-        const sp = window.noirData.getSpecialists().find(s => s.id === specialistId);
-        if (sp) specialistName = sp.name;
-      }
 
       let totalP = 0;
       let totalD = 0;
@@ -1509,6 +1601,34 @@ function setupModals() {
         totalD += (item.duration || 60);
         serviceNames.push(item.name);
       });
+
+      // ПРОВЕРКА КОНФЛИКТА ПЕРЕСЕЧЕНИЯ ВРЕМЕНИ ДЛЯ МАСТЕРА
+      const conflict = window.checkAppointmentTimeConflict({
+        id: id,
+        specialistId: specialistId,
+        date: date,
+        time: time,
+        duration: totalD || 60
+      });
+
+      const errBox = document.getElementById('editAppConflictAlert');
+      if (conflict.hasConflict) {
+        const errMsg = `Это время уже занято, выберите другое.\n\nМастер ${conflict.specialistName} уже занят(а) с ${conflict.conflictStart} до ${conflict.conflictEnd} (${conflict.clientName} — ${conflict.serviceName}).`;
+        if (errBox) {
+          errBox.textContent = `⚠️ Это время уже занято, выберите другое! Мастер ${conflict.specialistName} занят(а) с ${conflict.conflictStart} до ${conflict.conflictEnd} (${conflict.clientName} — ${conflict.serviceName}).`;
+          errBox.style.display = 'block';
+        }
+        alert(errMsg);
+        return;
+      } else if (errBox) {
+        errBox.style.display = 'none';
+      }
+
+      let specialistName = "Любой свободный мастер";
+      if (specialistId !== 'any') {
+        const sp = window.noirData.getSpecialists().find(s => s.id === specialistId);
+        if (sp) specialistName = sp.name;
+      }
 
       window.noirData.updateAppointment(id, {
         clientName,
@@ -1541,12 +1661,38 @@ function setupModals() {
       const srvId = document.getElementById('adminServiceSelect').value;
       const specId = document.getElementById('adminSpecialistSelect').value;
       const date = document.getElementById('adminBookingDate').value;
-      const time = document.getElementById('adminBookingTime').value;
+      
+      const timeInp = document.getElementById('adminBookingTime');
+      if (timeInp) window.roundTimeInput(timeInp);
+      const time = timeInp ? timeInp.value : '';
+
       const clientName = document.getElementById('adminClientName').value.trim();
       const phone = document.getElementById('adminClientPhone').value.trim();
 
       const srv = window.noirData.getServices().find(s => s.id === srvId);
       const sp = window.noirData.getSpecialists().find(s => s.id === specId);
+      const dur = srv ? srv.duration : 60;
+
+      // ПРОВЕРКА КОНФЛИКТА ПЕРЕСЕЧЕНИЯ ВРЕМЕНИ ДЛЯ МАСТЕРА
+      const conflict = window.checkAppointmentTimeConflict({
+        specialistId: specId,
+        date: date,
+        time: time,
+        duration: dur
+      });
+
+      const errBox = document.getElementById('quickBookingConflictAlert');
+      if (conflict.hasConflict) {
+        const errMsg = `Это время уже занято, выберите другое.\n\nМастер ${conflict.specialistName} уже занят(а) с ${conflict.conflictStart} до ${conflict.conflictEnd} (${conflict.clientName} — ${conflict.serviceName}).`;
+        if (errBox) {
+          errBox.textContent = `⚠️ Это время уже занято, выберите другое! Мастер ${conflict.specialistName} занят(а) с ${conflict.conflictStart} до ${conflict.conflictEnd} (${conflict.clientName} — ${conflict.serviceName}).`;
+          errBox.style.display = 'block';
+        }
+        alert(errMsg);
+        return;
+      } else if (errBox) {
+        errBox.style.display = 'none';
+      }
 
       const client = window.noirData.findClientByContact(phone) || window.noirData.getClientByPhone(phone);
       const discount = (client && client.discountPercent) ? client.discountPercent : 0;
@@ -1565,7 +1711,7 @@ function setupModals() {
         specialistName: sp ? sp.name : "Любой свободный мастер",
         date,
         time,
-        duration: srv ? srv.duration : 60,
+        duration: dur,
         price: finalPrice,
         discountPercent: discount,
         status: bookingStatus,
@@ -1576,7 +1722,7 @@ function setupModals() {
       try {
         const orderSummaryText = `💇 Услуга: ${srv ? srv.name : "Услуга"}
 👤 Мастер: ${sp ? sp.name : "Мастер"}
-📅 Дата и время: ${date} в ${time} (${srv ? srv.duration : 60} мин)
+📅 Дата и время: ${date} в ${time} (${dur} мин)
 ${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i>(Запись создана администратором в CRM)</i>`;
 
         fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/order", {
@@ -1597,7 +1743,7 @@ ${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i
             specialist_name: sp ? sp.name : "Любой свободный мастер",
             app_date: date,
             app_time: time,
-            duration: srv ? srv.duration : 60,
+            duration: dur,
             discount_percent: discount || 0,
             comment: createdRecord.comment || ""
           })
@@ -1918,13 +2064,19 @@ window.openQuickBookingFor = function(specialistId, time) {
   const quickModal = document.getElementById('adminQuickBookingModal');
   if (!quickModal) return;
 
+  const errBox = document.getElementById('quickBookingConflictAlert');
+  if (errBox) errBox.style.display = 'none';
+
   const serviceSel = document.getElementById('adminServiceSelect');
   const specSel = document.getElementById('adminSpecialistSelect');
   const dateInput = document.getElementById('adminBookingDate');
   const timeInput = document.getElementById('adminBookingTime');
 
   if (dateInput) dateInput.value = currentDate;
-  if (timeInput) timeInput.value = time;
+  if (timeInput) {
+    timeInput.value = time;
+    window.roundTimeInput(timeInput);
+  }
 
   if (serviceSel) {
     const services = window.noirData.getServices();
