@@ -801,14 +801,11 @@ function renderTimeline() {
 
     html += `
       <tr style="${!isWorking ? 'opacity: 0.65; background: rgba(0,0,0,0.12);' : ''}">
-        <td style="border-right: 2px solid var(--border-medium); padding: 10px 14px; width: 200px; min-width: 200px; position: sticky; left: 0; background: var(--bg-surface); z-index: 2;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="${sp.avatar}" alt="${sp.name}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-medium); flex-shrink: 0;">
-            <div style="overflow: hidden;">
-              <div style="font-size: 13px; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sp.name}</div>
-              <div style="font-size: 11px; color: ${isWorking ? 'var(--color-success)' : 'var(--text-dim)'}; font-weight: 600; white-space: nowrap;">
-                ${isWorking ? '● На смене' : '○ Выходной'}
-              </div>
+        <td class="timeline-master-col" style="border-right: 2px solid var(--border-medium); position: sticky; left: 0; background: var(--bg-surface); z-index: 2;">
+          <div class="timeline-master-info">
+            <div class="timeline-master-name" title="${sp.name}">${sp.name}</div>
+            <div class="timeline-master-status ${isWorking ? 'status-working' : 'status-off'}">
+              ${isWorking ? '● На смене' : '○ Выходной'}
             </div>
           </div>
         </td>
