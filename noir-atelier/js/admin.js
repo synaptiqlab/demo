@@ -455,7 +455,8 @@ function setupNav() {
     if (dateDisplay) {
       const d = new Date(currentDate);
       const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-      dateDisplay.textContent = d.toLocaleDateString('ru-RU', options);
+      const formatted = d.toLocaleDateString('ru-RU', options);
+      dateDisplay.textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
     }
   }
 
