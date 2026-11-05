@@ -85,6 +85,21 @@ function setupAuth() {
   }
 
 
+  // Экспортируем глобальный обработчик завершения сессии
+  window.handleSessionExpired = function() {
+    sessionStorage.removeItem('noir_admin_auth');
+    sessionStorage.removeItem('noir_admin_token');
+    const pScreen = document.getElementById('pinLockScreen');
+    const mLayout = document.getElementById('adminMainLayout');
+    const pError = document.getElementById('pinErrorMsg');
+    if (mLayout) mLayout.style.display = 'none';
+    if (pScreen) pScreen.style.display = 'flex';
+    if (pError) {
+      pError.textContent = 'Сессия истекла или недействительна. Пожалуйста, введите PIN-код заново.';
+      pError.style.display = 'block';
+    }
+  };
+
   if (pinForm) {
     pinForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -95,6 +110,9 @@ function setupAuth() {
       if (submitBtn) submitBtn.disabled = true;
 
       let isValid = false;
+      let token = null;
+      let errorMsg = "Неверный PIN-код. Проверьте правильность ввода";
+
       try {
         const resp = await fetch("https://synaptiq-crm-bot.dandeliondnd-vn.workers.dev/api/salon/verify-pin", {
           method: "POST",
@@ -102,7 +120,12 @@ function setupAuth() {
           body: JSON.stringify({ tenant_id: "noir-atelier", pin: entered })
         });
         const resData = await resp.json();
-        isValid = resData && resData.success;
+        if (resData && resData.success) {
+          isValid = true;
+          token = resData.token || null;
+        } else if (resData && resData.error) {
+          errorMsg = resData.error;
+        }
       } catch (err) {
         console.warn("ClientBase PIN check offline, using local verification:", err);
         isValid = window.noirData ? window.noirData.verifyAdminPin(entered) : (entered === "1234");
@@ -112,11 +135,17 @@ function setupAuth() {
       
       if (isValid) {
         sessionStorage.setItem('noir_admin_auth', 'true');
-        pinScreen.style.display = 'none';
-        mainLayout.style.display = 'flex';
+        if (token) {
+          sessionStorage.setItem('noir_admin_token', token);
+        }
+        if (pinScreen) pinScreen.style.display = 'none';
+        if (mainLayout) mainLayout.style.display = 'flex';
         loadDashboard();
       } else {
-        if (pinError) pinError.style.display = 'block';
+        if (pinError) {
+          pinError.textContent = errorMsg;
+          pinError.style.display = 'block';
+        }
         if (pinInput) pinInput.value = '';
       }
     });
@@ -475,6 +504,14 @@ function switchTab(tabId) {
 function loadDashboard() {
   updateKPIs();
   switchTab(currentTab);
+
+  if (window.noirData && typeof window.noirData.syncFromCloud === 'function') {
+    window.noirData.syncFromCloud().then(() => {
+      updateKPIs();
+      if (currentTab === 'appointments') renderJournal();
+      if (currentTab === 'timeline') renderTimeline();
+    }).catch(e => console.warn("Background cloud sync error:", e));
+  }
 
   const href = window.location.href;
   const search = window.location.search || (href.includes('?') ? href.substring(href.indexOf('?')) : '');
