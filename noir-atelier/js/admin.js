@@ -1677,6 +1677,12 @@ function setupModals() {
       e.preventDefault();
       const srvId = document.getElementById('adminServiceSelect').value;
       const specId = document.getElementById('adminSpecialistSelect').value;
+
+      if (!srvId) {
+        alert("Пожалуйста, выберите услугу из списка!");
+        return;
+      }
+
       const date = document.getElementById('adminBookingDate').value;
       
       const timeInp = document.getElementById('adminBookingTime');
@@ -2093,7 +2099,7 @@ ${discount > 0 ? `⭐ Скидка лояльности: ${discount}%\n` : ''}<i
 }
 
 // ==========================================================================
-// СВЯЗАННЫЙ ДВУНАПРАВЛЕННЫЙ ФИЛЬТР: УСЛУГА <-> МАСТЕР (Quick Booking)
+// СВЯЗАННЫЙ ДВУНАПРАВЛЕННЫЙ ФИЛЬТР: МАСТЕР <-> УСЛУГА (Quick Booking)
 // ==========================================================================
 window.noirQuickFilter = {
   isUpdating: false,
@@ -2107,27 +2113,31 @@ window.noirQuickFilter = {
     const currentSrvId = targetServiceId !== null ? targetServiceId : serviceSel.value;
 
     let filtered = allServices;
+    let placeholder = '-- Выберите услугу из каталога --';
+
     if (specialistId && specialistId !== 'any') {
       const sp = allSpecialists.find(s => s.id === specialistId);
-      if (sp && Array.isArray(sp.categories) && sp.categories.length > 0) {
-        filtered = allServices.filter(s => sp.categories.includes(s.categoryId));
+      if (sp) {
+        placeholder = `-- Выберите услугу (${sp.name}) --`;
+        if (Array.isArray(sp.categories) && sp.categories.length > 0) {
+          filtered = allServices.filter(s => sp.categories.includes(s.categoryId));
+        }
       }
     }
 
-    let html = '';
+    let html = `<option value="">${placeholder}</option>`;
     filtered.forEach(s => {
       html += `<option value="${s.id}">${s.name} (${window.noirData.formatMoney(s.price)} • ${s.duration} мин)</option>`;
     });
 
     serviceSel.innerHTML = html;
 
-    // Восстанавливаем выбранную услугу, если она доступна в отфильтрованном списке
-    const stillValid = filtered.some(s => s.id === currentSrvId);
+    // Сохраняем выбранную услугу, только если она действительно была выбрана и входит в список
+    const stillValid = currentSrvId && filtered.some(s => s.id === currentSrvId);
     if (stillValid) {
       serviceSel.value = currentSrvId;
-    } else if (filtered.length > 0) {
-      serviceSel.value = filtered[0].id;
     } else {
+      // Изначально услуга НЕ предвыбирается, чтобы список мастеров оставался полным!
       serviceSel.value = '';
     }
   },
@@ -2159,30 +2169,12 @@ window.noirQuickFilter = {
 
     specSel.innerHTML = html;
 
-    // Если ранее выбранный мастер есть в списке подходящих — оставляем его
-    const stillValid = (currentSpecId === 'any') || filtered.some(sp => sp.id === currentSpecId);
-    if (stillValid && currentSpecId) {
+    // Если ранее выбранный мастер есть в списке подходящих — сохраняем его
+    const stillValid = (currentSpecId === 'any') || (currentSpecId && filtered.some(sp => sp.id === currentSpecId));
+    if (stillValid) {
       specSel.value = currentSpecId;
     } else {
       specSel.value = 'any';
-    }
-  },
-
-  onServiceChange() {
-    if (this.isUpdating) return;
-    this.isUpdating = true;
-    try {
-      const serviceSel = document.getElementById('adminServiceSelect');
-      const specSel = document.getElementById('adminSpecialistSelect');
-      const srvId = serviceSel ? serviceSel.value : '';
-      const currentSpec = specSel ? specSel.value : 'any';
-
-      this.renderSpecialists(srvId, currentSpec);
-      if (typeof window.updateQuickBookingDiscountDisplay === 'function') {
-        window.updateQuickBookingDiscountDisplay();
-      }
-    } finally {
-      this.isUpdating = false;
     }
   },
 
@@ -2195,7 +2187,29 @@ window.noirQuickFilter = {
       const specId = specSel ? specSel.value : 'any';
       const currentSrv = serviceSel ? serviceSel.value : '';
 
+      // Перестраиваем список услуг под выбранного мастера
       this.renderServices(specId, currentSrv);
+
+      if (typeof window.updateQuickBookingDiscountDisplay === 'function') {
+        window.updateQuickBookingDiscountDisplay();
+      }
+    } finally {
+      this.isUpdating = false;
+    }
+  },
+
+  onServiceChange() {
+    if (this.isUpdating) return;
+    this.isUpdating = true;
+    try {
+      const serviceSel = document.getElementById('adminServiceSelect');
+      const specSel = document.getElementById('adminSpecialistSelect');
+      const srvId = serviceSel ? serviceSel.value : '';
+      const currentSpec = specSel ? specSel.value : 'any';
+
+      // Перестраиваем список мастеров под выбранную услугу
+      this.renderSpecialists(srvId, currentSpec);
+
       if (typeof window.updateQuickBookingDiscountDisplay === 'function') {
         window.updateQuickBookingDiscountDisplay();
       }
@@ -2212,13 +2226,17 @@ window.noirQuickFilter = {
     this.isUpdating = true;
     try {
       if (initialSpecId && initialSpecId !== 'any') {
-        this.renderServices(initialSpecId);
-        const srvId = serviceSel.value;
-        this.renderSpecialists(srvId, initialSpecId);
+        // Открытие для конкретного мастера (например, клик по ячейке таймлайна мастера)
+        this.renderSpecialists('', initialSpecId);
+        specSel.value = initialSpecId;
+        // Услуги фильтруются под этого мастера, но изначально стоит плейсхолдер
+        this.renderServices(initialSpecId, '');
       } else {
-        this.renderServices('any');
-        const srvId = serviceSel.value;
-        this.renderSpecialists(srvId, 'any');
+        // Открытие по общей кнопке "+ Новая запись": мастер "Любой свободный", все мастера доступны
+        this.renderSpecialists('', 'any');
+        specSel.value = 'any';
+        // Услуга не выбрана (плейсхолдер), все услуги доступны
+        this.renderServices('any', '');
       }
     } finally {
       this.isUpdating = false;
