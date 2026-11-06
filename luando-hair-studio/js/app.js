@@ -95,6 +95,8 @@ function renderStaticTexts() {
   document.getElementById("nav-reviews").textContent = t.nav.reviews;
   document.getElementById("nav-contacts").textContent = t.nav.contacts;
   document.getElementById("btn-header-book").textContent = t.nav.bookOnline;
+  const mobileBookBtn = document.getElementById("btn-mobile-nav-book");
+  if (mobileBookBtn) mobileBookBtn.textContent = t.nav.bookOnline;
 
   // Hero
   document.getElementById("hero-location-badge").textContent = t.hero.locationBadge;
@@ -123,12 +125,12 @@ function renderStaticTexts() {
   document.getElementById("services-subtitle").textContent = t.services.subtitle;
 
   // Services Filter Buttons
-  document.getElementById("filter-all").textContent = t.services.filterAll;
-  document.getElementById("filter-color").textContent = t.services.filterColor;
-  document.getElementById("filter-blond").textContent = t.services.filterBlond;
-  document.getElementById("filter-extensions").textContent = t.services.filterExtensions;
-  document.getElementById("filter-haircut").textContent = t.services.filterHaircut;
-  document.getElementById("filter-care").textContent = t.services.filterCare;
+  const fAll = document.getElementById("filter-all");
+  if (fAll) fAll.textContent = t.services.filterAll;
+  const fStyling = document.getElementById("filter-styling");
+  if (fStyling) fStyling.textContent = t.services.filterStyling;
+  const fCare = document.getElementById("filter-care");
+  if (fCare) fCare.textContent = t.services.filterCare;
 
   // Portfolio Head
   document.getElementById("portfolio-tag").textContent = t.portfolio.tag;
