@@ -1,19 +1,17 @@
 /**
  * TRUMP by LUANDO Hair Studio Nha Trang
- * Interactive 5-Step Booking Engine
+ * Interactive 4-Step Booking Engine
  * Ready for PulseCore / Cloudflare D1 CRM Bridge
  */
 
 class BookingEngine {
   constructor() {
     this.currentStep = 1;
-    this.totalSteps = 5;
+    this.totalSteps = 4;
     this.bookingData = {
       serviceId: "airtouch",
-      serviceName: "Balayage & AirTouch",
+      serviceName: "AirTouch Balayage & Toning",
       servicePrice: "3 000 000 ₫",
-      master: "luando",
-      masterName: "LuanDo (Founder & Master Stylist)",
       date: new Date().toISOString().split("T")[0],
       time: "10:00",
       clientName: "",
@@ -47,7 +45,7 @@ class BookingEngine {
   open(preselectedServiceId = null) {
     if (preselectedServiceId) {
       this.selectServiceById(preselectedServiceId);
-      this.currentStep = 2; // Jump directly to master selection
+      this.currentStep = 2; // Jump directly to date & time selection
     } else {
       this.currentStep = 1;
     }
@@ -83,11 +81,19 @@ class BookingEngine {
   }
 
   updateIndicators() {
+    const lang = window.appState ? window.appState.lang : "ru";
+    const stepNames = (translations[lang] && translations[lang].booking && translations[lang].booking.stepIndicators) 
+      || ["Услуга", "Время", "Контакты", "Готово"];
+
     this.stepIndicators.forEach((el, index) => {
       if (index + 1 <= this.currentStep) {
         el.classList.add("active");
       } else {
         el.classList.remove("active");
+      }
+      const labelEl = el.querySelector(".step-text");
+      if (labelEl && stepNames[index]) {
+        labelEl.textContent = stepNames[index];
       }
     });
   }
@@ -131,63 +137,9 @@ class BookingEngine {
         break;
 
       case 2:
-        html = `
-          <h3 style="font-size: 18px; margin-bottom: 8px; color: #fff;">${t.step2Title}</h3>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-            Каждый мастер студии сертифицирован в техниках Airtouch & Balayage.
-          </p>
-          <div class="selection-list">
-            <div class="selectable-item ${this.bookingData.master === 'luando' ? 'selected' : ''}"
-                 onclick="window.bookingEngine.handleSelectMaster('luando', '${t.selectMasterLuando.replace(/'/g, "\\'")}')">
-              <div style="display: flex; align-items: center; gap: 14px;">
-                <span style="font-size: 28px;">👑</span>
-                <div>
-                  <div style="font-weight: 700; color: #fff; font-size: 15px;">${t.selectMasterLuando}</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">10+ лет опыта • Эксперт по славянским волосам</div>
-                </div>
-              </div>
-              <div class="item-check">${this.bookingData.master === 'luando' ? '✓' : ''}</div>
-            </div>
-
-            <div class="selectable-item ${this.bookingData.master === 'top' ? 'selected' : ''}"
-                 onclick="window.bookingEngine.handleSelectMaster('top', '${t.selectMasterTop.replace(/'/g, "\\'")}')">
-              <div style="display: flex; align-items: center; gap: 14px;">
-                <span style="font-size: 28px;">✂️</span>
-                <div>
-                  <div style="font-weight: 700; color: #fff; font-size: 15px;">${t.selectMasterTop}</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">Ведущий колорист команды Луана До</div>
-                </div>
-              </div>
-              <div class="item-check">${this.bookingData.master === 'top' ? '✓' : ''}</div>
-            </div>
-
-            <div class="selectable-item ${this.bookingData.master === 'any' ? 'selected' : ''}"
-                 onclick="window.bookingEngine.handleSelectMaster('any', '${t.selectMasterAny.replace(/'/g, "\\'")}')">
-              <div style="display: flex; align-items: center; gap: 14px;">
-                <span style="font-size: 28px;">⚡</span>
-                <div>
-                  <div style="font-weight: 700; color: #fff; font-size: 15px;">${t.selectMasterAny}</div>
-                  <div style="font-size: 12px; color: var(--text-muted);">Быстрая запись на ближайшее удобное время</div>
-                </div>
-              </div>
-              <div class="item-check">${this.bookingData.master === 'any' ? '✓' : ''}</div>
-            </div>
-          </div>
-          <div class="modal-nav-btns">
-            <button class="btn btn-outline" onclick="window.bookingEngine.setStep(1)">
-              ${t.btnPrev}
-            </button>
-            <button class="btn btn-primary" onclick="window.bookingEngine.setStep(3)">
-              ${t.btnNext}
-            </button>
-          </div>
-        `;
-        break;
-
-      case 3:
         const timeSlots = ["09:00", "10:30", "12:00", "14:00", "15:30", "17:00", "18:00"];
         html = `
-          <h3 style="font-size: 18px; margin-bottom: 8px; color: #fff;">${t.step3Title}</h3>
+          <h3 style="font-size: 18px; margin-bottom: 8px; color: #fff;">${t.step2Title}</h3>
           <div class="form-group" style="margin-top: 18px;">
             <label class="form-label">${t.dateLabel}</label>
             <input type="date" class="form-input" id="bookingDateInput" 
@@ -207,19 +159,19 @@ class BookingEngine {
             </div>
           </div>
           <div class="modal-nav-btns">
-            <button class="btn btn-outline" onclick="window.bookingEngine.setStep(2)">
+            <button class="btn btn-outline" onclick="window.bookingEngine.setStep(1)">
               ${t.btnPrev}
             </button>
-            <button class="btn btn-primary" onclick="window.bookingEngine.setStep(4)">
+            <button class="btn btn-primary" onclick="window.bookingEngine.setStep(3)">
               ${t.btnNext}
             </button>
           </div>
         `;
         break;
 
-      case 4:
+      case 3:
         html = `
-          <h3 style="font-size: 18px; margin-bottom: 8px; color: #fff;">${t.step4Title}</h3>
+          <h3 style="font-size: 18px; margin-bottom: 8px; color: #fff;">${t.step3Title}</h3>
           <div class="form-group" style="margin-top: 18px;">
             <label class="form-label">${t.nameLabel} *</label>
             <input type="text" class="form-input" id="clientNameInput" 
@@ -239,7 +191,7 @@ class BookingEngine {
                       oninput="window.bookingEngine.bookingData.notes = this.value">${this.bookingData.notes}</textarea>
           </div>
           <div class="modal-nav-btns">
-            <button class="btn btn-outline" onclick="window.bookingEngine.setStep(3)">
+            <button class="btn btn-outline" onclick="window.bookingEngine.setStep(2)">
               ${t.btnPrev}
             </button>
             <button class="btn btn-primary" onclick="window.bookingEngine.submitBooking()">
@@ -249,16 +201,21 @@ class BookingEngine {
         `;
         break;
 
-      case 5:
+      case 4:
         const whatsappMsg = encodeURIComponent(
           `Hello TRUMP by LUANDO Hair Studio!\nI would like to book an appointment:\n\n` +
           `• Service: ${this.bookingData.serviceName}\n` +
-          `• Stylist: ${this.bookingData.masterName}\n` +
           `• Date & Time: ${this.bookingData.date} at ${this.bookingData.time}\n` +
           `• Client: ${this.bookingData.clientName || 'Guest'}\n` +
           `• Contact: ${this.bookingData.clientPhone}\n` +
           (this.bookingData.notes ? `• Note: ${this.bookingData.notes}\n` : '')
         );
+
+        const summaryLabels = {
+          ru: { service: "Услуга:", date: "Дата и время:", guest: "Гость:", noPhone: "номер не указан" },
+          en: { service: "Service:", date: "Date & Time:", guest: "Guest:", noPhone: "phone not provided" },
+          vi: { service: "Dịch vụ:", date: "Ngày & Giờ:", guest: "Khách hàng:", noPhone: "chưa có số điện thoại" }
+        }[lang] || { service: "Услуга:", date: "Дата и время:", guest: "Гость:", noPhone: "номер не указан" };
 
         html = `
           <div style="text-align: center; padding: 20px 0;">
@@ -270,10 +227,9 @@ class BookingEngine {
               ${t.successDesc}
             </p>
             <div style="background: rgba(220, 165, 74, 0.08); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; text-align: left; margin-bottom: 24px; font-size: 13px; line-height: 1.8;">
-              <div><strong>Услуга:</strong> ${this.bookingData.serviceName}</div>
-              <div><strong>Мастер:</strong> ${this.bookingData.masterName}</div>
-              <div><strong>Дата и время:</strong> ${this.bookingData.date} в ${this.bookingData.time}</div>
-              <div><strong>Гость:</strong> ${this.bookingData.clientName || 'Гость'} (${this.bookingData.clientPhone || 'номер не указан'})</div>
+              <div><strong>${summaryLabels.service}</strong> ${this.bookingData.serviceName} (${this.bookingData.servicePrice})</div>
+              <div><strong>${summaryLabels.date}</strong> ${this.bookingData.date} в ${this.bookingData.time}</div>
+              <div><strong>${summaryLabels.guest}</strong> ${this.bookingData.clientName || 'Гость'} (${this.bookingData.clientPhone || summaryLabels.noPhone})</div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <a href="https://wa.me/84343800996?text=${whatsappMsg}" target="_blank" class="btn btn-primary" style="width: 100%; padding: 16px;">
@@ -298,13 +254,7 @@ class BookingEngine {
     this.bookingData.serviceId = id;
     this.bookingData.serviceName = name;
     this.bookingData.servicePrice = `${price} ${translations[lang].services.currency}`;
-    this.render();
-  }
-
-  handleSelectMaster(id, name) {
-    this.bookingData.master = id;
-    this.bookingData.masterName = name;
-    this.render();
+    this.setStep(2); // Seamlessly advance directly to date & time
   }
 
   handleSelectTime(time) {
@@ -314,11 +264,17 @@ class BookingEngine {
 
   submitBooking() {
     if (!this.bookingData.clientPhone) {
-      alert("Пожалуйста, укажите ваш контактный телефон или мессенджер!");
+      const lang = window.appState ? window.appState.lang : "ru";
+      const alerts = {
+        ru: "Пожалуйста, укажите ваш контактный телефон или мессенджер!",
+        en: "Please provide your contact phone number or messenger!",
+        vi: "Vui lòng nhập số điện thoại hoặc Zalo / WhatsApp để salon liên hệ!"
+      };
+      alert(alerts[lang] || alerts.ru);
       return;
     }
     // Advance to confirmation screen
-    this.currentStep = 5;
+    this.currentStep = 4;
     this.render();
   }
 }
