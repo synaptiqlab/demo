@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>TRUMP by LUANDO | Премиум-студия колористики и ухода за волосами в Нячанге</title>
+  <meta name="description" content="TRUMP by LUANDO Hair Studio в Нячанге. Экспертная колористика славянских и европейских волос: AirTouch, Balayage, чистый блонд, наращивание волос, молекулярное восстановление Olaplex.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://nhatranghairsalon.com/wp-content/uploads/2026/03/cropped-77-6-4-scaled-3-192x192.png">
+
+  <!-- Google Fonts: Playfair Display + Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+
+  <!-- Anti-Theft & Demo Presentation Guard -->
+  <script>
+    (function() {
+      // 1. Prevent Right Click & Key Shortcuts (Ctrl+S, Ctrl+U, F12)
+      document.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('keydown', e => {
+        if (
+          e.key === 'F12' ||
+          (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) ||
+          (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J'))
+        ) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       Fixed Top Header & Trilingual Switcher
+       ========================================================================== -->
+  <header class="header">
+    <div class="container header-inner">
+      <!-- Brand Logo -->
+      <a href="index.html" class="brand-wrap">
+        <div class="brand-badge">
+          <span class="brand-title">TRUMP <span class="gold-text">by LUANDO</span></span>
+          <span class="brand-subtitle">HAIR STUDIO • NHA TRANG</span>
+        </div>
+      </a>
+
+      <!-- Desktop & Mobile Navigation -->
+      <nav id="mainNav">
+        <ul class="nav-links" id="navLinksList">
+          <li><a href="#about" class="nav-link" id="nav-about" onclick="closeMobileMenu()">О студии</a></li>
+          <li><a href="#founder" class="nav-link" id="nav-founder" onclick="closeMobileMenu()">Мастер Луан</a></li>
+          <li><a href="#services" class="nav-link" id="nav-services" onclick="closeMobileMenu()">Услуги и цены</a></li>
+          <li><a href="#portfolio" class="nav-link" id="nav-portfolio" onclick="closeMobileMenu()">Работы</a></li>
+          <li><a href="#reviews" class="nav-link" id="nav-reviews" onclick="closeMobileMenu()">Отзывы</a></li>
+          <li><a href="#contacts" class="nav-link" id="nav-contacts" onclick="closeMobileMenu()">Контакты</a></li>
+          <li class="mobile-only-item">
+            <button class="btn btn-primary" onclick="window.bookingEngine.open(); closeMobileMenu();" style="width: 100%; margin-top: 14px; padding: 14px;">
+              Онлайн-запись ✨
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Actions: Language Pill Switcher + Booking CTA -->
+      <div class="header-actions">
+        <!-- Trilingual Switcher: RU / EN / VI -->
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="ru">RU</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="vi">VI</button>
+        </div>
+
+        <button class="btn btn-primary header-desktop-book" id="btn-header-book" onclick="window.bookingEngine.open()">
+          Онлайн-запись ✨
+        </button>
+
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       Hero Section (First Screen - Exactly Fits 100dvh on Mobile)
+       ========================================================================== -->
+  <section class="hero" id="about">
+    <div class="container hero-grid">
+      <div class="hero-content-col">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <span id="hero-location-badge">Нячанг • Центр • 213 Nguyễn Thị Minh Khai</span>
+        </div>
+
+        <h1 class="hero-title" id="hero-title">
+          Экспертная колористика <br>
+          <span class="gold-text">славянских и европейских</span> волос
+        </h1>
+
+        <p class="hero-desc" id="hero-subtitle">
+          Студия топ-стилиста Луана До. Безупречный AirTouch, чистый блонд без желтизны, бережное наращивание и молекулярное восстановление структуры волос в Нячанге.
+        </p>
+
+        <div class="hero-cta">
+          <button class="btn btn-primary" id="hero-btn-book" onclick="window.bookingEngine.open()">
+            Забронировать визит ✨
+          </button>
+          <a href="#portfolio" class="btn btn-outline" id="hero-btn-work">
+            Смотреть работы 📸
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Visual Showcase (Desktop) -->
+      <div class="hero-visual">
+        <div class="hero-card-main">
+          <img src="https://nhatranghairsalon.com/wp-content/uploads/2026/03/IMG_3362-16-scaled.jpg" alt="AirTouch Master Hair Studio" loading="eager">
+          <div class="hero-floating-badge">
+            <div>
+              <div class="floating-text-sub">Signature Color Technique</div>
+              <div class="floating-text-main">AirTouch & Balayage Precision</div>
+            </div>
+            <span style="font-size: 26px;">👑</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Second Screen: Stats & Founder (LuanDo)
+       ========================================================================== -->
+  <section class="founder-section" id="founder">
+    <div class="container">
+      
+      <!-- 4 Stats Counters (Second Screen Entry) -->
+      <div class="stats-bar-wrapper">
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num gold-text">10+</span>
+            <span class="stat-label" id="stat-years-label">Лет опыта</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num gold-text">4.9★</span>
+            <span class="stat-label" id="stat-rating-label">Рейтинг Google</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num gold-text">136+</span>
+            <span class="stat-label" id="stat-clients-label">Отзывов гостей</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num gold-text">3000+</span>
+            <span class="stat-label" id="stat-blondes-label">Блондов</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Founder Showcase Grid -->
+      <div class="founder-grid">
+        <div class="founder-img-wrap">
+          <img src="https://nhatranghairsalon.com/wp-content/uploads/2026/03/IMG_3473-edited-768x1024.png" alt="LuanDo - Founder & Master Colorist" loading="lazy">
+        </div>
+
+      <div>
+        <span class="section-tag" id="founder-tag">Основатель и топ-колорист</span>
+        <h2 class="section-title" id="founder-title">Красота волос как искусство и точная наука</h2>
+        
+        <div class="founder-quote-box" id="founder-lead">
+          «Славянские и европейские волосы требуют принципиально иной техники работы, чем азиатские — тонкости полотна, деликатного осветления и ювелирного сохранения структуры».
+        </div>
+
+        <p class="founder-body" id="founder-bio1">
+          Привет! Меня зовут <strong>Луан До (LuanDo)</strong>, я основатель студии <strong>TRUMP by LUANDO</strong> в Нячанге. За более чем 10 лет ежедневной практики я сфокусировался на работе со светлыми, пористыми и тонкими волосами европейских и русскоязычных гостей.
+        </p>
+
+        <p class="founder-body" id="founder-bio2">
+          Мы создаем цвет и форму с учетом природного цветотипа, истории предыдущих окрашиваний и вашего образа жизни. Никаких пережженных концов, полос и неожиданных рыжих оттенков — только естественные переливы, мягкое отрастание и здоровый шелковистый блеск.
+        </p>
+
+        <div style="font-size: 15px; font-style: italic; color: var(--gold-light); margin-top: 18px;" id="founder-quote">
+          TRUMP by LUANDO — это золотой стандарт доверия, экспертного владения колористикой и персональной заботы о каждом клиенте.
+        </div>
+
+        <div class="founder-signature">
+          <img src="https://nhatranghairsalon.com/wp-content/uploads/2026/03/IMG_3473-edited.png" alt="LuanDo" class="signature-avatar">
+          <div>
+            <div class="signature-name" id="founder-sig-name">Луан До</div>
+            <div class="signature-role" id="founder-sig-role">Основатель & Главный стилист</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- ==========================================================================
+       Services & Price Menu
+       ========================================================================== -->
+  <section class="services-section" id="services">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag" id="services-tag">Прейскурант услуг</span>
+        <h2 class="section-title" id="services-title">Фирменные услуги студии</h2>
+        <p class="section-subtitle" id="services-subtitle">
+          Прозрачные фиксированные цены. В каждую сложную процедуру входит диагностика полотна волос и премиальный уход.
+        </p>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="filter-bar">
+        <button class="filter-btn active" id="filter-all" onclick="filterCategory('all', this)">Все услуги</button>
+        <button class="filter-btn" id="filter-color" onclick="filterCategory('color', this)">Сложное окрашивание</button>
+        <button class="filter-btn" id="filter-blond" onclick="filterCategory('blond', this)">Блонд и тонирование</button>
+        <button class="filter-btn" id="filter-extensions" onclick="filterCategory('extensions', this)">Наращивание волос</button>
+        <button class="filter-btn" id="filter-haircut" onclick="filterCategory('haircut', this)">Стрижки и укладки</button>
+        <button class="filter-btn" id="filter-care" onclick="filterCategory('care', this)">Уход и лечение</button>
+      </div>
+
+      <!-- Injected Service Cards -->
+      <div class="services-grid" id="servicesGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Portfolio Section
+       ========================================================================== -->
+  <section class="portfolio-section" id="portfolio">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag" id="portfolio-tag">Наши работы</span>
+        <h2 class="section-title" id="portfolio-title">Галерея преображений</h2>
+        <p class="section-subtitle" id="portfolio-subtitle">
+          Реальные результаты наших гостей. Оцените чистоту цвета, плавность градиентов и живость волос.
+        </p>
+      </div>
+
+      <div class="portfolio-grid" id="portfolioGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Why Us Section
+       ========================================================================== -->
+  <section class="why-section">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag" id="why-tag">Почему мы</span>
+        <h2 class="section-title" id="why-title">Стандарты комфорта и безопасности</h2>
+      </div>
+
+      <div class="why-grid" id="whyGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Reviews Section
+       ========================================================================== -->
+  <section class="reviews-section" id="reviews">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag" id="reviews-tag">Отзывы клиентов</span>
+        <h2 class="section-title" id="reviews-title">Нам доверяют клиенты со всего мира</h2>
+        <p class="section-subtitle" id="reviews-subtitle">
+          Официальный рейтинг 4.9★ на Google Maps на основе более 136 проверенных отзывов экспатов и путешественников.
+        </p>
+        <div style="margin-top: 14px;">
+          <span style="font-size: 13px; color: var(--gold-light); background: rgba(220,165,74,0.1); border: 1px solid var(--border-subtle); padding: 6px 14px; border-radius: var(--radius-pill);" id="reviews-badge-text">
+            Подтверждено Google & Trustindex
+          </span>
+        </div>
+      </div>
+
+      <div class="reviews-grid" id="reviewsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Contacts & Map Section
+       ========================================================================== -->
+  <section class="contacts-section" id="contacts">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag" id="contacts-tag">Контакты и локация</span>
+        <h2 class="section-title" id="contacts-title">Ждем вас в сердце Нячанга</h2>
+        <p class="section-subtitle" id="contacts-subtitle">
+          Удобное расположение в центральном районе, комфортная парковка для байков и автомобилей.
+        </p>
+      </div>
+
+      <div class="contacts-grid">
+        <div class="contact-card-box">
+          <div>
+            <div class="contact-row">
+              <div class="contact-icon">📍</div>
+              <div>
+                <div class="contact-label" id="contact-address-label">Адрес студии</div>
+                <div class="contact-value" id="contact-address-val">213 Nguyễn Thị Minh Khai, Phước Hòa, Nha Trang</div>
+                <div class="contact-note" id="contact-address-note">Рядом с центральными проспектами, 5 минут до набережной Чан Фу.</div>
+              </div>
+            </div>
+
+            <div class="contact-row">
+              <div class="contact-icon">⏰</div>
+              <div>
+                <div class="contact-label" id="contact-hours-label">Часы работы</div>
+                <div class="contact-value" id="contact-hours-val">Понедельник — Воскресенье: 08:30 – 19:30</div>
+                <div class="contact-note" id="contact-hours-note">Работаем без выходных. Приём по предварительной записи.</div>
+              </div>
+            </div>
+
+            <div class="contact-row">
+              <div class="contact-icon">💬</div>
+              <div>
+                <div class="contact-label" id="contact-direct-label">Прямая связь и запись</div>
+                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                  <a href="https://wa.me/84343800996" target="_blank" class="btn btn-outline" style="padding: 10px 18px; font-size: 13px;">
+                    WhatsApp: +84 343 800 996 ↗
+                  </a>
+                  <a href="https://www.instagram.com/luando944/" target="_blank" class="btn btn-outline" style="padding: 10px 18px; font-size: 13px;">
+                    Instagram: @luando944 ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <button class="btn btn-primary" onclick="window.bookingEngine.open()" style="width: 100%; padding: 16px; font-size: 15px;">
+              Записаться онлайн на процедуру ✨
+            </button>
+          </div>
+        </div>
+
+        <!-- Google Maps Embed -->
+        <div class="map-container-wrap">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3899.071167735391!2d109.18429219999999!3d12.2362091!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3170677a2818f435%3A0x6b9d6287c4765d79!2s213%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20Minh%20Khai%2C%20Ph%C6%B0%E1%BB%9Bc%20H%C3%B2a%2C%20Nha%20Trang%2C%20Kh%C3%A1nh%20H%C3%B2a!5e0!3m2!1sen!2svn!4v1710000000000!5m2!1sen!2svn" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Footer
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div id="footer-rights">© 2026 TRUMP by LUANDO | Hair Studio Nha Trang. Все права защищены.</div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="font-size: 12px; color: var(--gold-light);" id="footer-badge">
+          Разработано на технологии PulseCore by SYNAPTIQ Lab
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       Interactive 5-Step Booking Modal Overlay
+       ========================================================================== -->
+  <div class="modal-overlay" id="bookingModalOverlay">
+    <div class="booking-modal-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">✨</span>
+          <h3 style="font-size: 18px; color: #fff; font-family: var(--font-serif);">TRUMP by LUANDO</h3>
+        </div>
+        <button class="modal-close-btn" id="bookingModalClose">&times;</button>
+      </div>
+
+      <!-- Step Indicators -->
+      <div class="booking-steps-bar">
+        <div class="step-indicator active">
+          <div class="step-dot">1</div>
+          <span>Услуга</span>
+        </div>
+        <div class="step-indicator">
+          <div class="step-dot">2</div>
+          <span>Мастер</span>
+        </div>
+        <div class="step-indicator">
+          <div class="step-dot">3</div>
+          <span>Время</span>
+        </div>
+        <div class="step-indicator">
+          <div class="step-dot">4</div>
+          <span>Контакты</span>
+        </div>
+        <div class="step-indicator">
+          <div class="step-dot">5</div>
+          <span>Готово</span>
+        </div>
+      </div>
+
+      <!-- Dynamic Step Content -->
+      <div class="modal-body" id="bookingStepsContent"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/translations.js?v=2.0"></script>
+  <script src="js/booking.js?v=2.0"></script>
+  <script src="js/app.js?v=2.0"></script>
+</body>
+</html>
