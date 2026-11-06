@@ -137,7 +137,7 @@ class BookingEngine {
         break;
 
       case 2:
-        const timeSlots = ["09:00", "10:30", "12:00", "14:00", "15:30", "17:00", "18:00"];
+        const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
         html = `
           <h3 style="font-size: 18px; margin-bottom: 8px; color: #fff;">${t.step2Title}</h3>
           <div class="form-group" style="margin-top: 18px;">
