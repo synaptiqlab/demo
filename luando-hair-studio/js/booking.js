@@ -175,14 +175,8 @@ class BookingEngine {
           <div class="form-group" style="margin-top: 18px;">
             <label class="form-label">${t.nameLabel} *</label>
             <input type="text" class="form-input" id="clientNameInput" 
-                   placeholder="Например: Мария / Anna" value="${this.bookingData.clientName}"
+                   placeholder="${t.namePlaceholder || 'Например: Мария / Anna'}" value="${this.bookingData.clientName}"
                    oninput="window.bookingEngine.bookingData.clientName = this.value">
-          </div>
-          <div class="form-group">
-            <label class="form-label">${t.phoneLabel} *</label>
-            <input type="tel" class="form-input" id="clientPhoneInput" 
-                   placeholder="+84 ... / +7 ... / @telegram" value="${this.bookingData.clientPhone}"
-                   oninput="window.bookingEngine.bookingData.clientPhone = this.value">
           </div>
           <div class="form-group">
             <label class="form-label">${t.notesLabel}</label>
@@ -190,52 +184,65 @@ class BookingEngine {
                       placeholder="${t.notesPlaceholder}"
                       oninput="window.bookingEngine.bookingData.notes = this.value">${this.bookingData.notes}</textarea>
           </div>
-          <div class="modal-nav-btns">
+          
+          <div style="margin-top: 24px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--gold-light); margin-bottom: 12px; text-align: center;">
+              ${t.chooseMessengerLabel}
+            </div>
+            <div class="messenger-choice-grid">
+              <button type="button" class="btn btn-whatsapp" onclick="window.bookingEngine.submitToMessenger('whatsapp')" style="padding: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>💬</span> ${t.btnBookWhatsApp}
+              </button>
+              <button type="button" class="btn btn-telegram" onclick="window.bookingEngine.submitToMessenger('telegram')" style="padding: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>✈️</span> ${t.btnBookTelegram}
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-nav-btns" style="margin-top: 20px;">
             <button class="btn btn-outline" onclick="window.bookingEngine.setStep(2)">
               ${t.btnPrev}
             </button>
-            <button class="btn btn-primary" onclick="window.bookingEngine.submitBooking()">
-              ${t.btnSubmit}
-            </button>
+            <div style="font-size: 12px; color: var(--text-muted);">
+              ${t.instantConfirmationNote}
+            </div>
           </div>
         `;
         break;
 
       case 4:
-        const whatsappMsg = encodeURIComponent(
-          `Hello TRUMP by LUANDO Hair Studio!\nI would like to book an appointment:\n\n` +
-          `• Service: ${this.bookingData.serviceName}\n` +
-          `• Date & Time: ${this.bookingData.date} at ${this.bookingData.time}\n` +
-          `• Client: ${this.bookingData.clientName || 'Guest'}\n` +
-          `• Contact: ${this.bookingData.clientPhone}\n` +
-          (this.bookingData.notes ? `• Note: ${this.bookingData.notes}\n` : '')
-        );
-
         const summaryLabels = {
-          ru: { service: "Услуга:", date: "Дата и время:", guest: "Гость:", noPhone: "номер не указан" },
-          en: { service: "Service:", date: "Date & Time:", guest: "Guest:", noPhone: "phone not provided" },
-          vi: { service: "Dịch vụ:", date: "Ngày & Giờ:", guest: "Khách hàng:", noPhone: "chưa có số điện thoại" }
-        }[lang] || { service: "Услуга:", date: "Дата и время:", guest: "Гость:", noPhone: "номер не указан" };
+          ru: { service: "Услуга:", date: "Дата и время:", guest: "Гость:", note: "Заметка:" },
+          en: { service: "Service:", date: "Date & Time:", guest: "Guest:", note: "Note:" },
+          vi: { service: "Dịch vụ:", date: "Ngày & Giờ:", guest: "Khách hàng:", note: "Ghi chú:" }
+        }[lang] || { service: "Услуга:", date: "Дата и время:", guest: "Гость:", note: "Заметка:" };
+
+        const isWA = (this.selectedMessenger || 'whatsapp') === 'whatsapp';
+        const messengerBtnText = isWA 
+          ? (t.btnOpenWhatsAppAgain || 'Открыть чат WhatsApp снова ↗')
+          : (t.btnOpenTelegramAgain || 'Открыть чат Telegram снова ↗');
+        const messengerBtnClass = isWA ? 'btn-whatsapp' : 'btn-telegram';
 
         html = `
           <div style="text-align: center; padding: 20px 0;">
             <div style="font-size: 54px; margin-bottom: 16px;">✨</div>
-            <h3 style="font-size: 24px; color: #fff; margin-bottom: 12px; font-family: var(--font-serif);">
+            <h3 style="font-size: 22px; color: #fff; margin-bottom: 12px; font-family: var(--font-serif);">
               ${t.successTitle}
             </h3>
-            <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto 24px;">
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 440px; margin: 0 auto 22px;">
               ${t.successDesc}
             </p>
-            <div style="background: rgba(220, 165, 74, 0.08); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; text-align: left; margin-bottom: 24px; font-size: 13px; line-height: 1.8;">
+            <div style="background: rgba(220, 165, 74, 0.08); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; text-align: left; margin-bottom: 22px; font-size: 13px; line-height: 1.8;">
               <div><strong>${summaryLabels.service}</strong> ${this.bookingData.serviceName} (${this.bookingData.servicePrice})</div>
               <div><strong>${summaryLabels.date}</strong> ${this.bookingData.date} в ${this.bookingData.time}</div>
-              <div><strong>${summaryLabels.guest}</strong> ${this.bookingData.clientName || 'Гость'} (${this.bookingData.clientPhone || summaryLabels.noPhone})</div>
+              <div><strong>${summaryLabels.guest}</strong> ${this.bookingData.clientName || 'Гость'}</div>
+              ${this.bookingData.notes ? `<div><strong>${summaryLabels.note}</strong> ${this.bookingData.notes}</div>` : ''}
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
-              <a href="https://wa.me/84343800996?text=${whatsappMsg}" target="_blank" class="btn btn-primary" style="width: 100%; padding: 16px;">
-                ${t.btnOpenWhatsApp}
+              <a href="${this.lastMessengerUrl || '#'}" target="_blank" class="btn ${messengerBtnClass}" style="width: 100%; padding: 14px; font-weight: 700;">
+                ${isWA ? '💬' : '✈️'} ${messengerBtnText}
               </a>
-              <button class="btn btn-outline" onclick="window.bookingEngine.close()" style="width: 100%;">
+              <button class="btn btn-outline" onclick="window.bookingEngine.close()" style="width: 100%; padding: 12px;">
                 ${t.btnBackHome}
               </button>
             </div>
@@ -262,17 +269,44 @@ class BookingEngine {
     this.render();
   }
 
-  submitBooking() {
-    if (!this.bookingData.clientPhone) {
+  submitToMessenger(type) {
+    if (!this.bookingData.clientName || !this.bookingData.clientName.trim()) {
       const lang = window.appState ? window.appState.lang : "ru";
-      const alerts = {
-        ru: "Пожалуйста, укажите ваш контактный телефон или мессенджер!",
-        en: "Please provide your contact phone number or messenger!",
-        vi: "Vui lòng nhập số điện thoại hoặc Zalo / WhatsApp để salon liên hệ!"
+      const nameAlerts = {
+        ru: "Пожалуйста, укажите ваше имя!",
+        en: "Please enter your name!",
+        vi: "Vui lòng nhập họ và tên của bạn!"
       };
-      alert(alerts[lang] || alerts.ru);
+      alert(nameAlerts[lang] || nameAlerts.ru);
+      const input = document.getElementById("clientNameInput");
+      if (input) input.focus();
       return;
     }
+
+    this.selectedMessenger = type;
+
+    // Compose concise English message for salon
+    const msg = 
+      `Hello TRUMP by LUANDO Hair Studio!\n` +
+      `I would like to book an appointment:\n\n` +
+      `• Service: ${this.bookingData.serviceName} (${this.bookingData.servicePrice})\n` +
+      `• Date & Time: ${this.bookingData.date} at ${this.bookingData.time}\n` +
+      `• Client: ${this.bookingData.clientName.trim()}\n` +
+      (this.bookingData.notes && this.bookingData.notes.trim() ? `• Note: ${this.bookingData.notes.trim()}\n` : '');
+
+    const encodedMsg = encodeURIComponent(msg);
+
+    let targetUrl = "";
+    if (type === "whatsapp") {
+      targetUrl = `https://wa.me/84343800996?text=${encodedMsg}`;
+    } else if (type === "telegram") {
+      // Connects to salon's Telegram channel or direct handle
+      targetUrl = `https://t.me/luando944?text=${encodedMsg}`;
+    }
+
+    this.lastMessengerUrl = targetUrl;
+    window.open(targetUrl, "_blank");
+
     // Advance to confirmation screen
     this.currentStep = 4;
     this.render();
