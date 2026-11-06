@@ -17,9 +17,9 @@ const translations = {
       switchLang: "Язык"
     },
     hero: {
-      locationBadge: "Нячанг • Центр • 213 Nguyễn Thị Minh Khai",
+      locationBadge: "Балаяж, аиртач и наращивание волос",
       title: "Экспертная колористика славянских и европейских волос",
-      subtitle: "Студия топ-стилиста Луана До. Безупречный AirTouch, чистый блонд без желтизны, бережное наращивание и молекулярное восстановление структуры волос в Нячанге.",
+      subtitle: "Студия топ-стилиста Луана До. Обладая более чем 10-летним опытом, мы предлагаем полный спектр профессиональных услуг для волос, гарантируем стабильно безупречный результат и пользуемся доверием клиентов со всего мира.",
       btnBook: "Забронировать визит ✨",
       btnWork: "Смотреть работы 📸",
       statYears: "Лет опыта",
@@ -241,9 +241,9 @@ const translations = {
       switchLang: "Language"
     },
     hero: {
-      locationBadge: "Nha Trang • City Center • 213 Nguyễn Thị Minh Khai",
+      locationBadge: "Balayage, AirTouch & Hair Extensions",
       title: "Master Color & Hair Artistry for Slavic & European Hair",
-      subtitle: "Studio of founder & master stylist LuanDo. Flawless AirTouch, luminous blonde without warm brassiness, seamless hair extensions, and deep bond repair in Nha Trang.",
+      subtitle: "Studio of founder & master stylist LuanDo. With over 10 years of mastery, we offer a complete range of professional hair services, ensuring consistently flawless results trusted by clients worldwide.",
       btnBook: "Book an Appointment ✨",
       btnWork: "View Hair Transformations 📸",
       statYears: "Years Experience",
@@ -465,9 +465,9 @@ const translations = {
       switchLang: "Ngôn ngữ"
     },
     hero: {
-      locationBadge: "Nha Trang • Trung tâm • 213 Nguyễn Thị Minh Khai",
+      locationBadge: "Balayage, AirTouch & Nối tóc chuyên nghiệp",
       title: "Chuyên Gia Nhuộm Balayage & Airtouch Cao Cấp Tại Nha Trang",
-      subtitle: "Hair Studio sáng lập bởi Luân Đỗ. Nổi tiếng với kỹ thuật Airtouch chuẩn xác, tẩy tóc an toàn giữ nguyên cấu trúc tóc, nối tóc lông vũ và phục hồi tóc chuyên sâu.",
+      subtitle: "Studio của nhà sáng lập & chuyên gia tạo mẫu LuanDo. Với hơn 10 năm kinh nghiệm, chúng tôi cung cấp đầy đủ dịch vụ làm tóc chuyên nghiệp, cam kết kết quả hoàn hảo và được khách hàng toàn cầu tin chọn.",
       btnBook: "Đặt lịch trải nghiệm ✨",
       btnWork: "Xem mẫu tóc thực tế 📸",
       statYears: "Năm kinh nghiệm",
